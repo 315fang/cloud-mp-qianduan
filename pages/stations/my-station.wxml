@@ -1,0 +1,254 @@
+<view class="page">
+  <view class="loading" wx:if="{{loading}}">加载店长专属...</view>
+
+  <block wx:elif="{{workbench}}">
+    <view class="hero">
+      <view>
+        <text class="hero-kicker">店长工作台</text>
+        <text class="hero-title">{{workbench.summary.station_count || 0}} 家门店</text>
+      </view>
+      <button class="hero-action" bindtap="goPickupVerify">核销</button>
+    </view>
+
+    <view class="focus-strip">
+      <view class="focus-card {{item.level}}" wx:for="{{workbench.focus_cards}}" wx:key="key">
+        <view class="focus-top">
+          <text class="focus-label">{{item.label}}</text>
+          <text class="focus-value">{{item.value}}<text class="focus-unit">{{item.unit}}</text></text>
+        </view>
+        <text class="focus-hint">{{item.hint}}</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <view class="section-head-main">
+          <text class="section-title">今日处理</text>
+          <text class="section-sub">先看订单和库存，历史明细放在后面。</text>
+        </view>
+      </view>
+      <view class="action-grid">
+        <button class="action-btn primary-btn" bindtap="goPickupVerify">进入自提核销</button>
+        <button class="action-btn secondary-btn" bindtap="goPendingOrders">待核销订单</button>
+        <button class="action-btn secondary-btn" bindtap="toggleProcurementForm">{{showProcurementForm ? '收起采购申请' : '发起采购申请'}}</button>
+        <button class="action-btn secondary-btn" bindtap="goCommissionLogs">服务费明细</button>
+      </view>
+      <view class="simple-list compact-list" wx:if="{{workbench.pending_orders.length > 0}}">
+        <view class="simple-card" wx:for="{{workbench.pending_orders}}" wx:key="id">
+          <view class="simple-top">
+            <text class="simple-title">{{item.order_no}}</text>
+            <text class="simple-tag tag-warn">待核销</text>
+          </view>
+          <text class="simple-line">{{item.pickup_station_name || '门店'}} · {{item.product_name}}{{item.product_spec ? (' / ' + item.product_spec) : ''}} · {{item.quantity}} 件</text>
+          <text class="simple-line text-money">服务费 ¥{{item.service_fee_amount_text}} · 货款返还 ¥{{item.principal_return_amount_text}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view id="procurementFormSection" class="section procurement-section" wx:if="{{showProcurementForm}}">
+      <view class="section-head">
+        <view class="section-head-main">
+          <text class="section-title">发起采购申请</text>
+          <text class="section-sub">补货申请需要业务密码验证，提交后等待平台审核。</text>
+        </view>
+        <button class="section-mini-btn" bindtap="toggleProcurementForm">收起</button>
+      </view>
+      <view class="field">
+        <text class="field-label">门店</text>
+        <picker mode="selector" range="{{scope.stations}}" range-key="name" bindchange="onStationChange">
+          <view class="field-box">{{procurementForm.station_name || '请选择门店'}}</view>
+        </picker>
+        <view class="receive-preview" wx:if="{{procurementForm.receive_address || procurementForm.receive_contact_name || procurementForm.receive_contact_phone}}">
+          <text class="receive-line">收货：{{procurementForm.receive_address || '门店地址未维护'}}</text>
+          <text class="receive-line">联系人：{{procurementForm.receive_contact_name || '未维护'}} {{procurementForm.receive_contact_phone || ''}}</text>
+        </view>
+      </view>
+      <view class="field">
+        <text class="field-label">商品</text>
+        <picker mode="selector" range="{{products}}" range-key="name" bindchange="onProductChange" data-kind="product">
+          <view class="field-box">{{procurementForm.product_name || '请选择商品'}}</view>
+        </picker>
+      </view>
+      <view class="field" wx:if="{{skuOptions.length > 0}}">
+        <text class="field-label">规格{{procurementForm.sku_required ? '（必选）' : ''}}</text>
+        <picker mode="selector" range="{{skuOptions}}" range-key="sku_picker_name" bindchange="onSkuChange">
+          <view class="field-box">{{procurementForm.sku_name || '请选择规格'}}</view>
+        </picker>
+        <text class="field-tip" wx:if="{{procurementForm.sku_required}}">该商品按规格管理库存，采购申请必须选择具体规格。</text>
+      </view>
+      <view class="field">
+        <text class="field-label">采购数量</text>
+        <input class="field-input" type="number" value="{{procurementForm.quantity}}" data-field="quantity" bindinput="onFieldInput" />
+      </view>
+      <view class="field">
+        <text class="field-label">供应商</text>
+        <input class="field-input" value="{{procurementForm.supplier_name}}" data-field="supplier_name" bindinput="onFieldInput" placeholder="请输入供应商" />
+      </view>
+      <view class="field">
+        <text class="field-label">经办人</text>
+        <input class="field-input" value="{{procurementForm.operator_name}}" data-field="operator_name" bindinput="onFieldInput" placeholder="请输入经办人" />
+      </view>
+      <view class="field">
+        <text class="field-label">预计到货</text>
+        <picker mode="date" value="{{procurementForm.expected_arrival_date}}" bindchange="onExpectedArrivalChange">
+          <view class="field-box">{{procurementForm.expected_arrival_date || '请选择日期'}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text class="field-label">成本价</text>
+        <input class="field-input" type="digit" value="{{procurementForm.cost_price}}" data-field="cost_price" bindinput="onFieldInput" placeholder="可留空按默认供货价" />
+        <text class="field-tip">商品金额满1000元免运费，不足1000元固定运费50元。</text>
+      </view>
+      <view class="field">
+        <text class="field-label">备注</text>
+        <textarea class="field-textarea" value="{{procurementForm.remark}}" data-field="remark" bindinput="onFieldInput" placeholder="可填写采购说明"></textarea>
+      </view>
+      <button class="action-btn" loading="{{procurementSubmitting}}" bindtap="submitProcurement">提交采购申请</button>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <view class="section-head-main">
+          <text class="section-title">门店库存</text>
+          <text class="section-sub">{{workbench.summary.inventory_sku_count || 0}} 个库存项 · 可售 {{workbench.summary.inventory_available_qty || 0}} · 预占 {{workbench.summary.inventory_reserved_qty || 0}}</text>
+        </view>
+        <view class="segmented">
+          <view class="segment {{inventoryFilter === 'all' ? 'active' : ''}}" data-filter="all" bindtap="toggleInventoryFilter">全部</view>
+          <view class="segment {{inventoryFilter === 'low' ? 'active' : ''}}" data-filter="low" bindtap="toggleInventoryFilter">预警</view>
+        </view>
+      </view>
+      <view class="inventory-list" wx:if="{{workbench.visible_inventory.length > 0}}">
+        <view class="inventory-card" wx:for="{{workbench.visible_inventory}}" wx:key="id">
+          <view class="simple-top">
+            <text class="simple-title">{{item.product_name}}</text>
+            <text class="simple-tag {{item.stock_tag_class}}">{{item.stock_status_text}}</text>
+          </view>
+          <text class="simple-line">{{item.station_name}} / {{item.sku_display}}</text>
+          <view class="inventory-qty-grid">
+            <view class="inventory-qty">
+              <text class="inventory-qty-value">{{item.available_qty}}</text>
+              <text class="inventory-qty-label">可售</text>
+            </view>
+            <view class="inventory-qty">
+              <text class="inventory-qty-value">{{item.reserved_qty}}</text>
+              <text class="inventory-qty-label">预占</text>
+            </view>
+            <view class="inventory-qty">
+              <text class="inventory-qty-value">{{item.on_hand_qty}}</text>
+              <text class="inventory-qty-label">账面</text>
+            </view>
+          </view>
+          <text class="simple-line">成本 ¥{{item.cost_price_text}} · 更新 {{item.updated_at_text || '—'}}</text>
+          <view class="inventory-card-actions">
+            <button class="inventory-procure-btn" data-id="{{item.id}}" bindtap="startProcurementFromInventory">申请补货</button>
+          </view>
+        </view>
+      </view>
+      <text class="empty-desc" wx:else>{{workbench.inventory_empty_text}}</text>
+      <view class="stock-log-block">
+        <view class="stock-log-head">
+          <text class="subsection-title stock-log-title">最近库存变动</text>
+        </view>
+        <view class="stock-log-list" wx:if="{{workbench.recent_stock_logs.length > 0}}">
+          <view class="stock-log-row" wx:for="{{workbench.recent_stock_logs}}" wx:key="id">
+            <view class="stock-log-main">
+              <view class="stock-log-top">
+                <text class="stock-log-name">{{item.product_name}}</text>
+                <text class="simple-tag {{item.type_class}}">{{item.type_text}}</text>
+              </view>
+              <text class="simple-line">{{item.station_name}} / {{item.sku_display}}</text>
+              <text class="simple-line">{{item.created_at_text || '—'}}{{item.order_no ? (' · 订单 ' + item.order_no) : ''}}{{item.procurement_no ? (' · 采购 ' + item.procurement_no) : ''}}</text>
+              <text class="simple-line" wx:if="{{item.remark}}">{{item.remark}}</text>
+            </view>
+            <text class="stock-log-qty {{item.quantity_delta >= 0 ? 'qty-in' : 'qty-out'}}">{{item.quantity_text}}</text>
+          </view>
+        </view>
+        <text class="empty-desc" wx:else>暂无库存变动记录；采购入库、订单预占、核销消耗后会在这里出现。</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <view class="section-head-main">
+          <text class="section-title">最近记录</text>
+          <text class="section-sub">采购和核销历史收在这里，避免挤占首屏。</text>
+        </view>
+      </view>
+      <view class="finance-row">
+        <view class="finance-stat ripple" bindtap="goCommissionLogs">
+          <text class="finance-value">¥{{workbench.summary.service_fee_total_text}}</text>
+          <text class="finance-label">服务费累计</text>
+        </view>
+        <view class="finance-stat ripple" bindtap="goAgentWallet">
+          <text class="finance-value">¥{{workbench.summary.principal_return_total_text}}</text>
+          <text class="finance-label">货款返还</text>
+        </view>
+      </view>
+      <text class="subsection-title">采购申请</text>
+      <view class="simple-list" wx:if="{{workbench.procurements.length > 0}}">
+        <view class="simple-card" wx:for="{{workbench.procurements}}" wx:key="id">
+          <view class="simple-top">
+            <text class="simple-title">{{item.procurement_no}}</text>
+            <text class="simple-tag {{item.status_class}}">{{item.status_text}}</text>
+          </view>
+          <text class="simple-line">{{item.product_name}}{{item.sku_spec ? (' / ' + item.sku_spec) : ''}} · {{item.quantity}} 件</text>
+          <text class="simple-line text-money">成本 ¥{{item.cost_price}} · 商品 ¥{{item.total_cost_text}}</text>
+          <text class="simple-line text-money">运费 {{item.shipping_fee_label}} · 应付 ¥{{item.pay_amount_text}}</text>
+          <text class="simple-line" wx:if="{{item.remark}}">备注：{{item.remark}}</text>
+        </view>
+      </view>
+      <text class="empty-desc" wx:else>暂未提交采购申请。</text>
+
+      <text class="subsection-title history-title">核销订单</text>
+      <view class="simple-list" wx:if="{{workbench.recent_verified_orders.length > 0}}">
+        <view class="simple-card" wx:for="{{workbench.recent_verified_orders}}" wx:key="id">
+          <view class="simple-top">
+            <text class="simple-title">{{item.order_no}}</text>
+            <text class="simple-tag tag-ok">已核销</text>
+          </view>
+          <text class="simple-line">{{item.product_name}}{{item.product_spec ? (' / ' + item.product_spec) : ''}} · {{item.quantity}} 件</text>
+          <text class="simple-line">门店 {{item.pickup_station_name || '—'}} · 核销员 {{item.pickup_verified_by_name || item.pickup_verified_by || '—'}}</text>
+          <text class="simple-line">核销时间 {{item.pickup_verified_at_text || '—'}}</text>
+          <text class="simple-line text-money">服务费 ¥{{item.service_fee_amount_text}} · 货款返还 ¥{{item.principal_return_amount_text}}</text>
+          <text class="simple-line" wx:if="{{item.principal_reversal_amount > 0}}">已冲回 ¥{{item.principal_reversal_amount_text}}</text>
+        </view>
+      </view>
+      <text class="empty-desc" wx:else>暂未产生已核销订单。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">门店资料</text>
+      <view class="station-card" wx:for="{{workbench.stations}}" wx:key="id">
+        <view class="station-top">
+          <text class="station-name">{{item.name}}</text>
+          <text class="station-tag">平台指派</text>
+        </view>
+        <text class="station-line">我的角色：店长</text>
+        <text class="station-line">当前结算人：{{item.claimant.nick_name || item.claimant.nickname || '未设置'}}</text>
+        <text class="station-line">{{item.province}} {{item.city}} {{item.district || ''}} {{item.address || ''}}</text>
+        <view class="staff-summary" wx:if="{{item.staff_summary}}">
+          <view class="staff-stats">
+            <view class="staff-stat">
+              <text class="staff-stat-value">{{item.staff_summary.total}}</text>
+              <text class="staff-stat-label">成员</text>
+            </view>
+            <view class="staff-stat">
+              <text class="staff-stat-value">{{item.staff_summary.verify_count}}</text>
+              <text class="staff-stat-label">可核销</text>
+            </view>
+            <view class="staff-stat">
+              <text class="staff-stat-value">{{item.staff_summary.manager_count}}</text>
+              <text class="staff-stat-label">店长</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="empty" wx:else>
+    <text class="empty-title">当前账号未被指派为店长</text>
+    <text class="empty-desc">店长与门店绑定由平台完成，绑定后这里会显示你的门店工作台。</text>
+  </view>
+  <portal-password-dialog id="portalPasswordDialog" />
+</view>

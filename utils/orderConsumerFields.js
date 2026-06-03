@@ -1,0 +1,344 @@
+/**
+ * 小程序订单/退款展示归一化（单一入口）。
+ * 订单列表、详情、售后中心等页面统一从这里 require，勿再复制到各页面目录下的 utils。
+ */
+const ORDER_STATUS_TEXT = {
+    pending: '待付款',
+    pending_payment: '待付款',
+    pending_group: '待成团',
+    paid: '待发货',
+    pickup_pending: '待核销',
+    agent_confirmed: '代理已确认',
+    shipping_requested: '发货申请中',
+    shipped: '待收货',
+    completed: '已完成',
+    cancelled: '已取消',
+    refunding: '退款中',
+    refunded: '已退款'
+};
+
+const REFUND_STATUS_TEXT = {
+    pending: '审核中',
+    approved: '审核通过',
+    processing: '退款处理中',
+    completed: '已退款',
+    rejected: '已拒绝',
+    cancelled: '已取消',
+    failed: '退款失败'
+};
+
+const PAYMENT_METHOD_TEXT = {
+    wechat: '微信支付',
+    goods_fund: '货款支付',
+    wallet: '余额支付'
+};
+
+const REFUND_TARGET_TEXT = {
+    wechat: '原路退回微信支付',
+    goods_fund: '退回货款余额',
+    wallet: '退回账户余额'
+};
+
+function toNumber(value, fallback = 0) {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : fallback;
+}
+
+function toMoney(value) {
+    return toNumber(value).toFixed(2);
+}
+
+function pickText(value, fallback = '') {
+    if (value === null || value === undefined) return fallback;
+    const text = String(value).trim();
+    return text || fallback;
+}
+
+function roundMoney(value) {
+    return Math.round(toNumber(value, 0) * 100) / 100;
+}
+
+function nearlyEqual(left, right, tolerance = 0.01) {
+    return Math.abs(toNumber(left, 0) - toNumber(right, 0)) <= tolerance;
+}
+
+function resolveOrderPayAmountForDisplay(order = {}, originalAmount = 0, discounts = {}) {
+    const fallbackTotal = toNumber(order.total_amount != null ? order.total_amount : originalAmount, originalAmount);
+    const rawPayAmount = toNumber(
+        order.pay_amount != null
+            ? order.pay_amount
+            : (order.actual_price != null ? order.actual_price : fallbackTotal),
+        fallbackTotal
+    );
+    const expectedPayAmount = roundMoney(Math.max(0,
+        toNumber(originalAmount, fallbackTotal)
+        - toNumber(discounts.bundle_discount, 0)
+        - toNumber(discounts.coupon_discount, 0)
+        - toNumber(discounts.points_discount, 0)
+    ));
+    const remainingRefundableCash = toNumber(order.remaining_refundable_cash, NaN);
+    const hasDiscountBreakdown = (
+        toNumber(discounts.bundle_discount, 0) > 0
+        || toNumber(discounts.coupon_discount, 0) > 0
+        || toNumber(discounts.points_discount, 0) > 0
+    );
+
+    if (hasDiscountBreakdown && expectedPayAmount > 0 && rawPayAmount > 0) {
+        if (nearlyEqual(rawPayAmount * 100, expectedPayAmount)) {
+            return expectedPayAmount;
+        }
+        if (
+            Number.isFinite(remainingRefundableCash)
+            && remainingRefundableCash > rawPayAmount
+            && nearlyEqual(remainingRefundableCash, expectedPayAmount)
+        ) {
+            return expectedPayAmount;
+        }
+    }
+
+    return rawPayAmount;
+}
+
+function normalizePaymentMethodCode(raw) {
+    const method = String(raw || '').trim().toLowerCase();
+    if (['wechat', 'wx', 'wxpay', 'jsapi', 'miniapp', 'wechatpay', 'wechat_pay', 'weixin'].includes(method)) {
+        return 'wechat';
+    }
+    if (['goods_fund', 'goods-fund', 'goodsfund'].includes(method)) {
+        return 'goods_fund';
+    }
+    if (['wallet', 'wallet_balance', 'account_balance', 'balance', 'credit', 'debt'].includes(method)) {
+        return 'wallet';
+    }
+    return method;
+}
+
+function getOrderStatusText(status) {
+    return ORDER_STATUS_TEXT[status] || status || '';
+}
+
+function getRefundStatusText(status) {
+    return REFUND_STATUS_TEXT[status] || status || '';
+}
+
+function getPaymentMethodText(method) {
+    return PAYMENT_METHOD_TEXT[method] || '';
+}
+
+function getRefundTargetText(method, explicitText = '') {
+    if (explicitText) return explicitText;
+    if (!method) return '';
+    return REFUND_TARGET_TEXT[method] || '';
+}
+
+function buildRefundStatusDesc(refund = {}, statusDesc = '') {
+    if (statusDesc) return statusDesc;
+    if (refund.status === 'rejected' && refund.reject_reason) {
+        return `驳回原因：${refund.reject_reason}`;
+    }
+    if (refund.status === 'approved' && refund.type === 'return_refund') {
+        return refund.return_address_text
+            ? '请按寄回地址寄回商品，并填写退货单号'
+            : '请联系客服确认寄回地址，并填写退货单号';
+    }
+    if (refund.status === 'failed') {
+        return '退款未成功，请联系客服处理';
+    }
+    return '';
+}
+
+function normalizeReturnAddress(source = {}) {
+    const raw = source && typeof source === 'object' ? source : {};
+    return {
+        receiver_name: pickText(raw.receiver_name || raw.receiverName || raw.name || raw.contact_name || raw.consignee),
+        receiver_phone: pickText(raw.receiver_phone || raw.receiverPhone || raw.phone || raw.mobile || raw.tel),
+        province: pickText(raw.province),
+        city: pickText(raw.city),
+        district: pickText(raw.district || raw.county || raw.area),
+        detail: pickText(raw.detail || raw.address_detail || raw.address),
+        postal_code: pickText(raw.postal_code || raw.postalCode || raw.zip_code || raw.zip),
+        note: pickText(raw.note || raw.remark)
+    };
+}
+
+function hasReturnAddress(address = {}) {
+    return !!pickText([
+        address.receiver_name,
+        address.receiver_phone,
+        address.province,
+        address.city,
+        address.district,
+        address.detail
+    ].join(' '));
+}
+
+function buildReturnAddressText(address = {}) {
+    if (!hasReturnAddress(address)) return '';
+    const receiverLine = [address.receiver_name, address.receiver_phone].map((item) => pickText(item)).filter(Boolean).join(' ');
+    const addressLine = [address.province, address.city, address.district, address.detail].map((item) => pickText(item)).filter(Boolean).join('');
+    const postalLine = address.postal_code ? `邮编：${address.postal_code}` : '';
+    const noteLine = address.note ? `备注：${address.note}` : '';
+    return [receiverLine, addressLine, postalLine, noteLine].filter(Boolean).join('\n');
+}
+
+function normalizeOrderConsumer(order = {}) {
+    const rawOrderType = pickText(order.type || order.order_type || order.source_type || '').toLowerCase();
+    const isLotteryRewardOrder = rawOrderType === 'lottery_reward'
+        || pickText(order.source).toLowerCase() === 'lottery'
+        || !!pickText(order.lottery_record_id || order.source_lottery_record_id);
+    const refundFailed = order.status === 'refunding' && (
+        order.auto_refund_error
+        || order.auto_refund_failed_at
+    );
+    const paymentMethod = normalizePaymentMethodCode(
+        order.payment_method || order.pay_channel || order.pay_type || order.payment_channel || ''
+    );
+    const totalAmount = toNumber(order.total_amount != null ? order.total_amount : order.original_amount);
+    const originalAmount = toNumber(order.original_amount != null ? order.original_amount : totalAmount, totalAmount);
+    const couponDiscount = toNumber(order.coupon_discount);
+    const pointsDiscount = toNumber(order.points_discount);
+    const bundleDiscount = toNumber(order.bundle_discount);
+    const payAmount = resolveOrderPayAmountForDisplay(order, originalAmount, {
+        coupon_discount: couponDiscount,
+        points_discount: pointsDiscount,
+        bundle_discount: bundleDiscount
+    });
+    const paidLikeStatus = ['paid', 'pending_group', 'pickup_pending', 'agent_confirmed', 'shipping_requested', 'shipped', 'completed', 'refunding', 'refunded']
+        .includes(String(order.status || ''));
+    const rawGrowthEarned = order.growth_earned;
+    const fallbackGrowthEarned = paidLikeStatus || order.points_awarded_at ? Math.max(0, Math.floor(payAmount)) : 0;
+    const growthEarned = Math.max(0, Math.floor(
+        rawGrowthEarned != null ? toNumber(rawGrowthEarned, 0) : fallbackGrowthEarned
+    ));
+    const growthClawbackTotal = Math.max(0, Math.floor(toNumber(order.growth_clawback_total, 0)));
+    const growthNet = Math.max(0, growthEarned - growthClawbackTotal);
+    const displayGrowthRewardText = growthEarned > 0
+        ? (growthClawbackTotal > 0 ? `+${growthNet}（已扣回${growthClawbackTotal}）` : `+${growthEarned}`)
+        : '';
+    const shippingFee = roundMoney(toNumber(order.shipping_fee, 0));
+    const savingsTotal = roundMoney(couponDiscount + pointsDiscount + bundleDiscount);
+    const hasSavings = savingsTotal > 0.0001;
+    const refundedCashTotal = toNumber(order.refunded_cash_total);
+    const remainingRefundableCash = toNumber(order.remaining_refundable_cash);
+    const lotteryStatusDesc = isLotteryRewardOrder ? ({
+        paid: '神秘大奖已审核通过，等待平台发货或履约',
+        shipped: '神秘大奖已发出，请留意物流信息',
+        completed: '神秘大奖履约已完成',
+        cancelled: '神秘大奖领奖已取消'
+    }[order.status] || '') : '';
+    const statusText = refundFailed ? '退款失败' : (order.status_text || getOrderStatusText(order.status));
+    const statusDesc = refundFailed
+        ? '退款未成功，请联系客服处理'
+        : (isLotteryRewardOrder && lotteryStatusDesc ? lotteryStatusDesc : (order.status_desc || lotteryStatusDesc));
+    const paymentMethodText = order.payment_method_text || getPaymentMethodText(paymentMethod);
+    const refundTargetText = isLotteryRewardOrder ? '' : getRefundTargetText(paymentMethod, order.refund_target_text || '');
+    const normalizedItems = Array.isArray(order.items)
+        ? order.items.map((item) => ({
+            ...item,
+            display_original_line_amount: toMoney(item.original_line_amount),
+            display_coupon_allocated_amount: toMoney(item.coupon_allocated_amount),
+            display_points_allocated_amount: toMoney(item.points_allocated_amount),
+            display_cash_paid_allocated_amount: toMoney(item.cash_paid_allocated_amount),
+            display_refunded_cash_amount: toMoney(item.refunded_cash_amount),
+            display_refundable_cash_amount: toMoney(item.refundable_cash_amount)
+        }))
+        : [];
+
+    return {
+        ...order,
+        items: normalizedItems,
+        payment_method: paymentMethod || order.payment_method || '',
+        total_amount: totalAmount,
+        original_amount: originalAmount,
+        pay_amount: payAmount,
+        coupon_discount: couponDiscount,
+        points_discount: pointsDiscount,
+        bundle_discount: bundleDiscount,
+        shipping_fee: shippingFee,
+        has_savings: hasSavings,
+        growth_earned: growthEarned,
+        growth_clawback_total: growthClawbackTotal,
+        growth_net: growthNet,
+        refunded_cash_total: refundedCashTotal,
+        remaining_refundable_cash: remainingRefundableCash,
+        has_partial_refund: !!order.has_partial_refund,
+        is_lottery_reward_order: isLotteryRewardOrder,
+        non_refundable: isLotteryRewardOrder || !!order.non_refundable,
+        status_text: statusText,
+        status_desc: statusDesc,
+        payment_method_text: paymentMethodText,
+        refund_target_text: refundTargetText,
+        display_status_text: statusText,
+        display_status_desc: statusDesc,
+        display_payment_method_text: paymentMethodText,
+        display_refund_target_text: refundTargetText,
+        display_total_amount: toMoney(totalAmount),
+        display_original_amount: toMoney(originalAmount),
+        display_pay_amount: toMoney(payAmount),
+        display_coupon_discount: toMoney(couponDiscount),
+        display_points_discount: toMoney(pointsDiscount),
+        display_bundle_discount: toMoney(bundleDiscount),
+        display_shipping_fee: toMoney(shippingFee),
+        display_savings_total: toMoney(savingsTotal),
+        display_growth_earned: String(growthEarned),
+        display_growth_clawback_total: String(growthClawbackTotal),
+        display_growth_net: String(growthNet),
+        display_growth_reward_text: displayGrowthRewardText,
+        display_refunded_cash_total: toMoney(refundedCashTotal),
+        display_remaining_refundable_cash: toMoney(remainingRefundableCash)
+    };
+}
+
+function normalizeRefundConsumer(refund = {}) {
+    const normalizedOrder = refund.order ? normalizeOrderConsumer(refund.order) : null;
+    const paymentMethod = normalizePaymentMethodCode(
+        refund.payment_method
+        || normalizedOrder?.payment_method
+        || refund.order?.pay_channel
+        || refund.order?.pay_type
+        || refund.order?.payment_channel
+        || ''
+    );
+    const amount = toNumber(refund.amount);
+    const statusText = refund.status_text || getRefundStatusText(refund.status);
+    const explicitStatusDesc = refund.status === 'approved' && refund.type === 'return_refund' ? '' : (refund.status_desc || '');
+    const statusDesc = buildRefundStatusDesc(refund, explicitStatusDesc);
+    const paymentMethodText = refund.payment_method_text || getPaymentMethodText(paymentMethod);
+    const refundTargetText = getRefundTargetText(paymentMethod, refund.refund_target_text || '');
+    const processedAt = refund.processing_at || refund.processed_at || refund.processedAt || '';
+    const returnAddress = normalizeReturnAddress(refund.return_address || refund.returnAddress || {});
+    const returnAddressText = pickText(refund.return_address_text || refund.returnAddressText) || buildReturnAddressText(returnAddress);
+
+    return {
+        ...refund,
+        order: normalizedOrder,
+        payment_method: paymentMethod || refund.payment_method || '',
+        amount,
+        status_text: statusText,
+        status_desc: statusDesc,
+        payment_method_text: paymentMethodText,
+        refund_target_text: refundTargetText,
+        processed_at: processedAt,
+        return_address: returnAddress,
+        return_address_text: returnAddressText,
+        return_address_available: !!returnAddressText,
+        display_status_text: statusText,
+        display_status_desc: statusDesc,
+        display_payment_method_text: paymentMethodText,
+        display_refund_target_text: refundTargetText,
+        display_amount: toMoney(amount),
+        display_processed_at: processedAt,
+        display_created_at: refund.createdAt || refund.created_at || ''
+    };
+}
+
+module.exports = {
+    getOrderStatusText,
+    getRefundStatusText,
+    getPaymentMethodText,
+    getRefundTargetText,
+    normalizePaymentMethodCode,
+    normalizeOrderConsumer,
+    normalizeRefundConsumer,
+    toMoney
+};

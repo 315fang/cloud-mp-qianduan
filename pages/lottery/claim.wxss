@@ -1,0 +1,159 @@
+/* 抽奖领取 — 2026 青春版 */
+.claim-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #E8E0F0 0%, #F0EBF8 42%, #F7F5FF 100%);
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.loading-wrap {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid rgba(102, 126, 234, 0.15);
+  border-top: 4rpx solid #667eea;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  color: #78716c;
+  font-size: 28rpx;
+}
+
+.claim-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.06);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.claim-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1c1917;
+}
+
+.claim-status {
+  display: inline-block;
+  margin-top: 12rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background: rgba(102, 126, 234, 0.08);
+  color: #667eea;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.claim-value {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.claim-tip,
+.address-text,
+.empty-text {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #78716c;
+  line-height: 1.7;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1c1917;
+}
+
+.section-action {
+  font-size: 24rpx;
+  color: #667eea;
+}
+
+.address-name,
+.form-label {
+  display: block;
+  font-size: 26rpx;
+  color: #1c1917;
+  font-weight: 600;
+}
+
+.form-row {
+  margin-top: 18rpx;
+}
+
+.form-row-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.form-input,
+.form-textarea {
+  margin-top: 12rpx;
+  width: 100%;
+  border-radius: 18rpx;
+  background: rgba(102, 126, 234, 0.04);
+  border: 1rpx solid rgba(102, 126, 234, 0.1);
+  padding: 20rpx;
+  box-sizing: border-box;
+  font-size: 26rpx;
+  color: #1c1917;
+}
+
+.form-input {
+  height: 88rpx;
+  min-height: 88rpx;
+  line-height: 88rpx;
+  padding: 0 20rpx;
+}
+
+.form-input-placeholder {
+  color: #9ca3af;
+  font-size: 26rpx;
+  line-height: 88rpx;
+}
+
+.form-textarea {
+  min-height: 160rpx;
+}
+
+.submit-btn {
+  margin-top: 24rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 20rpx rgba(102, 126, 234, 0.25);
+}
+
+.submit-btn::after {
+  border: none;
+}

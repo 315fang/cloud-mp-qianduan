@@ -1,0 +1,268 @@
+/* 我的券包 */
+page {
+  height: 100%;
+  overflow: hidden;
+}
+
+.container {
+  height: 100vh;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-bar {
+  flex-shrink: 0;
+  width: 100%;
+  padding: 0 28rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #1e3a5f;
+}
+
+.nav-inner {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.nav-back {
+  position: relative;
+  z-index: 1;
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon {
+  width: 32rpx;
+  height: 32rpx;
+  filter: invert(1);
+}
+
+.nav-title {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: calc(100% - 220rpx);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
+  text-align: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.nav-title-text {
+  max-width: 100%;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-placeholder {
+  width: 160rpx;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.tab-row {
+  display: flex; background: #fff; border-bottom: 1rpx solid #f3f4f6; padding: 0 24rpx; position: relative;
+  width: 100%; box-sizing: border-box; overflow-x: hidden;
+  flex-shrink: 0;
+}
+.tab-item {
+  flex: 1; text-align: center; padding: 24rpx 0; font-size: 28rpx; color: #6b7280;
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 6rpx;
+  transition: color 0.3s;
+}
+.tab-item.active { color: #dc2626; font-weight: 700; }
+.tab-count {
+  background: #dc2626; color: #fff; font-size: 18rpx; font-weight: 700;
+  min-width: 28rpx; height: 28rpx; border-radius: 14rpx;
+  display: flex; align-items: center; justify-content: center; padding: 0 6rpx; margin-left: 4rpx;
+}
+.tab-indicator-track {
+  position: absolute; left: 24rpx; right: 24rpx; bottom: 0; height: 6rpx;
+  pointer-events: none; overflow: hidden;
+}
+.tab-indicator {
+  width: 33.3333%; height: 100%;
+  background: #dc2626; border-radius: 3rpx;
+  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.coupon-scroll {
+  flex: 1;
+  height: 0;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.empty-wrap {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 100rpx 40rpx; gap: 14rpx;
+  width: 100%; box-sizing: border-box; overflow-x: hidden;
+}
+.empty-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 8rpx;
+  opacity: 0.62;
+}
+.empty-text { font-size: 28rpx; color: #1f2937; text-align: center; font-weight: 600; }
+.empty-sub { font-size: 24rpx; color: #6b7280; text-align: center; }
+.empty-btn {
+  margin-top: 16rpx; background: #dc2626; color: #fff;
+  font-size: 26rpx; font-weight: 600; padding: 16rpx 48rpx; border-radius: 50rpx;
+  box-shadow: 0 4rpx 12rpx rgba(220,38,38,0.2);
+}
+
+.skeleton-list {
+  padding: 20rpx 24rpx 160rpx;
+  padding-bottom: calc(160rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 20rpx;
+  width: 100%; box-sizing: border-box; overflow-x: hidden;
+}
+.skeleton-coupon { display: flex; background: #fff; border-radius: 16rpx; overflow: hidden; height: 140rpx; }
+.sk-left {
+  width: 160rpx;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%; animation: shimmer 1.4s infinite;
+}
+.sk-right { flex: 1; padding: 24rpx 20rpx; display: flex; flex-direction: column; justify-content: center; gap: 12rpx; }
+.sk-line {
+  height: 20rpx; border-radius: 10rpx;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%; animation: shimmer 1.4s infinite;
+}
+.sk-long { width: 80%; }
+.sk-short { width: 55%; }
+.sk-tiny { width: 45%; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+.coupon-list {
+  padding: 24rpx 24rpx 180rpx;
+  padding-bottom: calc(180rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 24rpx;
+  width: 100%; box-sizing: border-box; overflow-x: hidden;
+}
+.coupon-swipe-row {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 16rpx;
+}
+.coupon-delete-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 128rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dc2626;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 700;
+  border-radius: 0 16rpx 16rpx 0;
+}
+.coupon-card {
+  display: grid;
+  grid-template-columns: 190rpx 2rpx minmax(0, 1fr);
+  background: #fff; border-radius: 16rpx; overflow: hidden;
+  position: relative; border: 1rpx solid rgba(220,38,38,0.1);
+  width: 100%; box-sizing: border-box; z-index: 1;
+  transition: transform 0.18s ease;
+  min-height: 196rpx;
+}
+.coupon-card.used, .coupon-card.expired, .coupon-card.coupon-expired { opacity: 0.6; filter: grayscale(0.5); }
+.coupon-card.unused.coupon-expired { border-color: #e5e7eb; background: #f9fafb; }
+
+.coupon-left {
+  padding: 28rpx 16rpx; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; min-width: 0;
+  box-sizing: border-box; background: #fef2f2;
+}
+.coupon-value-wrap {
+  min-height: 76rpx; display: flex; align-items: flex-end; justify-content: center;
+  color: #dc2626; gap: 4rpx; width: 100%;
+}
+.coupon-exchange-badge { font-size: 26rpx; font-weight: 700; color: #dc2626; margin-bottom: 8rpx; flex-shrink: 0; }
+.coupon-currency { font-size: 28rpx; font-weight: 700; line-height: 1; margin-bottom: 8rpx; flex-shrink: 0; }
+.coupon-value { display: block; font-size: 60rpx; font-weight: 800; line-height: 1; text-align: center; font-variant-numeric: tabular-nums; }
+.coupon-min { font-size: 22rpx; color: #991b1b; margin-top: 10rpx; text-align: center; line-height: 1.35; }
+
+.coupon-divider { display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 2rpx; position: relative; }
+.dashed-line { flex: 1; border-left: 2rpx dashed #fecaca; margin: 16rpx 0; }
+.dent { display: none; }
+
+.coupon-right {
+  padding: 28rpx 24rpx 28rpx 24rpx;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  column-gap: 22rpx;
+  position: relative;
+  min-width: 0; box-sizing: border-box; overflow: hidden;
+}
+.coupon-name {
+  font-size: 30rpx; font-weight: 700; color: #1f2937; margin-bottom: 12rpx;
+  width: 100%; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  grid-column: 1;
+  grid-row: 1;
+}
+.coupon-expire {
+  font-size: 22rpx; color: #dc2626; margin-bottom: 6rpx;
+  width: 100%; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  grid-column: 1;
+  grid-row: 2;
+}
+.coupon-scope {
+  font-size: 22rpx; color: #6b7280;
+  width: 100%; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  grid-column: 1;
+  grid-row: 3;
+}
+.coupon-scope.scope-limit { color: #991b1b; }
+
+.coupon-action {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  justify-self: end;
+  background: #dc2626; color: #fff; font-size: 24rpx; font-weight: 600;
+  min-width: 96rpx;
+  text-align: center;
+  padding: 12rpx 20rpx; border-radius: 8rpx; box-shadow: 0 4rpx 12rpx rgba(220,38,38,0.2);
+}
+.coupon-used-tag, .coupon-expire-tag {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  justify-self: end;
+  min-width: 96rpx;
+  text-align: center;
+  font-size: 24rpx; color: #9ca3af; border: 1rpx solid #e5e7eb; padding: 10rpx 18rpx; border-radius: 8rpx;
+}

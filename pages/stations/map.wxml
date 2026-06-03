@@ -1,0 +1,86 @@
+<view class="page">
+  <view class="map-banner" wx:if="{{regionBanner}}">
+    <text class="map-banner-text">{{regionBanner}}</text>
+  </view>
+  <view class="map-wrap" wx:if="{{mapLat && mapLng}}">
+    <map
+      class="map"
+      latitude="{{mapLat}}"
+      longitude="{{mapLng}}"
+      scale="{{scale}}"
+      markers="{{markers}}"
+      include-points="{{includePoints}}"
+      show-location
+      bindmarkertap="onMarkerTap"
+    />
+    <view class="map-choose-btn" bindtap="onChooseMyLocationOnMap">选点查最近店</view>
+    <view class="map-unavailable-tip" wx:if="{{mapUnavailableText}}">
+      <text>{{mapUnavailableText}}</text>
+    </view>
+  </view>
+  <view class="map-unavailable" wx:else>
+    <text class="map-unavailable-title">地图暂不可用</text>
+    <text class="map-unavailable-desc">{{mapUnavailableText || '站点缺少经纬度，无法在地图上标记门店。'}}</text>
+  </view>
+  <scroll-view class="list" scroll-y show-scrollbar="{{false}}" scroll-into-view="{{scrollIntoView}}" scroll-with-animation>
+    <view
+      class="item {{selectedId === item.id ? 'item-active' : ''}}"
+      wx:for="{{stations}}"
+      wx:key="id"
+      id="st-{{item.id}}"
+      data-id="{{item.id}}"
+      bindtap="onSelectStation"
+    >
+      <view class="item-head">
+        <text class="name">{{item.name}}</text>
+        <text class="item-tag" wx:if="{{item.pickupEnabled}}">支持自提</text>
+      </view>
+      <text class="sub">{{item.fullAddress}}</text>
+      <text class="meta" wx:if="{{item.contact_phone}}">联系电话：{{item.contact_phone}}</text>
+      <text class="meta" wx:if="{{item.businessHoursText}}">营业时间：{{item.businessHoursText}}</text>
+      <text class="meta" wx:if="{{item.businessDaysText}}">营业日期：{{item.businessDaysText}}</text>
+      <text class="desc" wx:if="{{item.introText}}">{{item.introText}}</text>
+    </view>
+    <view class="empty" wx:if="{{!loading && stations.length === 0}}">暂无站点数据</view>
+  </scroll-view>
+
+  <view class="sheet-mask" wx:if="{{selectedStation}}" catchtap="onCloseDetail">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <image class="sheet-logo" wx:if="{{selectedStation.logoUrl}}" src="{{selectedStation.logoUrl}}" mode="aspectFill" />
+      <text class="sheet-title">{{selectedStation.name}}</text>
+      <view class="sheet-tags">
+        <text class="sheet-tag pickup" wx:if="{{selectedStation.pickupEnabled}}">支持到店自提</text>
+        <text class="sheet-tag" wx:if="{{selectedStation.city}}">{{selectedStation.city}}</text>
+      </view>
+      <view class="sheet-info">
+        <view class="sheet-info-row">
+          <text class="sheet-info-label">地址</text>
+          <text class="sheet-info-value">{{selectedStation.fullAddress || '-'}}</text>
+        </view>
+        <view class="sheet-info-row" wx:if="{{selectedStation.contact_phone}}">
+          <text class="sheet-info-label">电话</text>
+          <text class="sheet-info-value">{{selectedStation.contact_phone}}</text>
+        </view>
+        <view class="sheet-info-row" wx:if="{{selectedStation.businessHoursText}}">
+          <text class="sheet-info-label">营业时间</text>
+          <text class="sheet-info-value">{{selectedStation.businessHoursText}}</text>
+        </view>
+        <view class="sheet-info-row" wx:if="{{selectedStation.businessDaysText}}">
+          <text class="sheet-info-label">营业日期</text>
+          <text class="sheet-info-value">{{selectedStation.businessDaysText}}</text>
+        </view>
+      </view>
+      <view class="sheet-intro" wx:if="{{selectedStation.introText}}">
+        <text class="sheet-intro-title">门店介绍</text>
+        <text class="sheet-intro-text">{{selectedStation.introText}}</text>
+      </view>
+      <view class="sheet-actions">
+        <button class="sheet-btn ghost" bindtap="onCopyStationAddress">复制地址</button>
+        <button class="sheet-btn ghost" wx:if="{{selectedStation.contact_phone}}" bindtap="onCallStation">联系门店</button>
+        <button class="sheet-btn" wx:if="{{selectedStation.latitude != null && selectedStation.longitude != null}}" bindtap="onOpenStationLocation">地图导航</button>
+        <button class="sheet-btn" wx:else bindtap="onCloseDetail">关闭</button>
+      </view>
+    </view>
+  </view>
+</view>

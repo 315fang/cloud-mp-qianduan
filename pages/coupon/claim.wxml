@@ -1,0 +1,111 @@
+<!-- pages/coupon/claim.wxml -->
+<view class="claim-page">
+
+  <!-- 加载中 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中…</text>
+  </view>
+
+  <!-- 错误/无效状态 -->
+  <view class="error-wrap card-enter" wx:elif="{{claimStatus === 'error' && !coupon}}">
+    <image class="status-icon" src="/assets/icons/alert-circle.svg" mode="aspectFit"></image>
+    <text class="status-title">{{ claimMsg || '券包无效' }}</text>
+    <view class="btn-back ripple" bindtap="goToCouponList">回到首页</view>
+  </view>
+
+  <!-- 券卡片 + 操作区 -->
+  <block wx:else>
+    <!-- 券卡片 -->
+    <view class="coupon-card card-enter">
+      <view class="coupon-left">
+        <text class="value-text">{{ valueText }}</text>
+        <text class="min-text">{{ minPurchaseText }}</text>
+      </view>
+      <view class="coupon-divider">
+        <view class="coupon-hole top"></view>
+        <view class="dashed-line"></view>
+        <view class="coupon-hole bottom"></view>
+      </view>
+      <view class="coupon-right">
+        <text class="coupon-name">{{ coupon.name }}</text>
+        <text class="coupon-desc" wx:if="{{coupon.description}}">{{ coupon.description }}</text>
+        <text class="coupon-days" wx:if="{{coupon.valid_days > 0}}">领取后 {{ coupon.valid_days }} 天内有效</text>
+        <text class="coupon-days" wx:else>领取后长期有效</text>
+      </view>
+    </view>
+
+    <!-- 状态区 -->
+    <view class="action-area card-enter delay-1">
+
+      <!-- 已停用 -->
+      <view class="status-badge inactive" wx:if="{{claimStatus === 'inactive'}}">
+        <text>此活动已结束</text>
+      </view>
+
+      <!-- 已售罄 -->
+      <view class="status-badge out-of-stock" wx:elif="{{claimStatus === 'out_of_stock'}}">
+        <text>此券已被领完</text>
+      </view>
+
+      <!-- 今日限额已用完 -->
+      <view class="status-badge out-of-stock" wx:elif="{{claimStatus === 'daily_exhausted'}}">
+        <text>{{ claimMsg || '今日份额已领完' }}</text>
+      </view>
+
+      <!-- 未到领取时段 -->
+      <view class="status-badge inactive" wx:elif="{{claimStatus === 'not_started' || claimStatus === 'time_ended'}}">
+        <text>{{ claimMsg || '当前不在领取时间内' }}</text>
+      </view>
+
+      <!-- 领取成功 -->
+      <view wx:elif="{{claimStatus === 'success'}}">
+        <view class="status-badge success">
+          <text>领取成功</text>
+        </view>
+        <view class="btn-primary ripple" bindtap="goToProducts">立即使用</view>
+      </view>
+
+      <!-- 已持有 -->
+      <view wx:elif="{{claimStatus === 'already_owned'}}">
+        <view class="status-badge owned">
+          <text>你已领过此券</text>
+        </view>
+        <view class="btn-primary ripple" bindtap="goToProducts">立即使用</view>
+      </view>
+
+      <!-- 领取码已被使用 -->
+      <view wx:elif="{{claimStatus === 'claimed'}}">
+        <view class="status-badge owned">
+          <text>该领取码已被使用</text>
+        </view>
+        <view class="btn-primary ripple" bindtap="goToCouponList">回到首页</view>
+      </view>
+
+      <!-- 领取失败 -->
+      <view wx:elif="{{claimStatus === 'error'}}">
+        <view class="status-badge error-badge">
+          <text>{{ claimMsg }}</text>
+        </view>
+      </view>
+
+      <!-- 默认：可领取 -->
+      <view wx:else>
+        <view
+          class="btn-primary ripple {{claiming ? 'btn-loading' : ''}}"
+          bindtap="claimCoupon"
+        >
+          <text wx:if="{{claiming}}">领取中…</text>
+          <text wx:else>立即领取</text>
+        </view>
+      </view>
+
+    </view>
+
+    <!-- 分享提示 -->
+    <view class="share-tip" wx:if="{{claimStatus === 'idle'}}">
+      <text>分享给好友，一起领券</text>
+    </view>
+  </block>
+
+</view>

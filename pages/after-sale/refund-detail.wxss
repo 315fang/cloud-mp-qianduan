@@ -1,0 +1,367 @@
+/* pages/after-sale/refund-detail.wxss */
+.container {
+  min-height: 100vh;
+  background: #F8FAFC;
+  padding: 24rpx;
+  padding-bottom: calc(72rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.status-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 48rpx 30rpx 40rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(15,23,42,0.04);
+}
+
+.status-icon {
+  font-size: 60rpx;
+  margin-bottom: 16rpx;
+}
+
+.status-text {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #0F172A;
+  margin-bottom: 8rpx;
+}
+
+.status-desc {
+  font-size: 24rpx;
+  color: #64748B;
+  text-align: center;
+}
+
+.status-card.status-pending { border-top: 6rpx solid #F97316; }
+.status-card.status-approved { border-top: 6rpx solid #4F46E5; }
+.status-card.status-rejected { border-top: 6rpx solid #EF4444; }
+.status-card.status-completed { border-top: 6rpx solid #10B981; }
+.status-card.status-cancelled { border-top: 6rpx solid #94A3B8; }
+
+.detail-actions {
+  margin-bottom: 24rpx;
+}
+
+.cancel-refund-btn {
+  width: 100%;
+  height: 84rpx;
+  line-height: 84rpx;
+  border-radius: 12rpx;
+  background: #FFFFFF;
+  color: #B91C1C;
+  border: 2rpx solid #FECACA;
+  font-size: 28rpx;
+}
+
+.cancel-refund-btn::after {
+  border: none;
+}
+
+.amount-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+}
+
+.amount-label {
+  font-size: 28rpx;
+  color: #64748B;
+}
+
+.amount-value {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #EF4444;
+  font-family: 'DIN Pro', sans-serif;
+}
+
+.next-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 26rpx 30rpx;
+  margin-bottom: 24rpx;
+  border: 1rpx solid #E2E8F0;
+}
+
+.next-label {
+  display: block;
+  font-size: 22rpx;
+  color: #94A3B8;
+  margin-bottom: 8rpx;
+}
+
+.next-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.next-desc {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #64748B;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #0F172A;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #F1F5F9;
+}
+
+.address-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copy-address-btn {
+  margin: 0;
+  padding: 0 22rpx;
+  min-width: 104rpx;
+  height: 52rpx;
+  line-height: 52rpx;
+  border-radius: 26rpx;
+  background: #EEF2FF;
+  color: #4F46E5;
+  font-size: 24rpx;
+}
+
+.copy-address-btn::after {
+  border: none;
+}
+
+.address-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 12rpx 0;
+}
+
+.address-label {
+  width: 120rpx;
+  flex-shrink: 0;
+  font-size: 26rpx;
+  color: #94A3B8;
+}
+
+.address-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: #334155;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.address-note,
+.address-empty {
+  margin-top: 12rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 12rpx;
+  background: #FFF7ED;
+  color: #9A3412;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.product-row {
+  display: flex;
+  align-items: center;
+}
+
+.product-img {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  background: #F1F5F9;
+  margin-right: 20rpx;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #0F172A;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.product-price {
+  font-size: 24rpx;
+  color: #64748B;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16rpx 0;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: #94A3B8;
+  flex-shrink: 0;
+  margin-right: 20rpx;
+}
+
+.info-value {
+  font-size: 26rpx;
+  color: #334155;
+  text-align: right;
+  flex: 1;
+  word-break: break-all;
+}
+
+.evidence-row {
+  align-items: flex-start;
+}
+
+.evidence-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.evidence-img {
+  width: 156rpx;
+  height: 156rpx;
+  border-radius: 12rpx;
+  background-color: #F2F2F2;
+}
+
+.form-row {
+  margin-bottom: 20rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 24rpx;
+  color: #64748B;
+  margin-bottom: 10rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 88rpx;
+  min-height: 88rpx;
+  line-height: 88rpx;
+  box-sizing: border-box;
+  border: 1rpx solid #E2E8F0;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 26rpx;
+  color: #0F172A;
+  background: #F8FAFC;
+}
+
+.form-input-placeholder {
+  color: #94A3B8;
+  font-size: 26rpx;
+  line-height: 88rpx;
+}
+
+.submit-btn {
+  margin-top: 12rpx;
+  background: #4F46E5;
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  line-height: 88rpx;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #94A3B8;
+}
+
+.refund-restore-card .restore-tag { color: #B98B58; font-weight: 500; }
+.refund-restore-card .restore-points { color: #10b981; font-weight: 500; }
+.refund-restore-card .restore-coupon { color: #8b5cf6; font-weight: 500; }
+
+.hub-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 30rpx;
+  margin-bottom: 24rpx;
+  font-size: 28rpx;
+  color: #0F172A;
+  border: 2rpx solid #E2E8F0;
+}
+
+.hub-link-arrow {
+  font-size: 36rpx;
+  color: #94A3B8;
+  line-height: 1;
+}
+
+.points-refund-card {
+  background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%);
+  border: 2rpx solid #BBF7D0;
+}
+
+.points-refund-body {
+  display: block;
+  font-size: 26rpx;
+  color: #166534;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.points-refund-num {
+  font-weight: 700;
+  color: #15803D;
+}
+
+.return-guide-card {
+  background: linear-gradient(180deg, #FFF7ED 0%, #FFFFFF 55%);
+  border: 2rpx solid #FDBA74;
+}
+
+.return-mini-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.mini-step-line {
+  font-size: 26rpx;
+  color: #78350F;
+  line-height: 1.55;
+  display: block;
+}
+
+.mini-step-tag {
+  font-weight: 700;
+  color: #C2410C;
+  margin-right: 8rpx;
+}

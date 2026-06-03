@@ -1,0 +1,73 @@
+<view class="container">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner" style="height: {{navBarHeight}}px;">
+      <view class="nav-back" bindtap="onBack">
+        <image class="back-icon" src="/assets/icons/arrow-left.svg" mode="aspectFit"></image>
+      </view>
+      <text class="nav-title">品牌推荐海报</text>
+    </view>
+  </view>
+
+  <view class="page-body">
+    <view class="poster-section">
+      <!-- 与分享链接 ?invite= 一致，为用户ID（非后台「会员码 member_no」） -->
+      <view class="invite-code-row" wx:if="{{memberCode}}">
+        <text class="invite-code-label">我的ID</text>
+        <text class="invite-code-value">{{memberCode}}</text>
+        <view class="invite-code-copy" bindtap="onCopyCode">复制</view>
+      </view>
+
+      <view class="poster-variant-row">
+        <text class="poster-variant-label">海报版本</text>
+        <view class="poster-variant-switch">
+          <view
+            wx:for="{{posterVariantOptions}}"
+            wx:key="value"
+            class="poster-variant-chip {{posterVariant === item.value ? 'poster-variant-chip--active' : ''}}"
+            data-variant="{{item.value}}"
+            bindtap="onPosterVariantChange"
+          >
+            <view class="poster-variant-chip-text {{posterVariant === item.value ? 'poster-variant-chip-text--active' : ''}}">
+              {{item.label}}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 海报预览：保留 Canvas 作为导出底图，预览图加载成功后覆盖显示 -->
+      <view class="poster-preview-wrap">
+        <canvas
+          id="posterCanvas"
+          type="2d"
+          class="poster-canvas"
+        ></canvas>
+        <image
+          wx:if="{{posterImagePath}}"
+          class="poster-result-img"
+          src="{{posterImagePath}}"
+          mode="aspectFit"
+          show-menu-by-longpress
+          bindload="onPosterImageLoad"
+          binderror="onPosterImageError"
+        ></image>
+        <view class="poster-generating" wx:if="{{posterGenerating || (posterImagePath && !posterPreviewReady)}}">
+          <view class="poster-spin"></view>
+          <text class="poster-gen-text">{{posterGenerating ? '海报生成中...' : '海报加载中...'}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="poster-actions">
+        <view class="poster-action-btn poster-action-secondary" bindtap="onRegeneratePoster">
+          <text class="poster-action-text-secondary">重新生成</text>
+        </view>
+        <view class="poster-action-btn poster-action-primary {{!posterPreviewReady ? 'btn-disabled' : ''}}" bindtap="onSavePoster">
+          <text class="poster-action-text">保存到相册</text>
+        </view>
+      </view>
+
+      <view class="poster-tip">长按海报可直接分享或保存</view>
+    </view>
+    <view class="page-bottom-spacer"></view>
+  </view>
+</view>

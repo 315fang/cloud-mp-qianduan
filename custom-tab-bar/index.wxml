@@ -1,0 +1,20 @@
+<view wx:if="{{!hidden}}" class="tab-bar">
+  <view
+    wx:for="{{list}}"
+    wx:for-index="idx"
+    wx:key="pagePath"
+    class="{{item.itemClass}}"
+    data-index="{{idx}}"
+    bindtap="onSwitchTab"
+  >
+    <view class="tab-bar-icon-wrap">
+      <image
+        class="tab-bar-icon"
+        src="{{item.displayIconPath}}"
+        mode="aspectFit"
+      />
+    </view>
+    <text class="tab-bar-text" style="color: {{item.textColor}};">{{item.text}}</text>
+    <view wx:if="{{item.active}}" class="tab-bar-indicator"></view>
+  </view>
+</view>

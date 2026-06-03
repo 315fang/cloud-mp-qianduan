@@ -1,0 +1,170 @@
+<!-- pages/after-sale/refund-apply.wxml - 申请退款 -->
+<view class="container">
+  <!-- 订单信息 -->
+  <view class="order-card" wx:if="{{order}}">
+    <view class="section-title section-title-inline">订单商品</view>
+    <view class="order-summary">
+      <text class="product-price">订单合计 ¥{{order.display_pay_amount}} / 共 {{order.quantity}} 件</text>
+      <text class="product-price">已退 ¥{{order.display_refunded_cash_total || '0.00'}} / 剩余可退 ¥{{order.display_remaining_refundable_cash || order.display_pay_amount}}</text>
+    </view>
+    <view class="bundle-refund-tip" wx:if="{{bundleOrder}}">
+      <text>组合订单仅支持整套退款，已自动锁定整套商品。</text>
+    </view>
+    <view class="refund-item-list">
+      <view class="refund-item-card" wx:for="{{refundItems}}" wx:key="refund_item_key">
+        <view class="refund-item-head">
+          <image class="product-img" src="{{item.product && item.product.images && item.product.images[0] || item.product && item.product.image || ''}}" mode="aspectFill" wx:if="{{item.product && ((item.product.images && item.product.images.length > 0) || item.product.image)}}"></image>
+          <view class="product-info">
+            <text class="product-name">{{item.product && item.product.name || item.name || '商品'}}</text>
+            <text class="product-spec" wx:if="{{item.sku && item.sku.spec_value}}">{{item.sku.spec_value}}</text>
+            <text class="product-price">商品实付 ¥{{item.display_cash_paid_allocated_amount}} / 已退 ¥{{item.display_refunded_cash_amount}}</text>
+            <text class="product-price">本次最多可退 ¥{{item.display_refundable_cash_amount}} / 剩余 {{item.refundable_quantity}} 件</text>
+          </view>
+        </view>
+        <view class="qty-row refund-item-qty" wx:if="{{!bundleOrder}}">
+          <view class="qty-control">
+            <view class="qty-btn {{item.selectedQuantity <= 0 ? 'qty-btn-disabled' : ''}}" bindtap="onRefundQtyMinus" data-index="{{index}}">−</view>
+            <input class="qty-input" type="number" value="{{item.selectedQuantity}}" bindinput="onRefundQtyInput" data-index="{{index}}" />
+            <view class="qty-btn {{item.selectedQuantity >= item.refundable_quantity ? 'qty-btn-disabled' : ''}}" bindtap="onRefundQtyPlus" data-index="{{index}}">+</view>
+          </view>
+          <text class="qty-hint">本次退款 ¥{{item.refundAmount || '0.00'}}</text>
+        </view>
+        <view class="bundle-refund-item-lock" wx:else>
+          <text class="qty-hint">整套退款 ¥{{item.refundAmount || '0.00'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款金额 -->
+  <view class="section-title">退款金额</view>
+  <view class="amount-row">
+    <text class="amount-symbol">¥</text>
+    <text class="amount-value">{{amount || '0.00'}}</text>
+    <text class="amount-max">按现金实付退回</text>
+  </view>
+
+  <view class="section-title">退款类型</view>
+  <radio-group bindchange="onTypeChange" class="type-group">
+    <label class="type-item {{type === 'refund_only' ? 'active' : ''}}">
+      <radio value="refund_only" checked="{{type === 'refund_only'}}" color="#0F172A" />
+      <view class="type-info">
+        <text class="type-name">仅退款</text>
+        <text class="type-desc">无需退货，审核通过后退款</text>
+      </view>
+    </label>
+    <label class="type-item {{type === 'return_refund' ? 'active' : ''}}">
+      <radio value="return_refund" checked="{{type === 'return_refund'}}" color="#0F172A" />
+      <view class="type-info">
+        <text class="type-name">退货退款</text>
+        <text class="type-desc">自行寄回商品（无上门取件），仓库签收后退款</text>
+      </view>
+    </label>
+  </radio-group>
+
+  <!-- 退货退款：拼多多式「自行邮寄」说明（工厂不设上门取件） -->
+  <view class="return-self-ship-flow" wx:if="{{type === 'return_refund'}}">
+    <view class="return-flow-head">
+      <text class="return-flow-title">退货怎么寄</text>
+      <text class="return-flow-badge">自行邮寄</text>
+    </view>
+    <view class="return-flow-banner">
+      <text class="return-flow-banner-main">本店不提供快递员上门取件。</text>
+      <text class="return-flow-banner-sub">请您自行联系任意快递公司，将商品寄回下方退货地址；审核通过后在「退款详情」填写物流单号即可。</text>
+    </view>
+    <view class="return-flow-steps">
+      <view class="return-flow-step">
+        <text class="step-num">1</text>
+        <view class="step-body">
+          <text class="step-name">提交申请</text>
+          <text class="step-desc">等待商家同意退货退款</text>
+        </view>
+      </view>
+      <view class="return-flow-step">
+        <text class="step-num">2</text>
+        <view class="step-body">
+          <text class="step-name">自行寄回</text>
+          <text class="step-desc">至快递网点或线上下单，收件信息填写下方退货地址</text>
+        </view>
+      </view>
+      <view class="return-flow-step">
+        <text class="step-num">3</text>
+        <view class="step-body">
+          <text class="step-name">填写单号</text>
+          <text class="step-desc">进入退款详情页提交快递公司及运单号</text>
+        </view>
+      </view>
+      <view class="return-flow-step return-flow-step-last">
+        <text class="step-num">4</text>
+        <view class="step-body">
+          <text class="step-name">退款到账</text>
+          <text class="step-desc">仓库核验无误后按原支付路径退款</text>
+        </view>
+      </view>
+    </view>
+    <view class="return-flow-tips">
+      <text class="tip-title">寄件提示</text>
+      <text class="tip-line">· 寄件请勿选择「到付」，仓库可能拒收到付件。</text>
+      <text class="tip-line">· 请妥善包装并保留底单，便于核对物流。</text>
+      <text class="tip-line">· 寄回商品请尽量保持完好并附上订单相关信息（若有）。</text>
+      <text class="tip-line">· 运费承担如有疑问，请先与客服确认。</text>
+    </view>
+  </view>
+
+  <view class="return-address-panel" wx:if="{{type === 'return_refund'}}">
+    <view class="return-address-head">
+      <text class="section-title return-address-heading">退货寄回地址</text>
+      <text class="copy-mini" wx:if="{{configReturnAddressReady}}" bindtap="onCopyConfigAddress">复制</text>
+    </view>
+    <view class="return-address-card" wx:if="{{configReturnAddressReady}}">
+      <text class="return-address-body">{{configReturnAddressText}}</text>
+    </view>
+    <view class="return-address-empty" wx:else>运营尚未在管理后台配置退货地址，可先提交申请，审核通过后以退款详情页地址为准或联系客服。</view>
+    <text class="return-address-hint">地址在后台「小程序设置 → 退货寄回地址」维护；与订单售后页展示一致。</text>
+  </view>
+
+  <!-- 退款原因 -->
+  <view class="section-title">退款原因</view>
+  <picker mode="selector" range="{{reasons}}" range-key="label" value="{{reasonIndex}}" bindchange="onReasonChange">
+    <view class="picker-row">
+      <text wx:if="{{reasonIndex >= 0}}">{{reasons[reasonIndex].label}}</text>
+      <text class="placeholder" wx:else>请选择退款原因</text>
+      <text class="arrow">›</text>
+    </view>
+  </picker>
+
+  <!-- 退款说明 -->
+  <view class="section-title">补充说明</view>
+  <textarea class="desc-input" placeholder="请简要说明问题" bindinput="onDescInput" value="{{description}}" maxlength="200"></textarea>
+
+  <view class="section-title">问题凭证</view>
+  <view class="evidence-panel">
+    <view class="evidence-grid">
+      <view class="evidence-item" wx:for="{{images}}" wx:key="index">
+        <image class="evidence-img" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-src="{{item}}" />
+        <view class="evidence-delete" catchtap="onDeleteImage" data-index="{{index}}">×</view>
+      </view>
+      <view class="evidence-add" wx:if="{{images.length < 6}}" bindtap="onChooseImage">
+        <text class="evidence-add-icon">+</text>
+        <text class="evidence-add-text">添加图片</text>
+      </view>
+    </view>
+    <text class="evidence-hint">选填，最多6张。质量问题、错发漏发建议上传清晰照片，便于商家审核。</text>
+  </view>
+
+  <!-- 退货数量提示（仅退货退款显示） -->
+  <view wx:if="{{type === 'return_refund'}}">
+    <view class="refund-qty-tip">退货退款将按所选件数恢复库存；仅退款不恢复库存。实际寄回数量应与申请一致。</view>
+  </view>
+  <view class="refund-only-tip" wx:if="{{type === 'refund_only'}}">
+    <image class="tip-icon-img" src="/assets/icons/info.svg" mode="aspectFit"/>
+    <text>仅退款不退货，不恢复库存，审核通过后退款</text>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-bar">
+    <button class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit" disabled="{{submitting}}">
+      {{submitting ? '提交中...' : '提交申请'}}
+    </button>
+  </view>
+</view>

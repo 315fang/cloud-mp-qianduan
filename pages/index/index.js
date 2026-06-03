@@ -1,0 +1,960 @@
+const { get, post } = require('../../utils/request');
+const { parseImages, resolveProductImage } = require('../../utils/dataFormatter');
+const { isDevelopment } = require('../../config/env');
+const navigator = require('../../utils/navigator');
+const { syncPageTabBar, restorePageTabBar } = require('../../utils/tabBarHelper');
+const { fetchUserProfile, truncateNickname, calcGrowthPercent } = require('../../utils/userProfile');
+const { consumePendingRegisterPrompt } = require('../../utils/lightPrompt');
+const { fetchPointSummary, checkinPoints } = require('../../utils/points');
+const {
+    loadData: loadHomeData,
+    loadFeaturedProducts: loadHomeFeaturedProducts,
+    loadPosters: loadHomePosters,
+    loadBubbles: loadHomeBubbles,
+    loadCoupons: loadHomeCoupons,
+    applyHomeConfig,
+    normalizeAssetUrl,
+    createEmptyBrandZone
+} = require('./indexHomeLoader');
+const { resolveRenderableImageUrl } = require('../../utils/cloudAssetRuntime');
+const app = getApp();
+
+const INDEX_USER_INFO_TTL = 15 * 1000;
+const HOME_PAGE_ASSET_TTL = 4 * 60 * 60 * 1000;
+const HOME_PAGE_ASSET_RETRY_COOLDOWN = 30 * 1000;
+const PRODUCT_IMAGE_MAX_RETRY = 2;
+
+function parseScene(scene) {
+    const result = {};
+    if (!scene) return result;
+    String(scene).split('&').forEach((pair) => {
+        const [rawKey, rawValue] = pair.split('=');
+        if (!rawKey) return;
+        const key = decodeURIComponent(rawKey);
+        const value = rawValue ? decodeURIComponent(rawValue) : '';
+        result[key] = value;
+    });
+    return result;
+}
+
+function uniqueImageUrls(list = []) {
+    const seen = new Set();
+    return (Array.isArray(list) ? list : [])
+        .map((item) => normalizeAssetUrl(item))
+        .filter((url) => {
+            if (/\/assets\/images\/placeholder\.svg(?:$|[?#])/i.test(String(url || ''))) return false;
+            if (!url || seen.has(url)) return false;
+            seen.add(url);
+            return true;
+        });
+}
+
+function collectFeaturedImageCandidates(product = {}) {
+    return uniqueImageUrls([
+        ...(Array.isArray(product.image_candidates) ? product.image_candidates : []),
+        product.image_url,
+        ...parseImages(product.preview_images),
+        ...parseImages(product.previewImages),
+        product.firstImage,
+        resolveProductImage(product, ''),
+        product.cover_image,
+        product.coverImage,
+        product.image,
+        product.cover,
+        product.cover_url,
+        product.coverUrl,
+        product.url,
+        product.thumb,
+        product.thumbnail,
+        product.product_image,
+        product.productImage,
+        product.product_image_url,
+        product.file_id,
+        product.fileId,
+        ...parseImages(product.images),
+        ...parseImages(product.image),
+        ...parseImages(product.cover_image)
+    ]);
+}
+
+function collectFeaturedImageRecoverySources(product = {}) {
+    const sources = [];
+    const push = (value) => {
+        if (!value) return;
+        if (Array.isArray(value)) {
+            value.forEach(push);
+            return;
+        }
+        sources.push(value);
+    };
+
+    push(product.image_ref || product.imageRef || product.file_id || product.fileId);
+    push({
+        file_id: product.image_ref || product.imageRef || product.file_id || product.fileId || '',
+        image: '',
+        image_url: '',
+        cover_image: '',
+        preview_images: product.preview_images || product.previewImages || '',
+        images: product.images || ''
+    });
+    push(product.image_sources);
+    push(product.preview_images || product.previewImages);
+    push(product.images);
+    push(product.cardImage || product.firstImage || product.image || product.cover_image || product.image_url);
+
+    return sources;
+}
+
+function findNextCandidateIndex(candidates = [], currentImage = '', currentIndex = -1) {
+    const normalizedCurrent = normalizeAssetUrl(currentImage);
+    for (let index = Math.max(0, currentIndex + 1); index < candidates.length; index += 1) {
+        const candidate = candidates[index];
+        if (!candidate) continue;
+        if (!normalizedCurrent || candidate !== normalizedCurrent) return index;
+    }
+    return -1;
+}
+
+function withRevealClass(baseClass, revealed) {
+    return revealed ? `${baseClass} revealed` : baseClass;
+}
+
+Page({
+    data: {
+        homeConfigs: {},
+        heroBanners: [],
+        midPosters: [],
+        bottomPosters: [],
+        pageLayout: null,
+        showBrandLogo: true,
+        brandLogo: '',
+        bubbles: [],
+        currentBubble: '',
+        bubbleAnim: {},
+        featuredProducts: [],
+        featuredSections: [],
+        userInfo: null,
+        isLoggedIn: false,
+        truncatedName: '',
+        growthValue: 0,
+        nextLevelThreshold: 500,
+        growthPercent: 0,
+        pointBalance: 0,
+        todaySigned: false,
+        latestActivity: {},
+        navScrolled: false,
+        revealMidPosters: false,
+        revealCoupons: false,
+        revealProducts: false,
+        revealFeatured: false,
+        revealBrand: false,
+        revealBottomPosters: false,
+        showHomeLoading: true,
+        showSoloSearch: true,
+        navRootClass: 'custom-nav nav-transparent',
+        navBubbleClass: 'nav-bubble-bar nav-visible',
+        navSearchBoxClass: 'nav-search-box nav-hidden',
+        revealMidPostersClass: 'poster-section scroll-reveal',
+        revealCouponsClass: 'coupon-section scroll-reveal',
+        revealProductsClass: 'products-section products-section-grouped scroll-reveal',
+        revealFeaturedClass: 'products-section scroll-reveal',
+        revealBrandClass: 'brand-zone-section scroll-reveal',
+        revealBottomPostersClass: 'poster-section scroll-reveal',
+        navBrandTitle: '问兰镜像',
+        navBrandSub: '品牌甄选',
+        statusBarHeight: 20,
+        navTopPadding: 20,
+        navBarHeight: 44,
+        heroViewportHeight: 0,
+        loading: true,
+        showPopupAd: false,
+        popupAd: {},
+        regLightTipShow: false,
+        regLightTipTitle: '',
+        regLightTipContent: '',
+        homeCoupons: [],
+        homeCouponHasMore: false,
+        claimableCouponCount: 0,
+        homeBundles: [],
+        unusedCouponCount: 0,
+        couponZoneTitle: '优惠券中心',
+        couponZoneSubtitle: '领券后下单可用',
+        brandZoneCoverKicker: '品牌甄选',
+        brandZoneCoverTitle: '问兰镜像',
+        showFeaturedSkeleton: false,
+        showProductsEmpty: false,
+        brandZone: createEmptyBrandZone()
+    },
+
+    onLoad(options) {
+        this._assetRefreshInFlight = false;
+        this._assetRefreshAttempted = false;
+        this._skipNextHomeRefresh = true;
+        const windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+        const viewportHeight = windowInfo.windowHeight || windowInfo.screenHeight || 667;
+        const heroTeaserHeight = 72;
+        this._viewportHeight = viewportHeight;
+        this.setData({
+            heroViewportHeight: Math.max(620, viewportHeight - heroTeaserHeight),
+            statusBarHeight: app.globalData.statusBarHeight || 20,
+            navTopPadding: app.globalData.navTopPadding || (app.globalData.statusBarHeight || 20),
+            navBarHeight: app.globalData.navBarHeight || 44
+        });
+
+        // 小程序码 scene / 分享链接 invite：写入待绑定会员码，登录时由 app.wxLogin 带给后端
+        app._captureInviteFromLaunch({ query: options || {} });
+        this._resolveCouponEntry(options);
+
+        if (app.globalData.homeDataPromise) {
+            app.globalData.homeDataPromise.then((data) => {
+                if (data) this._applyHomeConfig(data);
+            }).catch((err) => {
+                console.warn('[Index] homeDataPromise error:', err);
+            });
+        }
+
+        this.loadData();
+    },
+
+    onShow() {
+        this._consumeCouponEntry();
+        this.loadUserInfo();
+        this.loadCoupons();
+        wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
+        this._syncPopupAdTabBar();
+        this._tryPendingRegisterLightTip();
+        if (this._skipNextHomeRefresh) {
+            this._skipNextHomeRefresh = false;
+        } else if ((app.globalData.homePageDataExpireAt || 0) <= Date.now()) {
+            this.loadData(true);
+        }
+    },
+
+    _tryPendingRegisterLightTip() {
+        const p = consumePendingRegisterPrompt();
+        if (!p) return;
+        this.setData({
+            regLightTipShow: true,
+            regLightTipTitle: p.title,
+            regLightTipContent: p.content || ''
+        });
+    },
+
+    onRegLightTipClose() {
+        this.setData({ regLightTipShow: false });
+    },
+
+    _resolveCouponEntry(options = {}) {
+        const parsedScene = parseScene(options.scene ? decodeURIComponent(options.scene) : '');
+        const couponId = String(options.coupon_id || options.id || parsedScene.cid || parsedScene.id || parsedScene.coupon_id || '').trim();
+        this._pendingCouponClaimId = couponId || '';
+        this._couponClaimConsumed = false;
+    },
+
+    _consumeCouponEntry() {
+        if (!this._pendingCouponClaimId || this._couponClaimConsumed) return;
+        this._couponClaimConsumed = true;
+        const couponId = this._pendingCouponClaimId;
+        this._pendingCouponClaimId = '';
+        const claimUrl = `/pages/coupon/claim?id=${encodeURIComponent(couponId)}`;
+        setTimeout(() => {
+            wx.navigateTo({
+                url: claimUrl,
+                fail(err) {
+                    console.error('[coupon-entry] navigateTo failed:', err);
+                    // 子包页面不存在时降级为模态提示
+                    wx.showModal({
+                        title: '领取优惠券',
+                        content: `优惠券 ID：${couponId}，领券页暂未就绪，请升级到最新版小程序后重试。`,
+                        showCancel: false
+                    });
+                }
+            });
+        }, 800);
+    },
+
+onReady() {
+        this.brandAnimation = this.selectComponent('#brandAnimation');
+    },
+
+    _revealObservers: [],
+
+    _buildHomeViewPatch(patch = {}) {
+        const next = Object.assign({}, this.data, patch);
+        const featuredProducts = Array.isArray(next.featuredProducts) ? next.featuredProducts : [];
+        const featuredSections = Array.isArray(next.featuredSections) ? next.featuredSections : [];
+        const bubbles = Array.isArray(next.bubbles) ? next.bubbles : [];
+        return {
+            showHomeLoading: !!(next.loading && featuredProducts.length === 0 && featuredSections.length === 0),
+            showFeaturedSkeleton: !!(next.loading && featuredProducts.length === 0),
+            showProductsEmpty: !!(!next.loading && featuredProducts.length === 0),
+            showSoloSearch: bubbles.length === 0 && !next.navScrolled,
+            navRootClass: next.navScrolled ? 'custom-nav nav-scrolled' : 'custom-nav nav-transparent',
+            navBubbleClass: next.navScrolled ? 'nav-bubble-bar nav-hidden' : 'nav-bubble-bar nav-visible',
+            navSearchBoxClass: next.navScrolled ? 'nav-search-box nav-visible' : 'nav-search-box nav-hidden',
+            revealMidPostersClass: withRevealClass('poster-section scroll-reveal', next.revealMidPosters),
+            revealCouponsClass: withRevealClass('coupon-section scroll-reveal', next.revealCoupons),
+            revealProductsClass: withRevealClass('products-section products-section-grouped scroll-reveal', next.revealProducts),
+            revealFeaturedClass: withRevealClass('products-section scroll-reveal', next.revealFeatured),
+            revealBrandClass: withRevealClass('brand-zone-section scroll-reveal', next.revealBrand),
+            revealBottomPostersClass: withRevealClass('poster-section scroll-reveal', next.revealBottomPosters)
+        };
+    },
+
+    _setHomeData(patch, callback) {
+        this.setData(Object.assign({}, patch, this._buildHomeViewPatch(patch)), callback);
+    },
+
+    // 单项路径 setData：图片兜底/切换时只更新该商品，避免全量重传整个 featuredProducts 数组。
+    // 派生视图字段(loading/skeleton/nav/reveal)均不依赖单项图片字段，无需重算。
+    _setFeaturedItem(index, item, callback) {
+        this.setData({ ['featuredProducts[' + index + ']']: item }, callback);
+    },
+
+    _getRevealTargetMap() {
+        const hasFeaturedSections = Array.isArray(this.data.featuredSections) && this.data.featuredSections.length > 0;
+        return {
+            'reveal_mid_posters': {
+                key: 'revealMidPosters',
+                enabled: Array.isArray(this.data.midPosters) && this.data.midPosters.length > 0
+            },
+            'reveal_coupons': { key: 'revealCoupons', enabled: true },
+            'reveal_products': { key: 'revealProducts', enabled: hasFeaturedSections },
+            'reveal_featured': { key: 'revealFeatured', enabled: !hasFeaturedSections },
+            'reveal_brand': { key: 'revealBrand', enabled: !!(this.data.brandZone && this.data.brandZone.enabled) },
+            'reveal_bottom_posters': {
+                key: 'revealBottomPosters',
+                enabled: Array.isArray(this.data.bottomPosters) && this.data.bottomPosters.length > 0
+            }
+        };
+    },
+
+    _setupScrollReveal() {
+        this._revealObservers.forEach(o => o.disconnect());
+        this._revealObservers = [];
+
+        const targetMap = this._getRevealTargetMap();
+        const targets = Object.keys(targetMap).filter((id) => {
+            const target = targetMap[id];
+            return target.enabled && !this.data[target.key];
+        });
+        if (!targets.length) return;
+
+        const query = wx.createSelectorQuery().in(this);
+        targets.forEach((id) => query.select('#' + id).boundingClientRect());
+        query.exec((rects = []) => {
+            const revealImmediately = {};
+            targets.forEach((id, index) => {
+                const target = targetMap[id];
+                const dataKey = target.key;
+                if (this.data[dataKey]) return;
+                if (!rects[index]) {
+                    revealImmediately[dataKey] = true;
+                    return;
+                }
+
+                const observer = this.createIntersectionObserver({ thresholds: [0.1] });
+                observer.relativeToViewport({ bottom: -40 }).observe('#' + id, (res) => {
+                    if (res.intersectionRatio < 0.1) return;
+                    this._setHomeData({ [dataKey]: true });
+                    observer.disconnect();
+                    const idx = this._revealObservers.indexOf(observer);
+                    if (idx > -1) this._revealObservers.splice(idx, 1);
+                });
+                this._revealObservers.push(observer);
+            });
+
+            if (Object.keys(revealImmediately).length > 0) {
+                this._setHomeData(revealImmediately);
+            }
+        });
+    },
+
+    onPageScroll(e) {
+        const scrolled = e.scrollTop > 40;
+        if (scrolled !== this.data.navScrolled) {
+            this._setHomeData({ navScrolled: scrolled });
+        }
+    },
+
+    onPullDownRefresh() {
+        Promise.all([
+            this.loadData(true),
+            this.loadUserInfo(true)
+        ]).finally(() => {
+            wx.stopPullDownRefresh();
+        });
+    },
+
+    async loadData(forceRefresh = false) {
+        return loadHomeData(this, forceRefresh);
+    },
+
+    async loadFeaturedProducts() {
+        return loadHomeFeaturedProducts(this);
+    },
+
+    async loadPosters() {
+        return loadHomePosters(this);
+    },
+
+    async loadBubbles() {
+        return loadHomeBubbles(this);
+    },
+
+    async loadCoupons() {
+        return loadHomeCoupons(this);
+    },
+
+    onClaimWelcomeCoupons() {
+        if (!app.globalData.isLoggedIn) {
+            wx.showToast({ title: '请先登录', icon: 'none' });
+            return;
+        }
+        const { post } = require('../../utils/request');
+        wx.showLoading({ title: '领取中...' });
+        post('/user/claim-welcome-coupons').then((res) => {
+            wx.hideLoading();
+            if (res.code === 0 && res.data && res.data.claimed_count > 0) {
+                wx.showToast({ title: `成功领取${res.data.claimed_count}张优惠券`, icon: 'none', duration: 2000 });
+                this.loadCoupons();
+            } else if (res.code === 0) {
+                wx.showToast({ title: '暂无可领取的优惠券', icon: 'none' });
+            } else {
+                wx.showToast({ title: res.message || '领取失败', icon: 'none' });
+            }
+        }).catch(() => {
+            wx.hideLoading();
+            wx.showToast({ title: '网络异常', icon: 'none' });
+        });
+    },
+
+    onCouponTap() {
+        wx.navigateTo({ url: '/pages/coupon/center' });
+    },
+
+    onCouponItemTap(e) {
+        wx.navigateTo({ url: '/pages/coupon/center' });
+    },
+
+    _startBubbleRotation() {
+        if (this._bubbleTimer) clearInterval(this._bubbleTimer);
+        // 保存内层 timeout 句柄，以便 onHide/onUnload 时一并清除
+        this._bubbleT1 = null;
+        this._bubbleT2 = null;
+        this._bubbleTimer = setInterval(() => {
+            const { bubbles } = this.data;
+            if (!bubbles.length) return;
+            this._bubbleIdx = (this._bubbleIdx + 1) % bubbles.length;
+            const anim = wx.createAnimation({ duration: 300, timingFunction: 'ease' });
+            anim.opacity(0).translateY(-20).step();
+            this.setData({ bubbleAnim: anim.export() });
+            this._bubbleT1 = setTimeout(() => {
+                this._bubbleT1 = null;
+                const anim2 = wx.createAnimation({ duration: 0 });
+                anim2.opacity(0).translateY(20).step();
+                this.setData({ bubbleAnim: anim2.export(), currentBubble: this.data.bubbles[this._bubbleIdx] });
+                this._bubbleT2 = setTimeout(() => {
+                    this._bubbleT2 = null;
+                    const anim3 = wx.createAnimation({ duration: 300, timingFunction: 'ease' });
+                    anim3.opacity(1).translateY(0).step();
+                    this.setData({ bubbleAnim: anim3.export() });
+                }, 50);
+            }, 300);
+        }, 4000);
+    },
+
+    _clearBubbleTimers() {
+        if (this._bubbleTimer) { clearInterval(this._bubbleTimer); this._bubbleTimer = null; }
+        if (this._bubbleT1) { clearTimeout(this._bubbleT1); this._bubbleT1 = null; }
+        if (this._bubbleT2) { clearTimeout(this._bubbleT2); this._bubbleT2 = null; }
+    },
+
+    _normalizeLatestActivity(activity = {}) {
+        return {
+            ...activity,
+            coverImage: normalizeAssetUrl(activity.file_id || activity.image || activity.image_url || ''),
+            displaySubtitle: activity.subtitle || activity.summary || ''
+        };
+    },
+
+    onHide() {
+        this._clearBubbleTimers();
+        this._restoreNativeTabBar();
+    },
+
+    onUnload() {
+        this._clearBubbleTimers();
+        this._restoreNativeTabBar();
+        if (Array.isArray(this._revealObservers)) {
+            this._revealObservers.forEach(o => o.disconnect());
+            this._revealObservers = [];
+        }
+    },
+
+    _applyHomeConfig(data) {
+        return applyHomeConfig(this, data);
+    },
+
+    async loadUserInfo(forceRefresh = false) {
+        const isLoggedIn = app.globalData.isLoggedIn;
+        this.setData({ isLoggedIn });
+
+        if (!isLoggedIn) {
+            this.setData({
+                userInfo: null,
+                truncatedName: '',
+                growthValue: 0,
+                growthPercent: 0,
+                pointBalance: 0
+            });
+            return;
+        }
+
+        if (!forceRefresh && this._userInfoPromise) {
+            return this._userInfoPromise;
+        }
+
+        if (!forceRefresh && this._lastUserInfoLoadedAt && (Date.now() - this._lastUserInfoLoadedAt) < INDEX_USER_INFO_TTL) {
+            return;
+        }
+
+        this._userInfoPromise = (async () => {
+            // 两个独立接口并行拉取，避免串行瀑布拖慢首屏头部(成长值/积分)出现时间。
+            const [result, pointSummary] = await Promise.all([
+                fetchUserProfile(),
+                fetchPointSummary()
+            ]);
+            if (result) {
+                const info = result.info;
+                const growth = info.growth_value || 0;
+                const threshold = info.next_level_threshold || 500;
+                const displayName = info.nickName || info.nickname || '';
+
+                this.setData({
+                    userInfo: info,
+                    truncatedName: truncateNickname(displayName),
+                    growthValue: growth,
+                    nextLevelThreshold: threshold,
+                    growthPercent: calcGrowthPercent(growth, threshold)
+                });
+            }
+
+            const account = (pointSummary && pointSummary.account) || {};
+            this.setData({
+                pointBalance: account.balance_points || 0,
+                todaySigned: !!account.today_signed
+            });
+            this._lastUserInfoLoadedAt = Date.now();
+        })().catch((err) => {
+            console.error('加载用户信息失败:', err);
+        }).finally(() => {
+            this._userInfoPromise = null;
+        });
+
+        return this._userInfoPromise;
+    },
+
+    onMemberCardTap() {
+        wx.switchTab({ url: '/pages/user/user' });
+    },
+
+    onPointsTap() {
+        if (!this.data.isLoggedIn) {
+            wx.showToast({ title: '请先登录', icon: 'none' });
+            return;
+        }
+        wx.navigateTo({ url: '/pages/points/index' });
+    },
+
+    async onSignInTap() {
+        if (!this.data.isLoggedIn) {
+            wx.showToast({ title: '请先登录', icon: 'none' });
+            return;
+        }
+        if (this.data.todaySigned) {
+            wx.showToast({ title: '今日已签到', icon: 'none' });
+            return;
+        }
+        try {
+            const res = await checkinPoints();
+            if (res.code === 0) {
+                const earned = res.data.points_earned || res.data.points || 0;
+                wx.showToast({ title: `签到成功 +${earned}`, icon: 'success' });
+                this.setData({
+                    todaySigned: true,
+                    pointBalance: res.account?.balance_points || res.data.balance_points || (this.data.pointBalance + earned)
+                });
+            } else {
+                wx.showToast({ title: res.message || '签到失败', icon: 'none' });
+            }
+        } catch (e) {
+            wx.showToast({ title: '签到失败，请重试', icon: 'none' });
+        }
+    },
+
+    onExchangeTap() {
+        wx.navigateTo({ url: '/pages/points/index' });
+    },
+
+    onActivityTap() {
+        wx.switchTab({ url: '/pages/activity/activity' });
+    },
+
+    onLatestActivityTap() {
+        const item = this.data.latestActivity || {};
+        if (item.link_type && item.link_type !== 'none' && item.link_value) {
+            navigator.navigate(item.link_type, item.link_value);
+            return;
+        }
+        wx.switchTab({ url: '/pages/activity/activity' });
+    },
+
+    onFeatureCardTap(e) {
+        const item = e.currentTarget.dataset.item;
+        if (!item) return;
+        const { isValidPagePath } = require('../../utils/navigator');
+        switch (item.link_type) {
+            case 'page':
+                if (item.link_value && isValidPagePath(String(item.link_value))) {
+                    wx.navigateTo({ url: item.link_value });
+                } else if (!item.link_value) {
+                    wx.switchTab({ url: '/pages/activity/activity' });
+                } else {
+                    console.warn('[Index] 功能卡片路径不在白名单:', item.link_value);
+                }
+                break;
+            case 'copy':
+                if (item.link_value) {
+                    wx.setClipboardData({
+                        data: item.link_value,
+                        success: () => wx.showToast({ title: '内容已复制', icon: 'none', duration: 2500 })
+                    });
+                }
+                break;
+            default:
+                wx.switchTab({ url: '/pages/activity/activity' });
+        }
+    },
+
+    onSearchTap() {
+        wx.navigateTo({ url: '/pages/search/search' });
+    },
+
+    onProductTap(e) {
+        const id = e.currentTarget.dataset.id;
+        if (!id) return;
+        wx.navigateTo({ url: `/pages/product/detail?id=${id}` });
+    },
+
+    onFeaturedImageError(e) {
+        this._handleFeaturedImageError(e).catch((err) => {
+            console.warn('[Index] featured image error handler failed:', err);
+        });
+    },
+
+    async _handleFeaturedImageError(e) {
+        const index = Number(e.currentTarget.dataset.index || 0);
+        const featuredProducts = Array.isArray(this.data.featuredProducts)
+            ? this.data.featuredProducts.slice()
+            : [];
+        const item = featuredProducts[index];
+        if (!item) return;
+
+        const currentImage = normalizeAssetUrl(item.cover_image || item.image || (Array.isArray(item.images) ? item.images[0] : ''));
+        this._featuredImageRetryCounts = this._featuredImageRetryCounts || {};
+        const retryKey = `featured:${item.id || item._id || index}`;
+        const retryCount = Number(this._featuredImageRetryCounts[retryKey] || 0);
+        if (retryCount < PRODUCT_IMAGE_MAX_RETRY) {
+            this._featuredImageRetryCounts[retryKey] = retryCount + 1;
+            const sources = collectFeaturedImageRecoverySources(item);
+            for (let i = 0; i < sources.length; i += 1) {
+                const nextImage = await resolveRenderableImageUrl(sources[i], '', { forceRefresh: true }).catch(() => '');
+                if (!nextImage || nextImage === currentImage) continue;
+                featuredProducts[index] = {
+                    ...item,
+                    display_image: nextImage,
+                    cover_image: nextImage,
+                    image: nextImage,
+                    firstImage: nextImage,
+                    cardImage: nextImage,
+                    hasCardImage: true,
+                    image_missing: false
+                };
+                this._setFeaturedItem(index, featuredProducts[index]);
+                return;
+            }
+        }
+
+        const candidates = collectFeaturedImageCandidates(item);
+        const currentIndex = Math.max(
+            Number.isFinite(Number(item.image_candidate_index)) ? Number(item.image_candidate_index) : -1,
+            candidates.indexOf(currentImage)
+        );
+        const nextCandidateIndex = findNextCandidateIndex(candidates, currentImage, currentIndex);
+
+        if (nextCandidateIndex !== -1) {
+            const nextImage = candidates[nextCandidateIndex];
+            featuredProducts[index] = {
+                ...item,
+                display_image: nextImage,
+                cover_image: nextImage,
+                image: nextImage,
+                firstImage: nextImage,
+                cardImage: nextImage,
+                hasCardImage: true,
+                image_candidates: candidates,
+                image_candidate_index: nextCandidateIndex,
+                image_missing: false
+            };
+            this._setFeaturedItem(index, featuredProducts[index]);
+            return;
+        }
+
+        const hydrated = await this._hydrateFeaturedProductImage(index, item, candidates, currentImage);
+        if (hydrated) return;
+
+        featuredProducts[index] = {
+            ...item,
+            display_image: '',
+            cover_image: '',
+            image: '',
+            firstImage: '',
+            cardImage: '',
+            hasCardImage: false,
+            image_candidates: candidates,
+            image_candidate_index: candidates.length - 1,
+            image_missing: true,
+            _detailImageHydrated: true
+        };
+        this._setFeaturedItem(index, featuredProducts[index]);
+
+        if (currentImage || candidates.length) {
+            this.onAssetImageError({
+                currentTarget: { dataset: { scene: 'featured-product' } },
+                detail: e?.detail || {}
+            });
+        }
+    },
+
+    async _hydrateFeaturedProductImage(index, item, currentCandidates = [], currentImage = '') {
+        const productId = item && (item.id || item._id || item._legacy_id);
+        if (!productId || item._detailImageHydrated) return false;
+
+        try {
+            const detailRes = await get(`/products/${productId}`, {}, {
+                showError: false,
+                maxRetries: 0
+            });
+            const detail = detailRes && (detailRes.data || detailRes);
+            if (!detail || typeof detail !== 'object') return false;
+
+            const mergedCandidates = uniqueImageUrls([
+                ...currentCandidates,
+                ...collectFeaturedImageCandidates(detail)
+            ]);
+            const nextCandidateIndex = findNextCandidateIndex(mergedCandidates, currentImage, -1);
+            const featuredProducts = Array.isArray(this.data.featuredProducts)
+                ? this.data.featuredProducts.slice()
+                : [];
+            const currentItem = featuredProducts[index];
+            if (!currentItem) return false;
+
+            featuredProducts[index] = {
+                ...currentItem,
+                ...detail,
+                images: parseImages(detail.images).length ? parseImages(detail.images) : currentItem.images,
+                image_candidates: mergedCandidates,
+                image_candidate_index: nextCandidateIndex,
+                _detailImageHydrated: true,
+                image_missing: nextCandidateIndex === -1
+            };
+
+            if (nextCandidateIndex !== -1) {
+                const nextImage = mergedCandidates[nextCandidateIndex];
+                featuredProducts[index] = {
+                    ...featuredProducts[index],
+                    display_image: nextImage,
+                    cover_image: nextImage,
+                    image: nextImage,
+                    firstImage: nextImage,
+                    cardImage: nextImage,
+                    hasCardImage: true
+                };
+            } else {
+                featuredProducts[index] = {
+                    ...featuredProducts[index],
+                    display_image: '',
+                    cover_image: '',
+                    image: '',
+                    firstImage: '',
+                    cardImage: '',
+                    hasCardImage: false
+                };
+            }
+
+            this._setFeaturedItem(index, featuredProducts[index]);
+            return nextCandidateIndex !== -1;
+        } catch (err) {
+            console.warn('[Index] 商品详情补图失败:', productId, err && (err.message || err));
+            return false;
+        }
+    },
+
+    onGoCategory() {
+        wx.switchTab({ url: '/pages/category/category' });
+    },
+
+    /**
+     * Banner/海报点击导航
+     * 支持 link_type: none | product | activity | group_buy | slash | lottery | page | url
+     */
+    onBannerTap(e) {
+        const item = e.currentTarget.dataset.item;
+        if (!item) return;
+        navigator.navigate(item.link_type, item.link_value);
+    },
+
+    onAssetImageError(e) {
+        const scene = e?.currentTarget?.dataset?.scene || 'unknown';
+        console.warn('[Index] 图片加载失败，使用本地降级内容:', scene, e?.detail || {});
+
+        if (['hero-banner', 'mid-poster', 'bottom-poster'].includes(scene)) {
+            if (!this._assetRefreshInFlight && !this._assetRefreshAttempted) {
+                this._assetRefreshAttempted = true;
+                this._assetRefreshInFlight = true;
+                this.loadData(true)
+                    .catch(() => null)
+                    .finally(() => {
+                        this._assetRefreshInFlight = false;
+                        setTimeout(() => {
+                            this._assetRefreshAttempted = false;
+                        }, HOME_PAGE_ASSET_RETRY_COOLDOWN);
+                    });
+                return;
+            }
+        }
+
+        if (scene === 'hero-banner') {
+            const heroBanners = (this.data.heroBanners || []).map((item, index) => (
+                index === Number(e?.currentTarget?.dataset?.index || 0)
+                    ? { ...item, image: '' }
+                    : item
+            ));
+            this.setData({ heroBanners });
+            return;
+        }
+
+        if (scene === 'mid-poster' || scene === 'bottom-poster') {
+            const key = scene === 'mid-poster' ? 'midPosters' : 'bottomPosters';
+            const list = Array.isArray(this.data[key]) ? this.data[key].slice() : [];
+            const index = Number(e?.currentTarget?.dataset?.index || 0);
+            if (list[index]) {
+                list[index] = { ...list[index], image: '' };
+                this.setData({ [key]: list });
+            }
+            return;
+        }
+
+        if (scene === 'popup-ad') {
+            this.setData({ showPopupAd: false }, () => this._restoreNativeTabBar());
+        }
+    },
+
+    onBrandZoneImageError(e) {
+        const scene = e?.currentTarget?.dataset?.scene || 'card';
+        const index = Number(e?.currentTarget?.dataset?.index || 0);
+        const brandZone = {
+            ...createEmptyBrandZone(),
+            ...(this.data.brandZone || {})
+        };
+
+        if (scene === 'cover') {
+            brandZone.coverImage = '';
+            this.setData({ brandZone });
+            return;
+        }
+
+        if (scene === 'certification') {
+            const certifications = Array.isArray(brandZone.certifications) ? brandZone.certifications.slice() : [];
+            if (!certifications[index]) return;
+            certifications[index] = { ...certifications[index], image: '' };
+            brandZone.certifications = certifications;
+            this.setData({ brandZone });
+            return;
+        }
+
+        const cards = Array.isArray(brandZone.cards) ? brandZone.cards.slice() : [];
+        if (!cards[index]) return;
+        cards[index] = { ...cards[index], image: '' };
+        brandZone.cards = cards;
+        this.setData({ brandZone });
+    },
+
+    _syncPopupAdTabBar() {
+        if (this.data.showPopupAd) {
+            syncPageTabBar(this, true);
+        } else {
+            this._restoreNativeTabBar();
+        }
+    },
+
+    _restoreNativeTabBar() {
+        restorePageTabBar(this);
+    },
+
+    _checkAndShowPopupAd(popupAd) {
+        const freq = popupAd.frequency || 'once_daily';
+        const storageKey = 'popup_ad_shown';
+
+        if (freq === 'once_daily') {
+            const today = new Date().toDateString();
+            const last = wx.getStorageSync(storageKey);
+            if (last === today) return;
+        } else if (freq === 'once_session') {
+            if (this._popupAdShownThisSession) return;
+        }
+
+        this.setData({ showPopupAd: true, popupAd }, () => this._syncPopupAdTabBar());
+    },
+
+    onPopupAdTap() {
+        const { popupAd } = this.data;
+        this.onClosePopupAd();
+        if (popupAd.link_type && popupAd.link_type !== 'none') {
+            navigator.navigate(popupAd.link_type, popupAd.link_value);
+        }
+    },
+
+    onClosePopupAd() {
+        const { popupAd } = this.data;
+        const freq = popupAd.frequency || 'once_daily';
+
+        if (freq === 'once_daily') {
+            wx.setStorageSync('popup_ad_shown', new Date().toDateString());
+        }
+        this._popupAdShownThisSession = true;
+        this.setData({ showPopupAd: false }, () => this._restoreNativeTabBar());
+    },
+
+    onShareAppMessage() {
+        const shareTitle = app.globalData.shareTitle || '问兰 · 品牌甄选';
+        // 分享参数中携带会员码；落地页写入 pending_invite_code，登录时绑 parent_id
+        const code = this.data.userInfo?.invite_code || app.globalData.userInfo?.invite_code || '';
+        return {
+            title: shareTitle,
+            path: `/pages/index/index${code ? `?invite=${encodeURIComponent(code)}` : ''}`
+        };
+    },
+
+    /** 分享到朋友圈（需在 onShow 里 showShareMenu 含 shareTimeline） */
+    onShareTimeline() {
+        const brandName = app.globalData.brandName || '问兰';
+        const code = this.data.userInfo?.invite_code || app.globalData.userInfo?.invite_code || '';
+        return {
+            title: `${brandName} · 品牌甄选`,
+            query: code ? `invite=${encodeURIComponent(code)}` : '',
+            imageUrl: ''
+        };
+    }
+});

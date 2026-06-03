@@ -1,0 +1,125 @@
+<view class="container">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner" style="height: {{navBarHeight}}px;">
+      <view class="nav-back" bindtap="onBack">
+        <image class="back-icon" src="/assets/icons/arrow-left.svg" mode="aspectFit"></image>
+      </view>
+      <text class="nav-title">团队中心</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="main-scroll">
+    <view class="hero-card">
+      <view class="hero-top">
+        <view class="hero-user">
+          <image class="hero-avatar" src="{{userInfo.avatar || userInfo.avatar_url || '/assets/images/default-avatar.svg'}}" mode="aspectFill"></image>
+          <view class="hero-user-meta">
+            <text class="hero-name">{{userInfo.nick_name || userInfo.nickname || '微信用户'}}</text>
+            <text class="hero-role">{{isStoreManager ? '店长' : (userInfo.role_name || '团队成员')}}</text>
+          </view>
+        </view>
+        <button class="hero-share-btn" bindtap="goInvitePosterPage">立即邀新</button>
+      </view>
+
+      <view class="hero-balance-grid">
+        <view class="hero-balance-card" wx:if="{{showGoodsWallet}}" bindtap="onAgentWalletTap">
+          <text class="balance-label">货款余额</text>
+          <text class="balance-amount">¥{{goodsBalanceDisplay}}</text>
+          <text class="balance-sub">代理订货与发货结算资金</text>
+        </view>
+        <view class="hero-balance-card {{showGoodsWallet ? '' : 'full'}}" bindtap="onPurseWalletTap">
+          <text class="balance-label">可提佣金</text>
+          <text class="balance-amount">¥{{purseBalanceDisplay}}</text>
+          <text class="balance-sub">可提佣金与佣金明细</text>
+        </view>
+      </view>
+
+    </view>
+
+    <view class="stats-panel">
+      <view class="stats-main">
+        <view class="stats-item">
+          <text class="stats-value">{{directCount}}</text>
+          <text class="stats-label">一级团队</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-value">{{indirectCount}}</text>
+          <text class="stats-label">二级团队</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-value">{{totalCount}}</text>
+          <text class="stats-label">团队总人数</text>
+        </view>
+      </view>
+      <view class="stats-sub">
+        <view class="stats-sub-item">
+          <text class="stats-sub-label">累计佣金</text>
+          <text class="stats-sub-value">¥{{totalEarnings}}</text>
+        </view>
+        <view class="stats-sub-item">
+          <text class="stats-sub-label">可提佣金</text>
+          <text class="stats-sub-value">¥{{availableAmount}}</text>
+        </view>
+        <view class="stats-sub-item">
+          <text class="stats-sub-label">本月新增</text>
+          <text class="stats-sub-value">{{monthlyNewMembers}} 人</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <view class="section-head">
+        <text class="section-title">核心入口</text>
+        <text class="section-sub">团队运营最常用的功能统一放在首页</text>
+      </view>
+
+      <view class="quick-grid">
+        <view class="quick-card" wx:if="{{showGoodsWallet}}" bindtap="onAgentWalletTap">
+          <text class="quick-title">货款明细</text>
+          <text class="quick-desc">查看余额、流水与货款明细</text>
+        </view>
+        <view class="quick-card" wx:if="{{!showGoodsWallet}}" bindtap="onPurseWalletTap">
+          <text class="quick-title">可提佣金</text>
+          <text class="quick-desc">查看可提佣金与佣金明细</text>
+        </view>
+        <view class="quick-card" wx:if="{{canDirectedInvite}}" bindtap="goDirectedInvites">
+          <text class="quick-title">推广合伙人邀约</text>
+          <text class="quick-desc">发起单次邀约，审核通过后为对方激活推广合伙人并划拨货款</text>
+        </view>
+        <view class="quick-card" bindtap="goCommissionLogs">
+          <text class="quick-title">佣金明细</text>
+          <text class="quick-desc">查看累计收益、可提现与结算记录</text>
+        </view>
+        <view class="quick-card" bindtap="goFundPool">
+          <text class="quick-title">基金贡献</text>
+          <text class="quick-desc">查看个人贡献与四个池子当前余额</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <view class="section-head">
+        <text class="section-title">团队结构</text>
+        <text class="section-sub">一级按当前归属统计，详情页会单独显示邀请人</text>
+      </view>
+
+      <view class="team-level-card" bindtap="goTeam" data-tab="direct">
+        <view class="team-level-left">
+          <text class="team-level-name">一级团队</text>
+          <text class="team-level-desc">当前归属在你名下的成员</text>
+        </view>
+        <text class="team-level-num">{{directCount}} 人</text>
+      </view>
+
+      <view class="team-level-card light" bindtap="goTeam" data-tab="indirect">
+        <view class="team-level-left">
+          <text class="team-level-name">二级团队</text>
+          <text class="team-level-desc">当前归属在你一级成员名下的成员</text>
+        </view>
+        <text class="team-level-num">{{indirectCount}} 人</text>
+      </view>
+    </view>
+
+    <view class="scroll-pad"></view>
+  </scroll-view>
+</view>

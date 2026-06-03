@@ -1,0 +1,68 @@
+<view class="page">
+  <view class="hero">
+    <text class="hero-title">收益规则</text>
+    <text class="hero-sub">收益来自真实订单，最终以订单、退款、佣金和微信提现流水为准。</text>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">收益试算</text>
+      <text class="section-sub">只用于理解规则，不代表承诺收益</text>
+    </view>
+    <view class="form-row">
+      <text class="form-label">订单实付</text>
+      <input class="form-input" type="digit" value="{{orderAmount}}" data-field="orderAmount" bindinput="onInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">直推比例 %</text>
+      <input class="form-input" type="digit" value="{{directRate}}" data-field="directRate" bindinput="onInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">团队比例 %</text>
+      <input class="form-input" type="digit" value="{{teamRate}}" data-field="teamRate" bindinput="onInput" />
+    </view>
+    <view class="estimate-grid">
+      <view class="estimate-item">
+        <text class="estimate-label">直推预估</text>
+        <text class="estimate-value">¥{{directAmount}}</text>
+      </view>
+      <view class="estimate-item">
+        <text class="estimate-label">团队预估</text>
+        <text class="estimate-value">¥{{teamAmount}}</text>
+      </view>
+      <view class="estimate-item total">
+        <text class="estimate-label">合计预估</text>
+        <text class="estimate-value">¥{{estimateTotal}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">资金口径</text>
+      <text class="section-sub">先把钱的去向看清楚</text>
+    </view>
+    <view class="rule-item" wx:for="{{rules}}" wx:key="title">
+      <text class="rule-title">{{item.title}}</text>
+      <text class="rule-desc">{{item.desc}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-head">
+      <text class="section-title">角色口径</text>
+      <text class="section-sub">不同身份看的收益来源不同</text>
+    </view>
+    <view class="role-item" wx:for="{{roleRules}}" wx:key="title">
+      <view class="role-dot"></view>
+      <view class="role-content">
+        <text class="role-title">{{item.title}}</text>
+        <text class="role-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer-note">
+    <text>如明细金额与预估不同，以佣金明细、提现记录和后台财务审核结果为准。</text>
+  </view>
+</view>

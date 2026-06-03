@@ -1,0 +1,383 @@
+<!-- 加载骨架屏（画廊区与正式页同 padding + 1:1，避免高度跳变） -->
+<view class="skeleton-container" wx:if="{{pageLoading}}">
+  <view class="sk-gallery-section">
+    <view class="gallery-aspect-wrap">
+      <view class="gallery-aspect-inner">
+        <view class="sk-gallery"></view>
+      </view>
+    </view>
+  </view>
+  <view class="sk-info-card">
+    <view class="sk-price-line"></view>
+    <view class="sk-title-line sk-long"></view>
+    <view class="sk-title-line sk-short"></view>
+  </view>
+  <view class="sk-info-card" style="margin-top:16rpx;">
+    <view class="sk-title-line sk-long"></view>
+    <view class="sk-title-line sk-short"></view>
+    <view class="sk-title-line sk-tiny"></view>
+  </view>
+</view>
+
+<!-- 真实内容 -->
+<view class="container" wx:if="{{!pageLoading}}">
+  <!-- 自定义导航栏 -->
+  <view class="detail-nav" style="padding-top: {{navTopPadding}}px;">
+    <view class="detail-nav-inner" style="height: {{navBarHeight}}px;">
+      <view class="detail-nav-back" bindtap="onBackTap">
+        <text class="detail-nav-back-chevron">‹</text>
+        <text class="detail-nav-back-text">返回</text>
+      </view>
+      <text class="detail-nav-title">商品详情</text>
+      <!-- 右侧留白给微信胶囊，收藏放在底部栏 -->
+    </view>
+  </view>
+
+  <view class="gallery-section">
+    <view class="gallery-aspect-wrap">
+      <view class="gallery-aspect-inner">
+        <swiper wx:if="{{product.images && product.images.length}}" class="gallery-swiper" indicator-dots="{{true}}" autoplay="{{true}}" circular="{{true}}" indicator-color="rgba(250,250,249,0.35)" indicator-active-color="#E2C4A0" bindchange="onImageChange">
+          <swiper-item class="gallery-slide" wx:for="{{product.images}}" wx:key="*this">
+            <view class="gallery-frame">
+              <image src="{{item}}" mode="aspectFill" class="gallery-image" bindtap="onPreviewImage" binderror="onGalleryImageError" data-index="{{index}}"></image>
+            </view>
+          </swiper-item>
+        </swiper>
+        <view wx:else class="gallery-fallback">
+          <text class="gallery-fallback-label">暂无商品图片</text>
+        </view>
+      </view>
+    </view>
+    <view class="gallery-copy" wx:if="{{imageCount > 0}}">
+      <text class="gallery-counter">{{currentImage + 1}} / {{imageCount}}</text>
+    </view>
+  </view>
+
+  <view class="product-info-card">
+    <scroll-view class="benefit-rail" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{estimatedPoints > 0 || productCouponChips.length > 0}}">
+      <view class="benefit-rail-track">
+        <view class="benefit-rail-item points-benefit-card" wx:if="{{estimatedPoints > 0}}">
+          <view class="benefit-points-mark">
+            <view class="benefit-points-core"></view>
+          </view>
+          <view class="benefit-points-copy">
+            <text class="benefit-rail-label">预计积分奖励</text>
+            <text class="benefit-rail-value">+{{estimatedPoints}}</text>
+          </view>
+        </view>
+        <view class="benefit-rail-item coupon-benefit-card" wx:for="{{productCouponChips}}" wx:key="id">
+          <view class="benefit-ticket-notch benefit-ticket-notch-left"></view>
+          <view class="benefit-ticket-main">
+            <text class="benefit-rail-value">{{item.valueText}}</text>
+          </view>
+          <view class="benefit-ticket-divider"></view>
+          <text class="benefit-rail-label">{{item.thresholdText}}</text>
+          <view class="benefit-ticket-notch benefit-ticket-notch-right"></view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="share-coupon-bar share-coupon-status-{{shareCouponBar.status}}" wx:if="{{shareCouponBar}}">
+      <view class="share-coupon-copy">
+        <text class="share-coupon-value">{{shareCouponBar.valueText}}</text>
+        <view class="share-coupon-texts">
+          <text class="share-coupon-title">{{shareCouponBar.title}}</text>
+          <text class="share-coupon-desc">{{shareCouponBar.display_desc}}</text>
+        </view>
+      </view>
+      <view
+        class="share-coupon-btn {{shareCouponBar.button_disabled ? 'share-coupon-btn-disabled' : ''}}"
+        bindtap="onClaimShareCoupon"
+      >
+        {{shareCouponBar.button_text}}
+      </view>
+    </view>
+
+    <view class="summary-top-row">
+      <view class="summary-price-wrap">
+        <view class="price-section">
+          <view class="price-main" wx:if="{{limitedSpotOffer && limitedSpotMode === 'points'}}">
+            <text class="price-value price-value-points">{{limitedSpotOffer.points_price}}</text>
+            <text class="price-points-suffix">积分兑换</text>
+          </view>
+          <view class="price-main" wx:else>
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{limitedSpotOffer && limitedSpotMode === 'money' ? limitedSpotOffer.money_price : (currentPrice || product.displayPrice || product.price)}}</text>
+          </view>
+          <view class="price-origin" wx:if="{{limitedSpotOffer && limitedSpotOriginalPrice}}">¥{{limitedSpotOriginalPrice}}</view>
+          <view class="price-origin" wx:elif="{{product.market_price}}">¥{{product.market_price}}</view>
+          <view class="price-discount" wx:if="{{limitedSpotOffer}}">限时专享</view>
+          <view class="price-discount" wx:elif="{{product.market_price}}">{{discount}}折</view>
+        </view>
+      </view>
+      <view class="summary-actions">
+        <view class="summary-action-item" bindtap="onToggleFavorite">
+          <view class="summary-icon-btn">
+            <image
+              class="summary-icon"
+              src="{{isFavorite ? '/assets/icons/heart-filled.svg' : '/assets/icons/heart.svg'}}"
+              mode="aspectFit"
+            />
+          </view>
+          <text class="summary-action-text">收藏</text>
+        </view>
+        <button class="summary-action-item summary-share-btn" bindtap="onOpenSharePanel">
+          <view class="summary-icon-btn">
+            <image class="summary-icon" src="/assets/icons/share.svg" mode="aspectFit" />
+          </view>
+          <text class="summary-action-text">分享</text>
+        </button>
+      </view>
+    </view>
+
+      <view class="product-title-area">
+      <view class="product-tags" wx:if="{{product.product_tag && product.product_tag !== 'normal' && product.product_tag !== 'hot'}}">
+        <text class="tag-discount" wx:if="{{product.product_tag === 'discount'}}">折扣</text>
+        <text class="tag-new" wx:if="{{product.product_tag === 'new'}}">新品</text>
+      </view>
+      <view class="explosive-notice" wx:if="{{limitedSpotOffer}}">
+        <text class="explosive-notice-text">{{limitedSpotMode === 'points' ? ((limitedSpotTitle || '限时专享商品') + '：按活动积分兑换，不参与优惠券、积分抵扣和货款支付') : ((limitedSpotTitle || '限时专享商品') + '：按活动价结算，不参与优惠券、积分抵扣和货款支付')}}</text>
+      </view>
+      <view class="explosive-notice" wx:if="{{exchangeMode}}">
+        <text class="explosive-notice-text">{{exchangeTitle || '该商品支持兑换券兑换，下单金额为 0 元。'}}</text>
+      </view>
+      <view class="product-title">{{product.name}}</view>
+      <view class="purchase-limit-strip" wx:if="{{purchaseLimitText}}">
+        <view class="purchase-limit-mark"></view>
+        <text class="purchase-limit-main">{{purchaseLimitText}}</text>
+        <text class="purchase-limit-sub">{{purchaseLimitRemainingText}}</text>
+      </view>
+    </view>
+
+    <view class="purchase-mode-card" wx:if="{{availablePurchaseModes.length > 1}}">
+      <view class="purchase-mode-head">
+        <text class="purchase-mode-title">购买方式</text>
+        <text class="purchase-mode-hint">{{purchaseModeHint}}</text>
+      </view>
+      <view class="purchase-mode-options">
+        <view
+          class="purchase-mode-option {{purchaseMode === item.key ? 'active' : ''}}"
+          wx:for="{{availablePurchaseModes}}"
+          wx:key="key"
+          data-mode="{{item.key}}"
+          bindtap="onPurchaseModeChange"
+        >
+          <text class="purchase-mode-option-label">{{item.label}}</text>
+          <text class="purchase-mode-option-desc">{{item.hint}}</text>
+        </view>
+      </view>
+      <view class="activity-status-card" wx:if="{{activityStatusCard}}">
+        <view class="activity-status-head">
+          <text class="activity-status-badge">{{activityStatusCard.badge}}</text>
+          <text class="activity-status-title">{{activityStatusCard.title}}</text>
+        </view>
+        <text class="activity-status-desc">{{activityStatusCard.desc}}</text>
+      </view>
+      <view class="activity-quick-links" wx:if="{{activityQuickLinks.length}}">
+        <view
+          class="activity-quick-link"
+          wx:for="{{activityQuickLinks}}"
+          wx:key="key"
+          data-action="{{item.key}}"
+          bindtap="onActivityQuickActionTap"
+        >
+          <view class="activity-quick-copy">
+            <text class="activity-quick-label">{{item.label}}</text>
+            <text class="activity-quick-desc">{{item.desc}}</text>
+          </view>
+          <text class="activity-quick-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card selection-card" wx:if="{{product.specs && product.specs.length > 0 || !limitedSpotOffer}}">
+    <view class="embedded-section">
+      <view wx:if="{{product.specs && product.specs.length > 0}}">
+        <view class="embedded-section-head">
+          <text class="embedded-title">规格选择</text>
+        </view>
+        <view class="spec-group" wx:for="{{product.specs}}" wx:key="name">
+          <view class="spec-title" wx:if="{{item.showTitle}}">{{item.name}}</view>
+          <view class="spec-options">
+            <view class="spec-option {{selectedSpecs[item.name] === val ? 'active' : ''}} {{isSpecValueDisabled(item.name, val) ? 'disabled' : ''}}" wx:for="{{item.values}}" wx:for-item="val" wx:key="*this" bindtap="onSpecSelect" data-key="{{item.name}}" data-val="{{val}}">{{val}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="qty-section {{product.specs && product.specs.length > 0 ? 'with-specs-border' : ''}}">
+        <view class="qty-section-head">
+          <text class="embedded-title">{{limitedSpotOffer ? '活动数量' : '选购数量'}}</text>
+          <text class="stock-text stock-out" wx:if="{{limitedSpotOffer && limitedSpotOffer.sold_out}}">已抢完</text>
+          <text class="stock-text" wx:elif="{{limitedSpotOffer}}">{{limitedSpotOffer.stock_label || ('活动剩余 ' + limitedSpotOffer.remaining + ' 件')}}</text>
+          <text class="stock-text stock-out" wx:elif="{{isOutOfStock}}">已售罄</text>
+          <text class="stock-text" wx:else>{{purchaseLimitRemainingText ? ('库存 ' + currentStock + ' 件 · ' + purchaseLimitRemainingText) : ('库存 ' + currentStock + ' 件')}}</text>
+        </view>
+        <view class="stepper {{isOutOfStock || purchaseLimitExhausted ? 'stepper-disabled' : ''}}" wx:if="{{!limitedSpotOffer}}">
+          <view class="stepper-btn {{quantity <= 1 || isOutOfStock || purchaseLimitExhausted ? 'disabled' : ''}}" bindtap="onMinus">
+            <image class="icon-xs" src="/assets/icons/minus.svg" mode="aspectFit"></image>
+          </view>
+          <input class="stepper-input" type="number" value="{{quantity}}" bindinput="onQtyInput" disabled="{{isOutOfStock || purchaseLimitExhausted}}" />
+          <view class="stepper-btn {{isOutOfStock || purchaseLimitExhausted ? 'disabled' : ''}}" bindtap="onPlus">
+            <image class="icon-xs" src="/assets/icons/plus.svg" mode="aspectFit"></image>
+          </view>
+        </view>
+        <view class="stepper stepper-static" wx:else>
+          <text class="stepper-static-value">1 件</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{servicePledges.length > 0}}">
+    <view class="section-title-row compact-row">
+      <text class="section-title">购物保障</text>
+    </view>
+    <view class="tags-row">
+      <view class="tag {{item.tagClass}}" wx:for="{{servicePledges}}" wx:key="id">
+        <image class="tag-icon" src="{{item.icon}}" mode="aspectFit"></image>
+        <text>{{item.title}}</text>
+      </view>
+    </view>
+    <view class="pledges-detail-card">
+      <view class="pledge-detail-block" wx:for="{{servicePledges}}" wx:key="id">
+        <text class="pledge-detail-name">{{item.title}}</text>
+        <text class="pledge-detail-copy" wx:if="{{item.desc}}">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card detail-section">
+    <view class="section-title-row compact-row">
+      <text class="section-title">商品详情</text>
+    </view>
+    <text class="detail-description" wx:if="{{product.description}}">{{product.description}}</text>
+    <view class="detail-images" wx:if="{{detailImageList.length > 0}}">
+      <image class="detail-image" wx:for="{{detailImageList}}" wx:key="*this" src="{{item}}" mode="widthFix" lazy-load="true" bindtap="onPreviewDetailImage" binderror="onDetailImageError" data-index="{{index}}"></image>
+    </view>
+    <text class="detail-empty" wx:elif="{{detailImageSourceList.length && !detailImagesLoaded}}">详情图片加载中...</text>
+    <view class="detail-content" wx:if="{{hasRichDetail}}">
+      <rich-text nodes="{{product.detail_html || '暂无详情'}}"></rich-text>
+    </view>
+    <text class="detail-empty" wx:if="{{detailImagesLoaded && !detailImageList.length && !hasRichDetail}}">暂无详情</text>
+  </view>
+
+  <view class="section-card reviews-section" wx:if="{{reviewsLoaded}}">
+    <view class="section-title-row compact-row">
+      <view class="review-title-wrap">
+        <text class="section-title">用户评价</text>
+        <text class="review-count">({{reviewTotal}})</text>
+      </view>
+    </view>
+    <view class="review-tags" wx:if="{{!reviewsLoadError && reviewTags.length > 0}}">
+      <view class="review-tag" wx:for="{{reviewTags}}" wx:key="*this">{{item}}</view>
+    </view>
+    <view class="review-list" wx:if="{{!reviewsLoadError && reviews.length > 0}}">
+      <view class="review-item" wx:for="{{reviews}}" wx:key="id" wx:if="{{index < 2}}">
+        <view class="review-header">
+          <image class="review-avatar" src="{{item.user.avatar || item.user.avatar_url || '/assets/icons/user.svg'}}" binderror="onReviewAvatarError" data-index="{{index}}"></image>
+          <view class="review-user-info">
+            <text class="review-name">{{item.user.nick_name || item.user.nickname}}</text>
+            <view class="review-stars">
+              <image wx:for="{{[1,2,3,4,5]}}" wx:for-item="star" wx:key="star" class="star-icon {{star <= item.rating ? 'filled' : ''}}" src="/assets/icons/star.svg" mode="aspectFit"></image>
+            </view>
+          </view>
+          <text class="review-date">{{item.display_created_at || item.created_at}}</text>
+        </view>
+        <text class="review-content">{{item.content}}</text>
+        <view class="review-images" wx:if="{{item.images && item.images.length > 0}}">
+          <image
+            wx:for="{{item.images}}"
+            wx:for-item="reviewImg"
+            wx:key="*this"
+            class="review-image"
+            src="{{reviewImg}}"
+            mode="aspectFill"
+            bindtap="onPreviewReviewImage"
+            data-urls="{{item.images}}"
+            data-current="{{reviewImg}}"
+          />
+        </view>
+      </view>
+    </view>
+    <text class="detail-empty" wx:elif="{{reviewsLoadError}}">评价加载失败，请稍后重试</text>
+    <text class="detail-empty" wx:else>暂无评价</text>
+  </view>
+
+  <view class="bottom-safe-area"></view>
+
+  <view class="action-bar">
+    <view class="action-cart-entry fly-cart-target" bindtap="onOpenCart">
+      <view class="action-cart-icon-wrap">
+        <image class="action-cart-icon" src="/assets/icons/shopping-cart.svg" mode="aspectFit" />
+        <text class="action-cart-badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</text>
+      </view>
+      <text class="action-cart-text">购物袋</text>
+    </view>
+    <view class="action-buttons">
+      <view class="action-btn action-btn-cart {{isOutOfStock || purchaseLimitExhausted ? 'btn-disabled' : ''}}" bindtap="onLeftActionTap">
+        <text>{{actionLeftLabel}}</text>
+      </view>
+      <view class="action-btn action-btn-buy {{purchaseMode === 'group' ? 'action-btn-group' : ''}} {{purchaseMode === 'slash' ? 'action-btn-slash' : ''}} {{isOutOfStock || purchaseLimitExhausted ? 'btn-disabled' : ''}}" bindtap="onRightActionTap">
+        <text>{{isOutOfStock ? '暂时缺货' : (purchaseLimitExhausted ? '已达限购' : actionRightLabel)}}</text>
+      </view>
+    </view>
+  </view>
+
+  <brand-animation id="brandAnimation" fly-image="{{product.images && product.images[0] || ''}}"></brand-animation>
+
+  <view class="share-panel-mask" wx:if="{{showSharePanel}}" bindtap="onCloseSharePanel"></view>
+  <view class="share-panel" wx:if="{{showSharePanel}}">
+    <view class="share-panel-handle"></view>
+    <view class="share-panel-head">
+      <text class="share-panel-title">分享商品</text>
+      <text class="share-panel-subtitle">转发卡片、朋友圈或生成商品海报</text>
+    </view>
+    <view class="poster-coupon-picker" wx:if="{{showPosterCouponPicker}}">
+      <view class="poster-coupon-head">
+        <text class="poster-coupon-title">附带优惠券</text>
+        <text class="poster-coupon-clear" wx:if="{{selectedPosterCouponId}}" bindtap="clearPosterCoupon">不带券</text>
+      </view>
+      <scroll-view class="poster-coupon-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}" wx:if="{{posterCouponOptions.length > 0}}">
+        <view class="poster-coupon-track">
+          <view
+            class="poster-coupon-chip {{item.selected ? 'poster-coupon-chip-active' : ''}}"
+            wx:for="{{posterCouponOptions}}"
+            wx:key="id"
+            data-coupon-id="{{item.id}}"
+            bindtap="onSelectPosterCoupon"
+          >
+            <text class="poster-coupon-chip-value">{{item.valueText}}</text>
+            <text class="poster-coupon-chip-name">{{item.displayName}}</text>
+          </view>
+        </view>
+      </scroll-view>
+      <text class="poster-coupon-loading" wx:elif="{{posterCouponLoading}}">可带券加载中...</text>
+    </view>
+    <view class="share-panel-options">
+      <button class="share-panel-option" open-type="share">
+        <view class="share-panel-icon-wrap">
+          <image class="share-panel-icon" src="/assets/icons/share.svg" mode="aspectFit"></image>
+        </view>
+        <text class="share-panel-option-title">好友</text>
+      </button>
+      <view class="share-panel-option" bindtap="onShareTimelineTap">
+        <view class="share-panel-icon-wrap">
+          <image class="share-panel-icon" src="/assets/icons/globe.svg" mode="aspectFit"></image>
+        </view>
+        <text class="share-panel-option-title">朋友圈</text>
+      </view>
+      <view class="share-panel-option" bindtap="onCreateProductPoster">
+        <view class="share-panel-icon-wrap share-panel-icon-primary">
+          <image class="share-panel-icon share-panel-icon-light" src="/assets/icons/download.svg" mode="aspectFit"></image>
+        </view>
+        <text class="share-panel-option-title">海报</text>
+      </view>
+    </view>
+    <view class="share-panel-tip" wx:if="{{showTimelineTip}}">
+      <text class="share-panel-tip-dot"></text>
+      <text class="share-panel-tip-text">点右上角菜单，选择分享到朋友圈</text>
+    </view>
+  </view>
+</view>
+<!-- /container -->

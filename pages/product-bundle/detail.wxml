@@ -1,0 +1,110 @@
+<view class="page">
+  <view class="loading-wrap" wx:if="{{loading}}">加载套装中...</view>
+
+  <view class="error-wrap" wx:elif="{{loadError}}">
+    <text class="error-title">套装加载失败</text>
+    <text class="error-desc">请稍后重试，或返回上一页重新进入。</text>
+    <view class="retry-btn" bindtap="onRetry">重新加载</view>
+  </view>
+
+  <block wx:elif="{{bundle}}">
+    <view class="bundle-hero">
+      <view class="hero-media">
+        <image class="hero-image" src="{{bundle.hero_media_url}}" mode="aspectFill" wx:if="{{bundle.hero_media_url}}"></image>
+        <view class="hero-image-fallback" wx:else>套装</view>
+      </view>
+      <view class="hero-content">
+        <view class="hero-badge-row">
+          <text class="hero-badge">{{bundle.scene_type === 'flex_bundle' ? '随心搭配' : '组合套装'}}</text>
+          <text class="hero-tag" wx:for="{{bundle.channel_tags}}" wx:key="index">{{item}}</text>
+        </view>
+        <text class="bundle-title">{{bundle.title || bundle.hero_title}}</text>
+        <text class="bundle-subtitle" wx:if="{{bundle.subtitle || bundle.hero_subtitle}}">{{bundle.subtitle || bundle.hero_subtitle}}</text>
+        <view class="price-line">
+          <view class="price-main">
+            <text class="currency">¥</text>
+            <text class="bundle-price">{{bundle.bundle_price}}</text>
+          </view>
+          <text class="bundle-origin" wx:if="{{originalAmount > 0}}">原合计 ¥{{originalAmountText}}</text>
+          <text class="bundle-discount" wx:if="{{bundleDiscount > 0}}">已省 ¥{{bundleDiscountText}}</text>
+          <text class="bundle-cap" wx:if="{{maxOriginalAmount > 0}}">{{maxOriginalMarketingText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <block wx:for="{{bundle.groups}}" wx:for-item="group" wx:for-index="groupIndex" wx:key="group_key">
+      <view class="picker-panel">
+        <view class="active-group-head">
+          <view>
+            <text class="active-group-title">{{group.group_title}}</text>
+          </view>
+          <view class="active-group-meta">
+            <text>{{group.rule_text}}</text>
+            <text>{{group.status_text}}</text>
+          </view>
+        </view>
+
+        <view class="option-list">
+          <view
+            class="option-card {{option.selected ? 'option-card-active' : ''}} {{option.disabled_by_limit ? 'option-card-disabled' : ''}}"
+            wx:for="{{group.options}}"
+            wx:for-item="option"
+            wx:key="option_key"
+            data-group-key="{{group.group_key}}"
+            data-option-key="{{option.option_key}}"
+            bindtap="onToggleOption"
+          >
+            <image class="option-image" src="{{option.product.image}}" mode="aspectFill" wx:if="{{option.product.image}}"></image>
+            <view class="option-image option-image-empty" wx:else></view>
+            <view class="option-info">
+              <view>
+                <text class="option-name">{{option.product.name}}</text>
+                <text class="option-library-tag" wx:if="{{option.bundle_product_id}}">特惠随心选</text>
+                <text class="option-spec" wx:if="{{option.sku && option.sku.spec_value}}">{{option.sku.spec_value}}</text>
+              </view>
+              <view class="option-bottom">
+                <view class="option-price-wrap">
+                  <text class="option-price">¥{{option.product.retail_price}}</text>
+                  <text class="option-qty">{{option.quantity_text}}</text>
+                </view>
+                <view class="option-qty-stepper" wx:if="{{option.show_qty_stepper}}">
+                  <view class="option-step-btn" data-group-key="{{group.group_key}}" data-option-key="{{option.option_key}}" catchtap="onDecreaseOptionQty">-</view>
+                  <text class="option-step-value">{{option.selected_quantity}}</text>
+                  <view class="option-step-btn {{option.increase_disabled ? 'option-step-btn-disabled' : ''}}" data-group-key="{{group.group_key}}" data-option-key="{{option.option_key}}" catchtap="onIncreaseOptionQty">+</view>
+                </view>
+                <text class="select-pill {{option.selected ? 'select-pill-active' : ''}}" wx:else>{{option.select_text}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="summary-panel">
+      <view class="summary-row">
+        <text class="summary-label">已选商品</text>
+        <text class="summary-value">{{selectedCount}} 项 / {{totalQuantity}} 件</text>
+      </view>
+      <view class="summary-row">
+        <text class="summary-label">已选商品成本</text>
+        <text class="summary-value">¥{{originalAmountText}}</text>
+      </view>
+      <view class="summary-row summary-row-final">
+        <text class="summary-label">支付金额</text>
+        <text class="summary-value summary-price">¥{{bundle.bundle_price}}</text>
+      </view>
+      <text class="summary-warning" wx:if="{{overMaxOriginalAmount}}">已超过套餐封顶，请调整选择。</text>
+      <text class="summary-tip">套装订单不叠加券包、积分和其他活动，售后整套处理。</text>
+    </view>
+
+    <view class="bottom-bar">
+      <view class="bottom-left">
+        <text class="bottom-progress">{{bottomProgressText}}</text>
+        <text class="bottom-price">¥{{bundle.bundle_price}}</text>
+      </view>
+      <view class="buy-btn {{selectionValid ? '' : 'buy-btn-disabled'}}" bindtap="onBuyNow">
+        {{bottomActionText}}
+      </view>
+    </view>
+  </block>
+</view>

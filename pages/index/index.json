@@ -1,0 +1,11 @@
+{
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F4F8FA",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "brand-animation": "/components/brand-animation/brand-animation",
+    "page-loading": "/components/page-loading/page-loading",
+    "light-tip-modal": "/components/light-tip-modal/light-tip-modal"
+  }
+}

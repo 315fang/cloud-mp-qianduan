@@ -1,0 +1,235 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/index/brand-zone-detail",
+        "pages/index/brand-news-list",
+        "pages/category/category",
+        "pages/activity/activity",
+        "pages/activity/n-invite",
+        "pages/activity/brand-news-detail",
+        "pages/activity/flex-bundles",
+        "pages/activity/limited-spot",
+        "pages/cart/cart",
+        "pages/user/user",
+        "pages/user/edit-profile",
+        "pages/user/favorites-footprints",
+        "pages/user/notifications",
+        "pages/user/portal-password",
+        "pages/user/customer-service",
+        "pages/user/membership-center",
+        "pages/user/member-privileges",
+        "pages/user/deposit-orders",
+        "pages/privacy/privacy"
+    ],
+    "subPackages": [
+        {
+            "root": "pages/product",
+            "name": "packageProduct",
+            "pages": [
+                "detail",
+                "poster"
+            ]
+        },
+        {
+            "root": "pages/product-bundle",
+            "name": "packageProductBundle",
+            "pages": [
+                "detail"
+            ]
+        },
+        {
+            "root": "pages/search",
+            "name": "packageSearch",
+            "pages": [
+                "search"
+            ]
+        },
+        {
+            "root": "pages/after-sale",
+            "name": "packageAfterSale",
+            "pages": [
+                "refund-list",
+                "refund-apply",
+                "order-after-sale",
+                "refund-detail"
+            ]
+        },
+        {
+            "root": "pages/order",
+            "name": "packageOrder",
+            "pages": [
+                "list",
+                "detail",
+                "confirm",
+                "pickup-station-list",
+                "review",
+                "pickup-credential"
+            ]
+        },
+        {
+            "root": "pages/stations",
+            "name": "packageStations",
+            "pages": [
+                "map",
+                "my-station"
+            ]
+        },
+        {
+            "root": "pages/pickup",
+            "name": "packagePickup",
+            "pages": [
+                "verify",
+                "orders"
+            ]
+        },
+        {
+            "root": "pages/address",
+            "name": "packageAddress",
+            "pages": [
+                "list",
+                "edit"
+            ]
+        },
+        {
+            "root": "pages/logistics",
+            "name": "packageLogistics",
+            "pages": [
+                "tracking"
+            ]
+        },
+        {
+            "root": "pages/distribution",
+            "name": "packageDistribution",
+            "pages": [
+                "directed-invites",
+                "directed-invite",
+                "team",
+                "team-member",
+                "invite-poster",
+                "business-center",
+                "stock-logs",
+                "commission-logs",
+                "earning-rules",
+                "goods-fund-transfer-history",
+                "withdraw-history",
+                "promotion-progress",
+                "fund-pool"
+            ]
+        },
+        {
+            "root": "pages/wallet",
+            "name": "packageWallet",
+            "pages": [
+                "index",
+                "agent-wallet",
+                "recharge-order"
+            ]
+        },
+        {
+            "root": "pages/points",
+            "name": "packagePoints",
+            "pages": [
+                "index"
+            ]
+        },
+        {
+            "root": "pages/lottery",
+            "name": "packageLottery",
+            "pages": [
+                "lottery",
+                "claim"
+            ]
+        },
+        {
+            "root": "pages/coupon",
+            "name": "packageCoupon",
+            "pages": [
+                "center",
+                "list",
+                "claim",
+                "exchange"
+            ]
+        },
+        {
+            "root": "pages/slash",
+            "name": "packageSlash",
+            "pages": [
+                "list",
+                "detail"
+            ]
+        },
+        {
+            "root": "pages/group",
+            "name": "packageGroup",
+            "pages": [
+                "list",
+                "detail"
+            ]
+        }
+    ],
+    "preloadRule": {
+        "pages/index/index": {
+            "network": "wifi",
+            "packages": ["packageProduct", "packageProductBundle", "packageOrder"]
+        },
+        "pages/category/category": {
+            "network": "wifi",
+            "packages": ["packageProduct", "packageProductBundle", "packageOrder"]
+        },
+        "pages/user/user": {
+            "network": "wifi",
+            "packages": ["packageOrder", "packageAfterSale", "packageWallet", "packagePoints"]
+        },
+        "pages/cart/cart": {
+            "network": "wifi",
+            "packages": ["packageOrder"]
+        }
+    },
+    "tabBar": {
+        "custom": true,
+        "color": "#9ca3af",
+        "selectedColor": "#3D6BB3",
+        "backgroundColor": "#ffffff",
+        "borderStyle": "white",
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "商城首页",
+                "iconPath": "assets/tabbar-icons/home.png",
+                "selectedIconPath": "assets/tabbar-icons/home-active.png"
+            },
+            {
+                "pagePath": "pages/category/category",
+                "text": "全部商品",
+                "iconPath": "assets/tabbar-icons/category.png",
+                "selectedIconPath": "assets/tabbar-icons/category-active.png"
+            },
+            {
+                "pagePath": "pages/activity/activity",
+                "text": "热门活动",
+                "iconPath": "assets/tabbar-icons/activity.png",
+                "selectedIconPath": "assets/tabbar-icons/activity-active.png"
+            },
+            {
+                "pagePath": "pages/user/user",
+                "text": "我的",
+                "iconPath": "assets/tabbar-icons/user.png",
+                "selectedIconPath": "assets/tabbar-icons/user-active.png"
+            }
+        ]
+    },
+    "window": {
+        "navigationBarBackgroundColor": "#1E4A6D",
+        "navigationBarTitleText": "臻选",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#F4F8FA"
+    },
+    "permission": {
+        "scope.userLocation": {
+            "desc": "用于按当前位置推荐附近门店，并支持地图选点查找最近服务站点"
+        }
+    },
+    "style": "v2",
+    "sitemapLocation": "sitemap.json",
+    "lazyCodeLoading": "requiredComponents"
+}

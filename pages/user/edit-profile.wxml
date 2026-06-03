@@ -1,0 +1,113 @@
+<view class="container">
+  <view class="bootstrap-guide" wx:if="{{showBootstrapGuide}}">
+    <text class="bootstrap-guide-title">完善昵称和头像后即可继续使用</text>
+    <text class="bootstrap-guide-desc">微信小程序不支持静默读取头像昵称，首次登录需要你手动确认一次。完成后将默认显示你的微信头像和昵称，本页才能离开。</text>
+    <view class="bootstrap-guide-actions">
+      <button class="bootstrap-guide-btn bootstrap-guide-btn-primary" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">使用微信头像</button>
+      <button class="bootstrap-guide-btn" bindtap="onEditNickname">使用微信昵称</button>
+    </view>
+  </view>
+
+  <!-- 导航栏：bootstrap 锁定中隐藏返回按钮，避免误以为可以跳过 -->
+  <view class="nav-bar">
+    <view class="nav-back" wx:if="{{!bootstrapLocked}}" bindtap="onBack">
+      <text class="nav-back-icon">‹</text>
+      <text class="nav-back-text">返回</text>
+    </view>
+    <view class="nav-back" wx:else>
+      <text class="nav-back-text" style="color:#94a3b8;">首次登录</text>
+    </view>
+    <text class="nav-title">编辑资料</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <!-- 头像 -->
+  <view class="profile-section">
+    <view class="profile-item" bindtap="onSelectAvatar">
+      <text class="profile-label">头像</text>
+      <view class="profile-right">
+        <image class="profile-avatar" src="{{userInfo.avatar || userInfo.avatar_url || '/assets/images/default-avatar.svg'}}" mode="aspectFill"></image>
+        <text class="profile-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 昵称 -->
+  <view class="profile-section">
+    <view class="profile-item" bindtap="onEditNickname">
+      <text class="profile-label">昵称</text>
+      <view class="profile-right">
+        <text class="profile-value">{{userInfo.nick_name || userInfo.nickname || '微信用户'}}</text>
+        <text class="profile-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="profile-section">
+    <view class="profile-item" bindtap="onEditRealName">
+      <view class="profile-left">
+        <text class="profile-label">真实姓名</text>
+        <text class="profile-tip">大额微信提现实名校验使用</text>
+      </view>
+      <view class="profile-right">
+        <text class="profile-value">{{userInfo.real_name || '未填写'}}</text>
+        <text class="profile-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 首次登录完成入口：bootstrap 模式下出现，必须完善后才能点亮 -->
+  <view class="bootstrap-finish-bar" wx:if="{{bootstrapMode}}">
+    <button class="bootstrap-finish-btn {{bootstrapLocked ? 'is-disabled' : ''}}" bindtap="onFinishBootstrap">
+      {{bootstrapLocked ? '完善昵称和头像后继续' : '完成，开始使用'}}
+    </button>
+  </view>
+
+  <!-- 选择头像弹层 -->
+  <view class="avatar-pick-mask" wx:if="{{showAvatarPickSheet}}" catchtap="onCancelAvatarPick">
+    <view class="avatar-pick-panel" catchtap="stopP">
+      <text class="avatar-pick-title">更换头像</text>
+      <text class="avatar-pick-tip">点击下方按钮，从相册或微信头像中选择</text>
+      <button class="avatar-pick-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">选择头像</button>
+      <view class="avatar-pick-cancel" bindtap="onCancelAvatarPick">取消</view>
+    </view>
+  </view>
+
+  <!-- 修改昵称弹层 -->
+  <view class="nick-modal-mask" wx:if="{{showNicknameModal}}" catchtap="onCancelNickname">
+    <view class="nick-modal" catchtap="stopP">
+      <text class="nick-modal-title">修改昵称</text>
+      <input
+        class="nick-modal-input"
+        type="nickname"
+        placeholder="输入昵称或使用微信昵称"
+        maxlength="32"
+        value="{{newNickname}}"
+        bindinput="onNicknameInput"
+      />
+      <view class="nick-modal-actions">
+        <view class="nick-modal-btn nick-modal-btn-cancel" bindtap="onCancelNickname">取消</view>
+        <view class="nick-modal-btn nick-modal-btn-ok" bindtap="onConfirmNickname">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="nick-modal-mask" wx:if="{{showRealNameModal}}" catchtap="onCancelRealName">
+    <view class="nick-modal" catchtap="stopP">
+      <text class="nick-modal-title">填写真实姓名</text>
+      <text class="real-name-hint">用于大额微信提现实名校验，请填写与你微信实名一致的姓名。</text>
+      <input
+        class="nick-modal-input"
+        type="text"
+        placeholder="输入真实姓名"
+        maxlength="32"
+        value="{{newRealName}}"
+        bindinput="onRealNameInput"
+      />
+      <view class="nick-modal-actions">
+        <view class="nick-modal-btn nick-modal-btn-cancel" bindtap="onCancelRealName">取消</view>
+        <view class="nick-modal-btn nick-modal-btn-ok" bindtap="onConfirmRealName">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

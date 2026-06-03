@@ -1,0 +1,214 @@
+<!--pages/group/detail.wxml-->
+<view class="container">
+  <view class="nav-bar" style="padding-top: {{navTopPadding}}px;">
+    <view class="nav-back" bindtap="onBack">
+      <image class="nav-icon" src="/assets/icons/arrow-left.svg" mode="aspectFit"/>
+    </view>
+    <text class="nav-title">拼团详情</text>
+    <view class="nav-placeholder"/>
+  </view>
+
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="skeleton-block hero-skeleton"></view>
+    <view class="skeleton-block card-skeleton"></view>
+    <view class="skeleton-block card-skeleton"></view>
+  </view>
+
+  <block wx:if="{{!loading && detail}}">
+    <!-- 用户订单状态横幅 -->
+    <view class="my-status-banner my-status-{{detail.my_payment_status}}" wx:if="{{detail.my_payment_status}}">
+      <view class="my-status-left">
+        <text class="my-status-role">{{detail.is_leader ? '我发起的团' : '我参与的团'}}</text>
+        <text class="my-status-text">{{detail._myStatusText}}</text>
+      </view>
+      <view class="my-status-right">
+        <view class="my-status-btn" wx:if="{{detail.my_payment_status === 'unpaid'}}" bindtap="onGoPayMyOrder">去支付</view>
+        <view class="my-status-btn my-status-btn-secondary" wx:elif="{{detail.my_payment_status === 'cancelled' && detail.status === 'open'}}" bindtap="onJoin">重新参团</view>
+        <view class="my-status-order-link" wx:elif="{{detail._canViewLogistics}}" bindtap="onGoMyLogistics">查看物流</view>
+        <view class="my-status-order-link" wx:elif="{{detail._canViewOrder}}" bindtap="onGoMyOrder">查看订单</view>
+      </view>
+    </view>
+
+    <view class="hero-shell">
+      <view class="hero-card">
+        <image class="hero-product-img" src="{{detail.product && (detail.product.images && detail.product.images[0] || detail.product.image || detail.product.image_url || detail.product.cover_image) || '/assets/icons/package.svg'}}" mode="aspectFill"/>
+        <view class="hero-copy">
+          <view class="hero-badge-row">
+            <text class="hero-badge">拼团特惠</text>
+            <view class="status-badge status-{{detail.status}}">
+              <text>{{statusTextMap[detail.status] || detail.status}}</text>
+            </view>
+          </view>
+          <text class="hero-title">{{detail.product && detail.product.name || '商品'}}</text>
+          <view class="detail-tags" wx:if="{{detail._saveNum > 0}}">
+            <text class="d-tag d-tag-hot">立省 ¥{{detail._savePerUnit}}</text>
+            <text class="d-tag">{{detail.min_members}}人起拼</text>
+          </view>
+          <view class="price-row">
+            <view class="price-main">
+              <text class="price-label">拼团价</text>
+              <text class="group-price">¥{{detail.group_price}}</text>
+            </view>
+            <view class="price-side">
+              <text class="price-label">单买价</text>
+              <text class="original-price">¥{{detail._listPriceVal || detail.original_price || (detail.product && detail.product.retail_price) || '-'}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="hero-stats">
+        <view class="stat-card">
+          <text class="stat-label">成团进度</text>
+          <text class="stat-value">{{detail.current_members || 0}}/{{detail.min_members || 2}}</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-label">还差人数</text>
+          <text class="stat-value">{{detail._needMore || 0}}</text>
+        </view>
+        <view class="stat-card" wx:if="{{detail.status === 'open' && !detail._expired}}">
+          <text class="stat-label">剩余时间</text>
+          <text class="stat-value">{{detail._remainHours}}h</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card progress-card">
+      <view class="section-head">
+        <text class="section-title">拼团进度</text>
+        <text class="section-side">{{detail.current_members || 0}}/{{detail.min_members || 2}}人</text>
+      </view>
+
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{detail._progressPct}}%;"/>
+      </view>
+
+      <view class="member-list" wx:if="{{detail.members && detail.members.length > 0}}">
+        <view class="member-item {{item.is_me ? 'member-item--me' : ''}}" wx:for="{{detail.members}}" wx:key="id">
+          <view class="avatar-wrap">
+            <image class="member-avatar {{item.is_me ? 'member-avatar--me' : ''}}" src="{{item.user && (item.user.avatar || item.user.avatar_url || item.user.avatarUrl) || '/assets/icons/user.svg'}}" mode="aspectFill"/>
+            <text class="owner-tag" wx:if="{{item.is_leader}}">团长</text>
+            <text class="me-tag" wx:elif="{{item.is_me}}">我</text>
+          </view>
+          <text class="member-name">{{item.is_me ? '我' : (item.user && (item.user.nick_name || item.user.nickname || item.user.nickName) || '成员')}}</text>
+        </view>
+        <view class="member-item" wx:for="{{detail._needMore}}" wx:key="*this">
+          <view class="avatar-empty"/>
+          <text class="member-name empty-name">待加入</text>
+        </view>
+      </view>
+
+      <view class="notice-row" wx:if="{{detail.status === 'open' && !detail._expired}}">
+        <image src="/assets/icons/clock.svg" class="icon-xs" mode="aspectFit"/>
+        <text class="notice-text">还剩 {{detail._remainHours}}小时{{detail._remainMins}}分钟结束</text>
+      </view>
+      <view class="notice-row" wx:if="{{detail.status === 'open' && detail._needMore > 0}}">
+        <image src="/assets/icons/users.svg" class="icon-xs" mode="aspectFit"/>
+        <text class="notice-text">还差 {{detail._needMore}} 人成团 · 满{{detail.min_members}}人即享拼团价</text>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <text class="section-title block-title">活动规则</text>
+      <view class="rule-line"><text class="rule-dot"></text><text>本团最多 {{detail._maxCap}} 人，以付款顺序为准。</text></view>
+      <view class="rule-line" wx:if="{{detail._expireHours}}"><text class="rule-dot"></text><text>开团后 {{detail._expireHours}} 小时内未满员则自动结束。</text></view>
+      <view class="rule-line" wx:if="{{detail.activity && detail.activity.stock_limit > 0}}"><text class="rule-dot"></text><text>已拼 {{detail._soldCount}} 件 · 剩余 {{detail._stockRemain}} 件。</text></view>
+      <view class="rule-line"><text class="rule-dot"></text><text>成团后进入发货流程，未成团按规则退款。</text></view>
+    </view>
+
+    <view class="section-card" wx:if="{{detail.activity && detail.activity.stock_limit > 0}}">
+      <view class="section-head">
+        <text class="section-title">全网抢购</text>
+        <text class="section-side">已抢 {{detail._soldPct}}%</text>
+      </view>
+      <view class="progress-bar stock-progress">
+        <view class="progress-fill" style="width: {{detail._soldPct}}%;"/>
+      </view>
+    </view>
+
+    <view class="section-card" wx:if="{{detail._productSummary}}">
+      <text class="section-title block-title">商品亮点</text>
+      <text class="desc-body">{{detail._productSummary}}</text>
+    </view>
+
+    <view class="trust-bar">
+      <text class="trust-item">正品保障</text>
+      <text class="trust-sep">|</text>
+      <text class="trust-item">成团发货</text>
+      <text class="trust-sep">|</text>
+      <text class="trust-item">喊好友更省</text>
+    </view>
+
+    <view class="state-banner success-banner" wx:if="{{detail.status === 'success'}}">
+      <text class="state-title">恭喜成团</text>
+      <text class="state-desc">拼团成功，订单已进入发货流程。</text>
+    </view>
+
+    <view class="state-banner fail-banner" wx:if="{{detail.status === 'fail' || detail.status === 'cancelled'}}">
+      <text class="state-title">拼团未成功</text>
+      <text class="state-desc">人数未凑足，活动已结束。</text>
+    </view>
+  </block>
+
+  <view class="bottom-bar" wx:if="{{!loading && detail}}">
+    <block wx:if="{{detail.status === 'open' && detail.my_payment_status === 'paid'}}">
+      <button class="btn-col-share share-button-reset" wx:if="{{detail.is_member}}" open-type="share">
+        <image src="/assets/icons/share.svg" class="btn-icon" mode="aspectFit"/>
+        <text class="btn-col-main">邀请好友</text>
+        <text class="btn-col-sub">差{{detail._needMore}}人</text>
+      </button>
+      <view class="btn-join-wrap">
+        <view class="btn-disabled btn-status-note">
+          <text>已参团，等待成团</text>
+        </view>
+      </view>
+    </block>
+    <block wx:elif="{{detail.status === 'open' && detail.my_payment_status === 'unpaid'}}">
+      <view class="btn-join-wrap full-width">
+        <view class="btn-join btn-pay" bindtap="onGoPayMyOrder">
+          <text class="btn-line1">去支付</text>
+          <text class="btn-line2">支付后自动加入拼团</text>
+        </view>
+      </view>
+    </block>
+    <block wx:elif="{{detail.status === 'open' && detail.my_payment_status === 'cancelled'}}">
+      <view class="btn-join-wrap full-width">
+        <view class="btn-join" bindtap="onJoin">
+          <text class="btn-line1">重新参团</text>
+          <text class="btn-line2">原订单已取消，可重新参团</text>
+        </view>
+      </view>
+    </block>
+    <block wx:elif="{{detail.status === 'open'}}">
+      <view class="btn-join-wrap full-width">
+        <view class="btn-join" bindtap="onJoin">
+          <text class="btn-line1">¥{{detail.group_price}} 去参团</text>
+          <text class="btn-line2" wx:if="{{detail._saveNum > 0}}">拼团省¥{{detail._savePerUnit}} · 库存{{detail._stockRemain}}件</text>
+          <text class="btn-line2" wx:else>支付成功后锁定名额</text>
+        </view>
+      </view>
+    </block>
+    <block wx:elif="{{detail.status === 'success' && detail._canViewLogistics}}">
+      <view class="btn-join-wrap full-width">
+        <view class="btn-join" bindtap="onGoMyLogistics">
+          <text class="btn-line1">查看物流</text>
+          <text class="btn-line2">{{detail._successActionSubText}}</text>
+        </view>
+      </view>
+    </block>
+    <block wx:elif="{{detail.status === 'success' && detail._canViewOrder}}">
+      <view class="btn-join-wrap full-width">
+        <view class="btn-join" bindtap="onGoMyOrder">
+          <text class="btn-line1">查看订单</text>
+          <text class="btn-line2">{{detail._successActionSubText}}</text>
+        </view>
+      </view>
+    </block>
+    <view class="btn-disabled success-done" wx:elif="{{detail.status === 'success'}}">
+      <text>拼团成功，订单同步中</text>
+    </view>
+    <view class="btn-disabled" wx:elif="{{detail.status === 'fail' || detail.status === 'cancelled'}}">
+      <text>拼团已结束</text>
+    </view>
+  </view>
+</view>
