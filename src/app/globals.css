@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  /* 色彩系统：米白 + 金色 + 深棕 + 暖灰 */
+  --color-background: #FAF7F4;
+  --color-surface: #FFFFFF;
+  --color-surface-warm: #F5EFE8;
+
+  --color-primary: #1A1208;
+  --color-primary-light: #3D2B1A;
+
+  --color-gold: #B8973A;
+  --color-gold-light: #D4AF5A;
+  --color-gold-pale: #F0E6C8;
+
+  --color-muted: #8C7B6B;
+  --color-border: #E8DDD0;
+  --color-border-light: #F0E8DC;
+
+  /* 字体 */
+  --font-sans: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Georgia", "Times New Roman", serif;
+
+  /* 圆角 */
+  --radius: 0.75rem;
+  --radius-sm: 0.375rem;
+  --radius-lg: 1.25rem;
+  --radius-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+/* 手机端滚动条隐藏 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* 页面最大宽度限制（模拟手机端） */
+.phone-frame {
+  max-width: 390px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* 金色装饰线 */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+/* 过渡动画 */
+.transition-base {
+  transition: all 0.2s ease;
+}
