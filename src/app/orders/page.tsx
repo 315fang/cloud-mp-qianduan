@@ -52,6 +52,14 @@ const mockOrders = [
     expressNo: "",
   },
   {
+    id: "2024112500005",
+    status: "paid" as const,
+    date: "2024-11-25",
+    items: [{ product: products[5], qty: 1 }],
+    total: 288,
+    expressNo: "",
+  },
+  {
     id: "2024110800004",
     status: "refund" as const,
     date: "2024-11-08",
