@@ -106,6 +106,35 @@ export default function ProfilePage() {
           />
 
           <div className="relative px-5 pt-5 pb-5">
+            {/* 快捷按钮 - 地址、优惠券、消息 */}
+            <div className="absolute top-4 right-4 flex items-center gap-1.5">
+              <Link
+                href="/profile/address"
+                className="w-8 h-8 flex items-center justify-center rounded-full"
+                style={{ background: "rgba(232,87,58,0.1)" }}
+                aria-label="地址"
+              >
+                <MapPin size={14} className="text-[#E8573A]" strokeWidth={2} />
+              </Link>
+              <Link
+                href="/profile/coupons"
+                className="w-8 h-8 flex items-center justify-center rounded-full"
+                style={{ background: "rgba(184,151,58,0.1)" }}
+                aria-label="优惠券"
+              >
+                <Gift size={14} className="text-[#B8973A]" strokeWidth={2} />
+              </Link>
+              <Link
+                href="/profile/notifications"
+                className="relative w-8 h-8 flex items-center justify-center rounded-full"
+                style={{ background: "rgba(124,74,193,0.1)" }}
+                aria-label="消息"
+              >
+                <Bell size={14} className="text-[#7C4AC7]" strokeWidth={2} />
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#E8573A] rounded-full text-white text-[9px] flex items-center justify-center font-bold">3</span>
+              </Link>
+            </div>
+
             {/* 头像 + 昵称 + 会员号 */}
             <div className="flex items-center gap-3 mb-4">
               <div
@@ -190,7 +219,7 @@ export default function ProfilePage() {
           <div className="px-4 pt-3 pb-1 border-b border-[#F0E8DC]">
             <span className="text-sm font-bold text-[#1A1208]">我的服务</span>
           </div>
-          <div className="grid grid-cols-4 gap-y-4 px-4 py-4">
+          <div className="grid grid-cols-5 gap-y-4 px-4 py-4">
             {serviceItems.map(({ icon: Icon, label, href, color, badge }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
                 <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>
