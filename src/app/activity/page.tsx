@@ -56,12 +56,12 @@ const festivals = [
 
 // 快捷入口
 const quickEntries = [
-  { icon: Zap, label: "限时秒杀", href: "/activity/flash", color: "#B8973A", bg: "#FBF5E6" },
-  { icon: Users, label: "拼团活动", href: "/activity/group", color: "#4A7CC7", bg: "#EBF1FB" },
-  { icon: Scissors, label: "砍价专区", href: "/activity/slash", color: "#B85A2A", bg: "#FBF0E8" },
-  { icon: Trophy, label: "抽奖大转盘", href: "/activity/lottery", color: "#7C4AC7", bg: "#F3EBFB" },
+  { icon: Zap, label: "限时秒杀", href: "/products?category=serum", color: "#B8973A", bg: "#FBF5E6" },
+  { icon: Users, label: "拼团活动", href: "/group", color: "#4A7CC7", bg: "#EBF1FB" },
+  { icon: Scissors, label: "砍价专区", href: "/slash", color: "#B85A2A", bg: "#FBF0E8" },
+  { icon: Trophy, label: "抽奖大转盘", href: "/lottery", color: "#7C4AC7", bg: "#F3EBFB" },
   { icon: Gift, label: "积分兑换", href: "/profile/points", color: "#2D8C5E", bg: "#E8F5EE" },
-  { icon: Star, label: "每日签到", href: "/activity/checkin", color: "#C7A42A", bg: "#FBF8E6" },
+  { icon: Star, label: "每日签到", href: "/questionnaire", color: "#C7A42A", bg: "#FBF8E6" },
 ];
 
 // 拼团活动
@@ -217,7 +217,7 @@ export default function ActivityPage() {
               <Flame size={16} className="text-[#B8973A]" />
               <h2 id="flash-heading" className="text-base font-bold text-[#1A1208]">限时秒杀</h2>
             </div>
-            <Link href="/activity/flash" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
               全部 <ChevronRight size={13} />
             </Link>
           </div>
@@ -266,7 +266,7 @@ export default function ActivityPage() {
               <Users size={16} className="text-[#4A7CC7]" />
               <h2 id="group-heading" className="text-base font-bold text-[#1A1208]">拼团专区</h2>
             </div>
-            <Link href="/activity/group" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+            <Link href="/group" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
               全部 <ChevronRight size={13} />
             </Link>
           </div>
@@ -330,7 +330,7 @@ export default function ActivityPage() {
               <Scissors size={16} className="text-[#B85A2A]" />
               <h2 id="slash-heading" className="text-base font-bold text-[#1A1208]">砍价专区</h2>
             </div>
-            <Link href="/activity/slash" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+            <Link href="/slash" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
               全部 <ChevronRight size={13} />
             </Link>
           </div>
@@ -356,7 +356,7 @@ export default function ActivityPage() {
                       style={{ width: `${act.percent}%` }}
                     />
                   </div>
-                  <p className="text-[9px] text-[#8C7B6B] mt-0.5">已有 {act.percent}% 砍价成功</p>
+                  <p className="text-[9px] text-[#8C7B6B] mt-0.5">已有 {act.percent}% 砍价��功</p>
                 </div>
                 <Link
                   href={`/activity/slash/${act.id}`}
@@ -370,7 +370,7 @@ export default function ActivityPage() {
         </section>
 
         {/* 抽奖大转盘入口 */}
-        <Link href="/activity/lottery" className="block">
+        <Link href="/lottery" className="block">
           <div className="bg-gradient-to-r from-[#1A1208] to-[#3D2B1A] rounded-2xl overflow-hidden px-5 py-5 relative">
             <div className="absolute top-0 right-0 w-28 h-28 rounded-full bg-[#B8973A]/20"
               style={{ transform: "translate(30%, -40%)" }}
