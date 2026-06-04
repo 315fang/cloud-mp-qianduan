@@ -1,0 +1,112 @@
+<view class="page">
+  <scroll-view scroll-y class="scroll" refresher-enabled refresher-triggered="{{refreshing}}" bindrefresherrefresh="onRefresherRefresh">
+    <!-- Hero 区域 -->
+    <view class="hero card-enter">
+      <view class="hero-glow"></view>
+      <text class="hero-kicker">领券服务</text>
+      <text class="hero-title">领券中心</text>
+      <text class="hero-subtitle">领券后下单可直接使用。</text>
+
+      <view class="hero-metrics">
+        <view class="metric-card metric-card-main">
+          <text class="metric-value">{{claimableCount}}</text>
+          <text class="metric-label">可领取</text>
+        </view>
+        <view class="metric-card">
+          <text class="metric-value">{{unusedCount}}</text>
+          <text class="metric-label">未使用</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 可领券包 -->
+    <view class="section card-enter delay-1">
+      <view class="section-head">
+        <view class="section-copy">
+          <text class="section-title">可领券包</text>
+          <text class="section-subtitle">每个账号默认限领一次。</text>
+        </view>
+        <view class="section-link ripple" bindtap="onOpenMyCoupons">我的券包 ›</view>
+      </view>
+
+      <view class="coupon-list" wx:if="{{coupons.length > 0}}">
+        <view class="coupon-card {{item.card_muted ? 'coupon-card-muted' : ''}} card-enter delay-{{index < 4 ? index : 3}}" wx:for="{{coupons}}" wx:key="id">
+          <view class="coupon-card-rail"></view>
+          <view class="coupon-value-area">
+            <text class="coupon-value">{{item.value_text}}</text>
+            <text class="coupon-threshold">{{item.threshold_text}}</text>
+          </view>
+
+          <view class="coupon-copy-area">
+            <view class="coupon-copy-top">
+              <text class="coupon-name">{{item.coupon_name}}</text>
+              <text class="coupon-window">{{item.claim_window_text}}</text>
+            </view>
+            <text class="coupon-desc" wx:if="{{item.description}}">{{item.description}}</text>
+            <text class="coupon-desc" wx:else>领取后 {{item.valid_days}} 天内有效</text>
+
+            <view class="coupon-meta-row">
+              <text class="coupon-meta">{{item.quota_text}}</text>
+              <text class="coupon-meta">{{item.stock_text}}</text>
+            </view>
+
+            <view class="coupon-bottom-row">
+              <text class="coupon-hint">{{item.claim_hint}}</text>
+              <view
+                class="coupon-action ripple {{item.action_disabled ? 'coupon-action-disabled' : ''}}"
+                bindtap="onClaimCoupon"
+                data-id="{{item.id}}"
+              >
+                {{claimingCouponId == item.id ? '处理中' : item.action_text}}
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="state-card" wx:elif="{{loading}}">
+        <view class="loading-spinner"></view>
+        <text class="state-title">加载中</text>
+        <text class="state-desc">正在加载券包。</text>
+      </view>
+
+      <view class="state-card" wx:else>
+        <image class="state-icon" src="/assets/icons/tag.svg" mode="aspectFit"></image>
+        <text class="state-title">暂无券包</text>
+        <text class="state-desc">请稍后再试。</text>
+      </view>
+    </view>
+
+    <!-- 我的券包 -->
+    <view class="section my-section card-enter delay-2">
+      <view class="section-head">
+        <view class="section-copy">
+          <text class="section-title">我的券包</text>
+          <text class="section-subtitle">展示未使用券包。</text>
+        </view>
+        <view class="section-link ripple" bindtap="onOpenCouponPack">{{mineCoupons.length > 0 ? '查看全部' : (isLoggedIn ? '去领券' : '去登录')}} ›</view>
+      </view>
+
+      <view class="mine-preview-list" wx:if="{{mineCoupons.length > 0}}">
+        <view class="mine-preview-card ripple" wx:for="{{mineCoupons}}" wx:key="id" bindtap="onOpenMyCoupons">
+          <view class="mine-preview-left">
+            <text class="mine-preview-value">{{item.value_text}}</text>
+            <text class="mine-preview-threshold">{{item.threshold_text}}</text>
+          </view>
+          <view class="mine-preview-right">
+            <text class="mine-preview-name">{{item.coupon_name}}</text>
+            <text class="mine-preview-expire">{{item.expire_text}} 到期</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="state-card state-card-light" wx:else>
+        <image class="state-icon" src="{{isLoggedIn ? '/assets/icons/inbox.svg' : '/assets/icons/shield.svg'}}" mode="aspectFit"></image>
+        <text class="state-title">{{isLoggedIn ? '暂无券包' : '登录看券'}}</text>
+        <text class="state-desc">{{isLoggedIn ? '领取后可在此查看。' : '登录后查看已领取券包。'}}</text>
+      </view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </scroll-view>
+</view>

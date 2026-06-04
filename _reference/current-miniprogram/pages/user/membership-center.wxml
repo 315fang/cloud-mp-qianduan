@@ -1,0 +1,149 @@
+<!--pages/user/membership-center.wxml - 权益中心-->
+<view class="page">
+  <view class="state-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="state-text">加载中...</text>
+  </view>
+
+  <view class="state-wrap" wx:elif="{{loadError}}">
+    <view class="state-mark">!</view>
+    <text class="state-text">加载失败</text>
+    <view class="retry-btn ripple" bindtap="onRetry">重试</view>
+  </view>
+
+  <scroll-view scroll-y class="scroll" wx:else>
+    <view class="account-hero card-enter">
+      <view class="hero-top">
+        <view class="hero-copy">
+          <text class="hero-kicker">权益中心</text>
+          <text class="hero-title">{{currentRoleName || 'VIP用户'}}</text>
+          <text class="hero-sub">{{subLine || '已达到当前最高成长进度'}}</text>
+        </view>
+        <view class="role-pill">
+          <text class="role-pill-label">成长进度</text>
+          <text class="role-pill-value">{{currentTierName || '基础进度'}}</text>
+        </view>
+      </view>
+
+      <view class="hero-progress">
+        <view class="hero-progress-head">
+          <text>成长进度</text>
+          <text>{{barPercent}}%</text>
+        </view>
+        <view class="hero-progress-track">
+          <view class="hero-progress-fill" style="width: {{barPercent}}%;"></view>
+        </view>
+      </view>
+
+      <view class="asset-grid">
+        <view class="asset-item asset-item-strong ripple" bindtap="goPoints">
+          <text class="asset-label">可用积分</text>
+          <text class="asset-value">{{pointsBalance}}</text>
+          <text class="asset-desc">抵扣 / 兑换</text>
+        </view>
+        <view class="asset-item ripple" bindtap="goCouponList">
+          <text class="asset-label">可用券</text>
+          <text class="asset-value">{{couponCount}}</text>
+          <text class="asset-desc">下单可用</text>
+        </view>
+        <view class="asset-item">
+          <text class="asset-label">成长值</text>
+          <text class="asset-value">{{growthValue}}</text>
+          <text class="asset-desc">累计成长</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="coupon-claim-card card-enter delay-1 ripple" bindtap="goCouponCenter">
+      <view class="coupon-claim-icon-wrap">
+        <image class="coupon-claim-icon" src="/assets/icons/tag.svg" mode="aspectFit"></image>
+      </view>
+      <view class="coupon-claim-copy">
+        <text class="coupon-claim-kicker">权益可用</text>
+        <text class="coupon-claim-title">领券中心</text>
+        <text class="coupon-claim-desc">领取优惠券，下单时直接抵扣</text>
+      </view>
+      <view class="coupon-claim-action">
+        <text class="coupon-claim-count">{{couponCount}}</text>
+        <text class="coupon-claim-unit">可用券</text>
+        <text class="coupon-claim-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="section identity-section card-enter delay-2">
+      <view class="section-head">
+        <view>
+          <text class="section-title">身份权益</text>
+          <text class="section-sub">一个会员身份，成长值只作为升级进度</text>
+        </view>
+      </view>
+
+      <view class="identity-card">
+        <view class="identity-row">
+          <image class="identity-icon" src="/assets/icons/crown.svg" mode="aspectFit"></image>
+          <view class="identity-copy">
+            <text class="identity-title">成长值进度</text>
+            <text class="identity-desc">{{consumeCardSummary.progressText || subLine || '成长值用于身份升级与权益进度'}}</text>
+          </view>
+          <text class="identity-value">{{consumeCardSummary.tierName || currentTierName || '基础进度'}}</text>
+        </view>
+
+        <view class="identity-divider"></view>
+
+        <view class="identity-row">
+          <image class="identity-icon" src="/assets/icons/users.svg" mode="aspectFit"></image>
+          <view class="identity-copy">
+            <text class="identity-title">当前身份</text>
+            <text class="identity-desc">{{agentCardSummary.statusText || '积分与团队权益以当前身份为准'}}</text>
+          </view>
+          <text class="identity-value">{{agentCardSummary.roleName || currentRoleName || '普通用户'}}</text>
+        </view>
+      </view>
+
+      <view class="agent-route-card" wx:if="{{agentUpgradeProgress.visible}}">
+        <view class="agent-route-head">
+          <view>
+            <text class="agent-route-label">升级路径</text>
+            <text class="agent-route-title">{{agentUpgradeProgress.title}}</text>
+          </view>
+          <text class="upgrade-status {{agentUpgradeProgress.statusClass}}">{{agentUpgradeProgress.statusText}}</text>
+        </view>
+        <text class="agent-route-summary">{{agentUpgradeProgress.summary}}</text>
+
+        <view class="agent-path" wx:if="{{agentUpgradeProgress.recommended_path}}">
+          <view class="agent-path-head">
+            <text class="agent-path-title">{{agentUpgradeProgress.recommended_path.title}}</text>
+            <text class="agent-path-percent">{{agentUpgradeProgress.recommended_path.percent}}%</text>
+          </view>
+          <view class="agent-path-track">
+            <view class="agent-path-fill" style="width: {{agentUpgradeProgress.bestPercent}}%;"></view>
+          </view>
+          <view class="agent-path-action ripple" bindtap="goMemberPrivileges">
+            <text>查看完整门槛</text>
+            <text class="agent-path-action-arrow">›</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="team-entry ripple" wx:if="{{agentCardSummary.showEntry}}" bindtap="goTeamCenter">
+        <image class="team-entry-icon" src="/assets/icons/users.svg" mode="aspectFit"></image>
+        <text class="team-entry-title">进入团队中心</text>
+        <text class="team-entry-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="privilege-guide card-enter delay-3 ripple" bindtap="goMemberPrivileges">
+      <view class="privilege-guide-copy">
+        <text class="privilege-guide-kicker">身份权益手册</text>
+        <text class="privilege-guide-title">查看完整身份权益和升级门槛</text>
+        <text class="privilege-guide-desc">当前页只保留你的当前身份和成长进度，完整规则单独查看</text>
+      </view>
+      <view class="privilege-guide-action">
+        <image class="privilege-guide-icon" src="/assets/icons/crown.svg" mode="aspectFit"></image>
+        <text class="privilege-guide-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

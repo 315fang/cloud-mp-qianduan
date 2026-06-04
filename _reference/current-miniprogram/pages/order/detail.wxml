@@ -1,0 +1,396 @@
+<!--pages/order/detail.wxml - 订单详情-->
+<view class="container" wx:if="{{order}}">
+  <view class="order-bubble {{orderBubbleVisible ? 'order-bubble-show' : 'order-bubble-hide'}}">
+    <view class="order-bubble-inner">
+      <view class="order-bubble-dot"></view>
+      <text class="order-bubble-text">{{orderBubbleText}}</text>
+    </view>
+  </view>
+
+  <!-- 订单状态（如有退款，覆盖为退款状态） -->
+  <view class="status-card status-{{hasActiveRefund ? 'refunding' : order.status}}">
+    <text class="status-text">{{hasActiveRefund ? (activeRefund.display_status_text || '退款中') : (order.display_status_text || order.status)}}</text>
+    <text class="status-desc" wx:if="{{order.status === 'pending' && payCountdownText}}">剩余支付时间 {{payCountdownText}}</text>
+    <text class="status-desc" wx:elif="{{hasActiveRefund}}">{{activeRefund.display_status_desc || statusDescMap['refunding']}}</text>
+    <text class="status-desc" wx:else>{{order.display_status_desc || statusDescMap[order.status] || ''}}</text>
+  </view>
+
+  <!-- 拼团订单流程进度 -->
+  <view class="progress-card" wx:if="{{!hasActiveRefund && order.type === 'group'}}">
+    <view class="progress-step {{order.paid_at || order.status !== 'pending_payment' ? 'done' : 'active'}}">
+      <view class="step-dot"></view>
+      <text class="step-label">付款</text>
+    </view>
+    <view class="progress-line {{order.group_completed_at || order.status === 'paid' || order.status === 'shipped' || order.status === 'completed' ? 'done' : ''}}"></view>
+    <view class="progress-step {{order.group_completed_at || order.status === 'paid' || order.status === 'shipped' || order.status === 'completed' ? 'done' : (order.status === 'pending_group' ? 'active' : '')}}">
+      <view class="step-dot"></view>
+      <text class="step-label">成团</text>
+    </view>
+    <view class="progress-line {{order.shipped_at ? 'done' : ''}}"></view>
+    <view class="progress-step {{order.shipped_at ? 'done' : (order.status === 'paid' || order.status === 'agent_confirmed' || order.status === 'shipping_requested' ? 'active' : '')}}">
+      <view class="step-dot"></view>
+      <text class="step-label">发货</text>
+    </view>
+    <view class="progress-line {{order.completed_at ? 'done' : ''}}"></view>
+    <view class="progress-step {{order.completed_at ? 'done' : (order.status === 'shipped' ? 'active' : '')}}">
+      <view class="step-dot"></view>
+      <text class="step-label">收货</text>
+    </view>
+  </view>
+
+  <!-- 普通订单流程进度 -->
+  <view class="progress-card" wx:if="{{!hasActiveRefund && order.type !== 'group'}}">
+    <view class="progress-step {{order.paid_at || (order.status !== 'pending' && order.status !== 'pending_payment' && order.status !== 'cancelled') ? 'done' : (order.status === 'pending' || order.status === 'pending_payment' ? 'active' : '')}}">
+      <view class="step-dot"></view>
+      <text class="step-label">付款</text>
+    </view>
+    <view class="progress-line {{order.agent_confirmed_at ? 'done' : ''}}"></view>
+    <view class="progress-step {{order.agent_confirmed_at ? 'done' : (order.status === 'paid' ? 'active' : '')}}">
+      <view class="step-dot"></view>
+      <text class="step-label">确认</text>
+    </view>
+    <view class="progress-line {{order.shipped_at ? 'done' : ''}}"></view>
+    <view class="progress-step {{order.shipped_at ? 'done' : (order.status === 'agent_confirmed' || order.status === 'shipping_requested' ? 'active' : '')}}">
+      <view class="step-dot"></view>
+      <text class="step-label">发货</text>
+    </view>
+    <view class="progress-line {{order.completed_at ? 'done' : ''}}"></view>
+    <view class="progress-step {{order.completed_at ? 'done' : (order.status === 'shipped' ? 'active' : '')}}">
+      <view class="step-dot"></view>
+      <text class="step-label">收货</text>
+    </view>
+  </view>
+
+  <!-- 退款信息 -->
+  <view class="card refund-card" wx:if="{{activeRefund}}">
+    <view class="card-title card-title-danger">退款信息</view>
+    <view class="info-row">
+      <text class="info-label">退款状态</text>
+      <text class="info-value info-value-danger">{{activeRefund.display_status_text || refundStatusText[activeRefund.status] || '处理中'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">退款金额</text>
+      <text class="info-value info-value-danger">¥{{activeRefund.display_amount}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.display_refunded_cash_total}}">
+      <text class="info-label">累计已退</text>
+      <text class="info-value">¥{{order.display_refunded_cash_total}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.display_remaining_refundable_cash}}">
+      <text class="info-label">剩余可退</text>
+      <text class="info-value">¥{{order.display_remaining_refundable_cash}}</text>
+    </view>
+    <view class="info-row" wx:if="{{activeRefund.display_refund_target_text}}">
+      <text class="info-label">退款去向</text>
+      <text class="info-value">{{activeRefund.display_refund_target_text}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">退款类型</text>
+      <text class="info-value">{{activeRefund.type === 'return_refund' ? '退货退款' : '仅退款'}}</text>
+    </view>
+    <view class="refund-action" bindtap="onViewRefund">
+      <text class="refund-link">查看退款详情 ›</text>
+    </view>
+  </view>
+
+  <!-- 收货地址 -->
+  <view class="card" wx:if="{{order.address}}">
+    <view class="card-title">收货信息</view>
+    <view class="info-row">
+      <text class="info-label">收货人</text>
+      <text class="info-value">{{order.address.receiver_name}} {{order.address.phone}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">地址</text>
+      <text class="info-value">{{order.address.province}} {{order.address.city}} {{order.address.district}} {{order.address.detail}}</text>
+    </view>
+  </view>
+
+  <!-- 到店自提凭证入口 -->
+  <view class="card pickup-card" wx:if="{{order.delivery_type === 'pickup' && order.status !== 'pending' && order.status !== 'cancelled'}}">
+    <view class="card-title">到店自提</view>
+    <text class="pickup-hint">请前往下单时选择的自提门店完成核销，只有该门店人员可以核销此订单。</text>
+    <view class="info-row" wx:if="{{order.pickupStation}}">
+      <text class="info-label">自提门店</text>
+      <text class="info-value">{{order.pickupStation.name}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.pickupStation}}">
+      <text class="info-label">门店地址</text>
+      <text class="info-value">{{order.pickupStation.city}} {{order.pickupStation.address || ''}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.pickupStation && order.pickupStation.contact_phone}}">
+      <text class="info-label">联系电话</text>
+      <text class="info-value">{{order.pickupStation.contact_phone}}</text>
+    </view>
+    <button class="pickup-btn" bindtap="onPickupCredentialTap">查看自提凭证</button>
+  </view>
+
+  <!-- 商品信息 -->
+  <view class="card product-card">
+    <view class="card-title">商品信息</view>
+    <view class="bundle-order-head" wx:if="{{order.bundle_meta}}">
+      <text class="bundle-order-title">{{order.bundle_meta.title}}</text>
+      <text class="bundle-order-subtitle" wx:if="{{order.bundle_meta.subtitle}}">{{order.bundle_meta.subtitle}}</text>
+      <text class="bundle-order-price">优选价 ¥{{order.display_pay_amount}}</text>
+    </view>
+    <view class="bundle-order-items" wx:if="{{order.bundle_meta && order.items && order.items.length > 0}}">
+      <view class="bundle-order-item" wx:for="{{order.items}}" wx:key="refund_item_key">
+        <image class="product-img" src="{{item.product && item.product.images && item.product.images[0] || item.product && item.product.image || ''}}" mode="aspectFill" wx:if="{{item.product && ((item.product.images && item.product.images.length > 0) || item.product.image)}}" binderror="onBundleItemImageError" data-index="{{index}}"></image>
+        <view class="product-img-placeholder" wx:else>
+          <image class="placeholder-icon" src="/assets/icons/package.svg" mode="aspectFit"/>
+        </view>
+        <view class="product-info">
+          <text class="product-name">{{item.product && item.product.name || item.snapshot_name || item.name || '商品'}}</text>
+          <text class="product-spec" wx:if="{{item.sku && item.sku.spec_value}}">{{item.sku.spec_value}}</text>
+          <text class="product-spec" wx:elif="{{item.snapshot_spec}}">{{item.snapshot_spec}}</text>
+          <text class="product-price">¥{{item.display_unit_price || item.display_price || item.price || item.unit_price || item.item_amount}}</text>
+        </view>
+        <text class="product-qty">×{{item.qty || item.quantity || 1}}</text>
+      </view>
+    </view>
+    <view class="product-row" wx:elif="{{order.product}}">
+      <image class="product-img" src="{{order.product.images && order.product.images[0] || order.product.image || ''}}" mode="aspectFill" wx:if="{{(order.product.images && order.product.images.length > 0) || order.product.image}}" binderror="onProductImageError"></image>
+      <view class="product-img-placeholder" wx:else>
+        <image class="placeholder-icon" src="/assets/icons/package.svg" mode="aspectFit"/>
+      </view>
+      <view class="product-info">
+        <text class="product-name">{{order.product.name || '商品'}}</text>
+        <text class="product-price">合计 ¥{{order.total_amount}}</text>
+        <text class="product-qty">×{{order.quantity}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 活动承接 -->
+  <view class="card activity-card activity-card-{{order.activityInfo.type}}" wx:if="{{order.activityInfo}}">
+    <view class="activity-card-head">
+      <view>
+        <text class="activity-label">{{order.activityInfo.label}}</text>
+        <text class="activity-title">{{order.activityInfo.title}}</text>
+      </view>
+      <view class="activity-status">{{order.activityInfo.type === 'group' ? '拼团' : (order.activityInfo.type === 'lottery' ? '抽奖' : '砍价')}}</view>
+    </view>
+    <text class="activity-desc">{{order.activityInfo.desc}}</text>
+    <view class="activity-action {{order.activityInfo.disabled ? 'activity-action-disabled' : ''}}" bindtap="onViewActivity">
+      {{order.activityInfo.actionText}}
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="card info-card">
+    <view class="card-title">订单信息</view>
+    <view class="info-row">
+      <text class="info-label">订单编号</text>
+      <text class="info-value">{{order.order_no}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">下单时间</text>
+      <text class="info-value">{{order.createdAt || order.created_at}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.paid_at}}">
+      <text class="info-label">支付时间</text>
+      <text class="info-value">{{order.paid_at}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.shipped_at}}">
+      <text class="info-label">发货时间</text>
+      <text class="info-value">{{order.shipped_at}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.completed_at}}">
+      <text class="info-label">签收时间</text>
+      <text class="info-value">{{order.completed_at}}</text>
+    </view>
+    <view class="price-breakdown-head">金额明细</view>
+    <view class="info-row">
+      <text class="info-label">商品原价合计</text>
+      <text class="info-value">¥{{order.display_original_amount}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.shipping_fee > 0}}">
+      <text class="info-label">运费</text>
+      <text class="info-value">¥{{order.display_shipping_fee}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.coupon_discount > 0}}">
+      <text class="info-label">券包抵扣</text>
+      <text class="info-value discount-amount">-¥{{order.display_coupon_discount}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.points_discount > 0}}">
+      <text class="info-label">积分抵扣</text>
+      <text class="info-value discount-amount">-¥{{order.display_points_discount}}（已用 {{order.points_used}} 积分）</text>
+    </view>
+    <view class="info-row" wx:if="{{order.bundle_discount > 0}}">
+      <text class="info-label">组合套装优惠</text>
+      <text class="info-value discount-amount">-¥{{order.display_bundle_discount}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.has_savings}}">
+      <text class="info-label">优惠合计</text>
+      <text class="info-value discount-amount">-¥{{order.display_savings_total}}</text>
+    </view>
+    <view class="info-row info-row-total-pay">
+      <text class="info-label">实付金额</text>
+      <text class="info-value price-value-strong">¥{{order.display_pay_amount}}</text>
+    </view>
+    <view class="price-breakdown-foot" wx:if="{{order.has_discount_breakdown}}">实付 = 商品原价 + 运费 − 券包、积分、组合等优惠（若有漏项以对账实付为准）。</view>
+    <view class="info-row" wx:if="{{order.display_growth_reward_text}}">
+      <text class="info-label">本单成长值</text>
+      <text class="info-value growth-value-text">{{order.display_growth_reward_text}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.refunded_cash_total > 0}}">
+      <text class="info-label">累计已退</text>
+      <text class="info-value">¥{{order.display_refunded_cash_total}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.remaining_refundable_cash >= 0}}">
+      <text class="info-label">剩余可退</text>
+      <text class="info-value">¥{{order.display_remaining_refundable_cash}}</text>
+    </view>
+    <!-- 支付方式说明 -->
+    <view class="info-row" wx:if="{{order.status !== 'pending' && order.status !== 'cancelled'}}">
+      <text class="info-label">支付方式</text>
+      <view class="payment-method-tag-wrap">
+        <text wx:if="{{order.pay_amount == 0}}" class="payment-tag payment-tag-free">免费</text>
+        <text wx:elif="{{order.payment_method === 'goods_fund'}}" class="payment-tag payment-tag-wallet">{{order.display_payment_method_text || '货款支付'}}</text>
+        <text wx:elif="{{order.payment_method === 'wallet'}}" class="payment-tag payment-tag-wallet">{{order.display_payment_method_text || '余额支付'}}</text>
+        <text wx:else class="payment-tag payment-tag-wechat">{{order.display_payment_method_text || '微信支付'}}</text>
+        <text wx:if="{{order.points_used > 0}}" class="payment-tag payment-tag-points">+积分抵扣</text>
+        <text wx:if="{{order.coupon_discount > 0}}" class="payment-tag payment-tag-coupon">+券包</text>
+      </view>
+    </view>
+    <view class="info-row" wx:if="{{order.status !== 'pending' && order.status !== 'cancelled' && order.display_refund_target_text}}">
+      <text class="info-label">退款去向</text>
+      <text class="info-value">{{order.display_refund_target_text}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.tracking_no}}">
+      <text class="info-label">物流单号</text>
+      <view class="info-value-row" bindtap="onCopyTrackingNo">
+        <text class="info-value">{{order.tracking_no}}</text>
+        <text class="copy-btn">复制</text>
+      </view>
+    </view>
+    <view class="info-row" wx:if="{{(order.status === 'shipped' || order.status === 'completed') && !order.tracking_no && order.delivery_type !== 'pickup'}}">
+      <text class="info-label">物流单号</text>
+      <text class="info-value info-muted">暂未录入，请稍后在「查看物流」重试或联系客服</text>
+    </view>
+    <view class="info-row" wx:if="{{order.logistics_company}}">
+      <text class="info-label">快递公司</text>
+      <text class="info-value">{{order.logistics_company_label || order.logistics_company}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">发货方式</text>
+      <text class="info-value">{{order.fulfillment_type === 'Agent' || order.fulfillment_type === 'Agent_Pending' || order.fulfillment_type === 'agent' || order.fulfillment_type === 'agent_pending' ? '团队代理发货' : '平台直发'}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.memo}}">
+      <text class="info-label">备注</text>
+      <text class="info-value">{{order.memo}}</text>
+    </view>
+  </view>
+
+  <!-- 佣金结算提示 -->
+  <view class="card settlement-card" wx:if="{{order.status === 'completed' && order.settlement_at}}">
+    <view class="settlement-info">
+      <image class="settlement-icon-img" src="/assets/icons/clock.svg" mode="aspectFit"></image>
+      <text class="settlement-text" wx:if="{{!order.commission_settled}}">佣金将在 {{order.settlement_at}} 后结算</text>
+      <text class="settlement-text" wx:else>佣金已结算</text>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-bar">
+    <!-- 有活跃退款时：只显示查看退款 -->
+    <block wx:if="{{hasActiveRefund}}">
+      <view class="bar-action-group">
+        <view class="bar-action-row single">
+          <view class="btn-primary" bindtap="onViewRefund">查看退款进度</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 无活跃退款，正常按钮 -->
+    <block wx:else>
+      <!-- 待付款 -->
+      <block wx:if="{{order.status === 'pending' || order.status === 'pending_payment'}}">
+        <!-- 代理商：货款余额支付 + 微信支付两个选项 -->
+        <block wx:if="{{isAgent && walletBalance > 0}}">
+          <view class="bar-action-group">
+            <view class="wallet-pay-hint">
+              <text class="wallet-pay-label">货款余额可用</text>
+              <text class="wallet-pay-value">¥{{walletBalanceDisplay}}</text>
+            </view>
+            <view class="bar-action-row">
+              <view class="btn-outline" bindtap="onCancelOrder">取消订单</view>
+              <view class="btn-wallet" bindtap="onPayOrderWithWallet">货款余额支付</view>
+            </view>
+            <view class="bar-action-row single" style="margin-top:12rpx;">
+              <view class="btn-primary-ghost" bindtap="onPayOrder">微信支付</view>
+            </view>
+          </view>
+        </block>
+        <!-- 普通用户 / 余额不足代理：仅微信支付 -->
+        <block wx:else>
+          <view class="bar-action-group">
+            <view class="bar-action-row">
+              <view class="btn-outline" bindtap="onCancelOrder">取消订单</view>
+              <view class="btn-primary" bindtap="onPayOrder">立即支付</view>
+            </view>
+          </view>
+        </block>
+      </block>
+      <!-- 待成团：已支付等待拼团成功 -->
+      <block wx:if="{{order.status === 'pending_group'}}">
+        <view class="bar-action-group">
+          <view class="bar-action-row">
+            <view class="btn-outline" bindtap="onApplyRefund">退出拼团</view>
+            <view class="btn-primary" bindtap="onViewActivity">查看拼团</view>
+          </view>
+        </view>
+      </block>
+      <!-- 待发货：仅已支付未进入代理履约流程时可申请退款 -->
+      <block wx:if="{{order.status === 'paid' && !order.is_lottery_reward_order}}">
+        <view class="bar-action-group">
+          <view class="bar-action-row single">
+            <view class="btn-outline" bindtap="onApplyRefund">申请退款</view>
+          </view>
+        </view>
+      </block>
+      <!-- 已发货 -->
+      <block wx:if="{{order.status === 'shipped'}}">
+        <view class="bar-action-group">
+          <view class="bar-action-row single" wx:if="{{canViewLogistics}}">
+            <view class="btn-soft" bindtap="onViewLogistics">查看物流</view>
+          </view>
+          <view class="bar-action-row">
+            <view class="btn-outline" wx:if="{{!order.is_lottery_reward_order}}" bindtap="onApplyRefund">申请退款</view>
+            <view class="btn-primary" bindtap="onConfirmReceive">确认收货</view>
+          </view>
+        </view>
+      </block>
+      <!-- 已完成 -->
+      <block wx:if="{{order.status === 'completed'}}">
+        <view class="bar-action-group">
+          <view class="bar-action-link-row" wx:if="{{!reviewed}}">
+            <view class="btn-text-link" bindtap="onGoReview">评价</view>
+          </view>
+          <view class="bar-action-row">
+            <view class="btn-soft" bindtap="onViewLogistics" wx:if="{{canViewLogistics}}">查看物流</view>
+            <view class="btn-outline" bindtap="onApplyRefund" wx:if="{{!order.is_lottery_reward_order && (!latestRefund || latestRefund.status === 'rejected' || latestRefund.status === 'cancelled')}}">申请售后</view>
+            <view class="btn-outline" bindtap="onViewRefund" wx:if="{{latestRefund && latestRefund.status !== 'rejected' && latestRefund.status !== 'cancelled'}}">查看退款</view>
+          </view>
+        </view>
+      </block>
+    </block>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading-container" wx:if="{{loading && !loadError}}">
+  <view class="loading-spinner"></view>
+  <text class="loading-text">加载中...</text>
+</view>
+
+<!-- 加载失败 -->
+<view class="loading-container error-container" wx:if="{{loadError}}">
+  <image class="error-icon" src="/assets/icons/alert-circle.svg" mode="aspectFit"/>
+  <text class="error-text">加载失败</text>
+  <view class="retry-btn" bindtap="onRetryLoad">点击重试</view>
+</view>
+
+<!-- 品牌动画（复制单号反馈等） -->
+<brand-animation id="brandAnimation"></brand-animation>
+<portal-password-dialog id="portalPasswordDialog" />

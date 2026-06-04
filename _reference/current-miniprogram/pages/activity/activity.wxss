@@ -1,0 +1,538 @@
+/* ══════════════════════════════════
+   活动页样式 — 重构版
+   顶部：Banner 轮播（含 Banner + 常驻/限时活动）
+   下方：活动入口与套餐活动
+   ══════════════════════════════════ */
+
+.container {
+  min-height: 100vh;
+  background: var(--page-shell-bg);
+  background-color: var(--brand-pearl);
+}
+
+/* ── 壁纸主题 ── */
+.container.wallpaper-warm-gold { background: linear-gradient(180deg,#F5EBD4 0%,#FCF6E8 35%,#EDE4D0 100%); }
+.container.wallpaper-mist-blue { background: linear-gradient(180deg,#E8E0F0 0%,#F0EBF8 40%,#E8E0F0 100%); }
+.container.wallpaper-dark      { background: linear-gradient(180deg,#0f0f23 0%,#1a1a2e 36%,#16213e 100%); }
+
+/* ══ Banner 区 ══ */
+.banner-wrap {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.banner-wrap-empty {
+  background: transparent;
+}
+
+.banner-swiper {
+  width: 100%;
+  height: 460rpx;
+  display: block;
+}
+
+.banner-swiper swiper-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-img,
+.banner-fallback {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 文字叠层 */
+.banner-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 60rpx 36rpx 36rpx;
+  background: linear-gradient(180deg, transparent 0%, rgba(20,15,10,0.72) 100%);
+}
+
+.banner-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 10rpx;
+}
+
+.banner-tag-pill {
+  display: inline-block;
+  font-size: 18rpx;
+  letter-spacing: 2rpx;
+  color: rgba(255,247,240,0.70);
+  text-transform: uppercase;
+}
+
+.banner-countdown {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(0,0,0,0.38);
+}
+
+.banner-countdown-text {
+  font-size: 20rpx;
+  color: #FFF7F0;
+}
+
+.banner-title {
+  display: block;
+  font-size: 46rpx;
+  font-weight: 700;
+  color: #FFF7F0;
+  line-height: 1.2;
+  margin-bottom: 8rpx;
+}
+
+.banner-subtitle {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(255,247,240,0.78);
+  line-height: 1.6;
+}
+
+/* 指示点 */
+.banner-dots {
+  position: absolute;
+  bottom: 20rpx;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.banner-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  transition: all 0.3s;
+}
+
+.banner-dot.active {
+  width: 28rpx;
+  border-radius: 5rpx;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+/* ══ 主内容区 ══ */
+.content-area {
+  padding: 24rpx 24rpx 0;
+  background: transparent;
+}
+
+/* ── section 块 ── */
+.section-block {
+  margin-bottom: 28rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1c1917;
+}
+
+.section-desc {
+  font-size: 22rpx;
+  color: #A09080;
+}
+
+/* ── 子卡片容器 ── */
+.sub-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.activity-sub-card {
+  height: 220rpx;
+}
+
+.activity-sub-card-overlay {
+  background: linear-gradient(100deg, rgba(18,12,8,0.68) 0%, rgba(18,12,8,0.14) 100%);
+}
+
+.activity-sub-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+}
+
+.activity-sub-card-head-main {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  min-width: 0;
+}
+
+.activity-sub-card-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 18rpx;
+  color: rgba(255,255,255,0.84);
+  background: rgba(255,255,255,0.12);
+  border: 1rpx solid rgba(255,255,255,0.14);
+}
+
+.activity-sub-card-fallback--flash_sale {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 52%, #a78bfa 100%);
+}
+
+.activity-sub-card-fallback--bundle_zone {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 56%, #667eea 100%);
+}
+
+.activity-sub-card-fallback--lottery {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 52%, #667eea 100%);
+}
+
+.activity-sub-card-fallback--group {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 56%, #a78bfa 100%);
+}
+
+.activity-sub-card-fallback--slash {
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 56%, #667eea 100%);
+}
+
+.quick-entry-card {
+  position: relative;
+  min-height: 224rpx;
+  box-sizing: border-box;
+  padding: 26rpx 24rpx;
+  border-radius: 28rpx;
+  overflow: hidden;
+  box-shadow: 0 10rpx 28rpx rgba(30, 74, 109, 0.10);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.quick-entry-card--hero {
+  grid-column: span 2;
+  min-height: 248rpx;
+}
+
+.quick-entry-card--flash_sale {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 52%, #a78bfa 100%);
+}
+
+.quick-entry-card--bundle_zone {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 56%, #667eea 100%);
+}
+
+.quick-entry-card--lottery {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 52%, #667eea 100%);
+}
+
+.quick-entry-card--group {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 56%, #a78bfa 100%);
+}
+
+.quick-entry-card--slash {
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 56%, #667eea 100%);
+}
+
+.quick-entry-sheen {
+  position: absolute;
+  inset: auto -60rpx -40rpx auto;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  filter: blur(2rpx);
+}
+
+.quick-entry-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.quick-entry-icon-wrap {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.18);
+  border: 1rpx solid rgba(255,255,255,0.16);
+}
+
+.quick-entry-icon {
+  width: 34rpx;
+  height: 34rpx;
+  filter: brightness(0) invert(1);
+}
+
+.quick-entry-tail {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.quick-entry-pill {
+  padding: 8rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 18rpx;
+  color: rgba(255,255,255,0.84);
+  background: rgba(255,255,255,0.12);
+  border: 1rpx solid rgba(255,255,255,0.14);
+}
+
+.quick-entry-arrow {
+  font-size: 32rpx;
+  color: rgba(255,255,255,0.88);
+}
+
+.quick-entry-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  min-width: 0;
+}
+
+.quick-entry-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FFFDF8;
+  line-height: 1.3;
+}
+
+.quick-entry-sub {
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.82);
+}
+
+/* ── 活动卡片 ── */
+.activity-card {
+  position: relative;
+  width: 100%;
+  height: 220rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(33,26,20,0.09);
+}
+
+.section-main-card {
+  margin-bottom: 16rpx;
+}
+
+.sub-card {
+  /* 子卡片使用相同高度 */
+  height: 220rpx;
+}
+
+.activity-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.activity-card-fallback {
+  position: absolute;
+  inset: 0;
+}
+
+/* 卡片信息叠层 */
+.activity-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(18,12,8,0.68) 0%, rgba(18,12,8,0.10) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+  gap: 12rpx;
+}
+
+.activity-card-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-card-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #FFF7F0;
+  line-height: 1.25;
+  margin-bottom: 8rpx;
+}
+
+.activity-card-sub {
+  display: block;
+  font-size: 22rpx;
+  color: rgba(255,247,240,0.70);
+  line-height: 1.5;
+}
+
+.activity-card-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-left: 18rpx;
+}
+
+.activity-card-entry {
+  min-width: 188rpx;
+  padding: 16rpx 22rpx;
+  border-radius: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.10);
+  border: 1rpx solid rgba(255,255,255,0.28);
+  box-shadow: inset 0 0 0 1rpx rgba(255,255,255,0.05);
+}
+
+.activity-card-entry-text {
+  font-size: 22rpx;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 1rpx;
+  color: rgba(255,247,240,0.92);
+}
+
+.activity-card-arrow {
+  font-size: 40rpx;
+  color: rgba(255,255,255,0.55);
+  flex-shrink: 0;
+}
+
+.activity-preview-card {
+  height: 152rpx;
+}
+
+.activity-preview-fallback {
+  background: linear-gradient(135deg, #EEF4F8 0%, #DDE8F0 100%);
+}
+
+.activity-preview-overlay {
+  background: linear-gradient(100deg, rgba(30,74,109,0.88) 0%, rgba(30,74,109,0.60) 100%);
+}
+
+.activity-preview-title {
+  font-size: 28rpx;
+  margin-bottom: 6rpx;
+}
+
+.activity-preview-sub {
+  font-size: 20rpx;
+}
+
+.card-press {
+  opacity: 0.88;
+  transform: scale(0.985);
+}
+
+/* ── 限时活动：倒计时行 ── */
+.limited-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+  flex-wrap: wrap;
+}
+
+.countdown-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  background: rgba(102, 126, 234, 0.82);
+  border-radius: 999rpx;
+  padding: 4rpx 14rpx;
+}
+
+.countdown-chip-icon {
+  font-size: 18rpx;
+}
+
+.countdown-chip-text {
+  font-size: 20rpx;
+  color: #FFF;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* 限时卡片给左边加一条紫色细边 */
+.limited-card {
+  border-left: 4rpx solid rgba(102, 126, 234, 0.7);
+}
+
+/* ── 空态 ── */
+.section-empty {
+  padding: 40rpx 0;
+  text-align: center;
+}
+
+.section-empty-text {
+  font-size: 26rpx;
+  color: #B0A396;
+}
+
+/* ── 加载失败 ── */
+.state-error {
+  padding: 60rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.state-icon-text {
+  font-size: 48rpx;
+  color: #C9B9A8;
+}
+
+.state-title {
+  font-size: 28rpx;
+  color: #8A7A6E;
+}
+
+.state-action {
+  margin-top: 8rpx;
+  padding: 16rpx 40rpx;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 999rpx;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.25);
+}
+
+.state-action::after { border: none; }
+
+.safe-bottom {
+  /* Reserve the fixed custom tab bar so the last card is reachable. */
+  height: calc(120rpx + constant(safe-area-inset-bottom));
+  height: calc(120rpx + env(safe-area-inset-bottom));
+  min-height: 120rpx;
+}

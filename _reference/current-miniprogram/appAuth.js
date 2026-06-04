@@ -1,0 +1,267 @@
+/**
+ * appAuth.js — 云开发版认证模块
+ *
+ * 核心变更：
+ * - login() → 改为调用云函数 `login`，云函数内部通过 WXContext 自动获取 openid
+ * - 不再需要 wx.login() 获取 code，不再需要 JWT token
+ * - globalData 中移除 token 字段
+ */
+const { cloneDefaults, mergeDeep } = require('./utils/miniProgramConfig');
+const { syncLocalFavoritesToCloud } = require('./utils/favoriteSync');
+const { normalizeUserInfo } = require('./utils/userProfile');
+const { callFn } = require('./utils/cloud');
+const { enforceProfileBootstrap, enforceProfileBootstrapDeferred } = require('./utils/profileBootstrap');
+
+function isPlainObject(value) {
+    return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function normalizeLoginPayload(result) {
+    if (!isPlainObject(result)) return { userData: null, openid: '' };
+
+    const data = isPlainObject(result.data) ? result.data : null;
+    const userInfo = isPlainObject(result.userInfo) ? result.userInfo : null;
+    const userData = data || userInfo || result;
+    const openid = userData.openid || result.openid || '';
+
+    return { userData, openid };
+}
+
+function extractCachedOpenid(userInfo, openid) {
+    if (openid) return openid;
+    if (isPlainObject(userInfo) && userInfo.openid) return userInfo.openid;
+    return '';
+}
+
+function decodeLaunchValue(value) {
+    let text = value == null ? '' : String(value);
+    for (let i = 0; i < 2; i += 1) {
+        try {
+            const decoded = decodeURIComponent(text);
+            if (decoded === text) break;
+            text = decoded;
+        } catch (_) {
+            break;
+        }
+    }
+    return text.trim();
+}
+
+function isInviteCodeCandidate(value) {
+    return /^[A-Z0-9_-]{4,32}$/i.test(String(value || '').trim());
+}
+
+function parseInviteCodeFromLaunchValue(raw) {
+    const value = decodeLaunchValue(raw);
+    if (!value) return '';
+    const directMatch = value.match(/^i=([A-Z0-9_-]{4,32})$/i);
+    if (directMatch) return directMatch[1].toUpperCase();
+    if (isInviteCodeCandidate(value)) return value.toUpperCase();
+
+    const queryText = value.includes('?') ? value.slice(value.indexOf('?') + 1).split('#')[0] : value.split('#')[0];
+    const parts = queryText.split('&');
+    for (const part of parts) {
+        const [rawKey, ...rawValueParts] = part.split('=');
+        const key = decodeLaunchValue(rawKey);
+        if (key !== 'i' && key !== 'invite') continue;
+        const code = decodeLaunchValue(rawValueParts.join('='));
+        if (isInviteCodeCandidate(code)) return code.toUpperCase();
+    }
+    return '';
+}
+
+module.exports = {
+    _captureInviteFromLaunch(options) {
+        try {
+            const q = options && options.query;
+            if (q && q.invite) {
+                wx.setStorageSync('pending_invite_code', String(q.invite).trim());
+            }
+            if (q && q.scene != null && q.scene !== '') {
+                this._parseSceneToPendingInvite(q.scene);
+            }
+            if (q && q.q != null && q.q !== '') {
+                this._parseSceneToPendingInvite(q.q);
+            }
+        } catch (e) {
+            /* ignore */
+        }
+    },
+
+    _parseSceneToPendingInvite(raw) {
+        try {
+            const code = parseInviteCodeFromLaunchValue(raw);
+            if (code) wx.setStorageSync('pending_invite_code', code.toUpperCase());
+        } catch (e) { /* ignore */ }
+    },
+
+    /**
+     * 从本地缓存恢复登录状态（云开发版：无需 token）
+     */
+    async autoLogin() {
+        try {
+            const userInfo = wx.getStorageSync('userInfo');
+            const cachedOpenid = wx.getStorageSync('openid');
+            const openid = extractCachedOpenid(userInfo, cachedOpenid);
+
+            if (userInfo && openid) {
+                const normalizedUser = normalizeUserInfo({ ...userInfo, openid });
+                if (!cachedOpenid) {
+                    wx.setStorageSync('openid', openid);
+                }
+                wx.removeStorageSync('token');
+                this.globalData.userInfo = normalizedUser;
+                this.globalData.openid = openid;
+                this.globalData.isLoggedIn = true;
+                wx.setStorageSync('userInfo', normalizedUser);
+
+                // 缓存恢复路径也要强制首次登录的完善流程：
+                // 老版本曾允许"稍后"跳过，遗留账号在 reLaunch 后会被锁定到 edit-profile。
+                // 这里 onLaunch 阶段第一帧未必有页面栈，用 deferred 等到下个 tick 再 reLaunch。
+                enforceProfileBootstrapDeferred(normalizedUser);
+
+                let pendingInviteCode = '';
+                try {
+                    pendingInviteCode = String(wx.getStorageSync('pending_invite_code') || '').trim().toUpperCase();
+                } catch (_) {
+                    pendingInviteCode = '';
+                }
+                if (pendingInviteCode) {
+                    try {
+                        await this.wxLogin();
+                    } catch (refreshErr) {
+                        console.warn('[Auth] 待绑定邀请码刷新登录失败:', refreshErr);
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('[Auth] 恢复缓存登录状态失败:', err);
+        }
+    },
+
+    /**
+     * 触发登录入口（供页面调用）
+     */
+    async triggerLogin(options) {
+        const { ensurePrivacyAuthorization } = require('./utils/privacy');
+        try {
+            await ensurePrivacyAuthorization();
+        } catch (err) {
+            return { success: false, reason: 'privacy_denied' };
+        }
+        try {
+            return await this.wxLogin(options);
+        } catch (err) {
+            return { success: false, reason: 'login_failed', err };
+        }
+    },
+
+    /**
+     * ★ 核心登录 — 调用云函数 login
+     *
+     * 原流程：wx.login() → 获取 code → POST /login → 后端换 openid + 写 DB → 返回 JWT
+     * 云开发：wx.cloud.callFunction('login') → 云函数中自动有 openid → 写云数据库 → 返回用户信息
+     */
+    async wxLogin(options = {}) {
+        try {
+            // 读取待绑定的会员码（如果有）
+            let inviteCode = '';
+            const ignorePendingInviteCode = !!(options && options.ignorePendingInviteCode);
+            try {
+                if (!ignorePendingInviteCode) {
+                    const pending = wx.getStorageSync('pending_invite_code');
+                    if (pending) inviteCode = String(pending).trim().toUpperCase();
+                }
+            } catch (e) { /* ignore */ }
+
+            // ★ 调用云函数 login（云函数内部通过 getWXContext() 获取 openid，无需 code）
+            const result = await callFn('login', {
+                invite_code: inviteCode || undefined
+            }, { showError: false });
+
+            if (!result || !result.success) {
+                throw new Error((result && result.message) || '登录失败');
+            }
+
+            // 清除已消费的会员码
+            if (!ignorePendingInviteCode) {
+                try { wx.removeStorageSync('pending_invite_code'); } catch (e) { /* ignore */ }
+            }
+
+            // 保存登录信息（注意：云开发版无 token）
+            // 云函数 login 返回 { success, data: { openid, ... } }，data 即 userInfo
+            const { userData, openid: userOpenid } = normalizeLoginPayload(result);
+            if (!userData || !userOpenid) {
+                throw new Error('登录响应缺少用户标识');
+            }
+
+            userData.openid = userOpenid;
+
+            const normalizedUser = normalizeUserInfo(userData);
+            this.globalData.userInfo = normalizedUser;
+            this.globalData.openid = userOpenid;
+            this.globalData.isLoggedIn = true;
+
+            wx.setStorageSync('userInfo', normalizedUser);
+            wx.setStorageSync('openid', userOpenid);
+            wx.removeStorageSync('token');
+
+            // 新用户优惠券提示
+            if (result.is_new_user || userData.is_new_user) {
+                this.globalData.isNewUser = true;
+                this._applyRegisterCouponPrompt(result);
+            }
+
+            // 等级提升提示
+            if (result.level_up || userData.level_up) {
+                this.globalData.levelUpInfo = {
+                    levelName: result.level_name || userData.level_name || ''
+                };
+            }
+
+            syncLocalFavoritesToCloud();
+
+            // 首次登录强制完善昵称+头像：所有 wxLogin 路径（用户中心登录、订单确认页静默登录、
+            // errorHandler 401 重登）在拿到 userInfo 后都要走这一关。
+            // 默认昵称（'新用户'/'微信用户'）或空头像将触发 wx.reLaunch 到 edit-profile?bootstrap=1。
+            enforceProfileBootstrap(normalizedUser);
+
+            return { ...result, userInfo: normalizedUser, openid: userOpenid };
+        } catch (err) {
+            console.error('[Auth] 云函数登录失败:', err);
+            throw err;
+        }
+    },
+
+    logout() {
+        this.globalData.userInfo = null;
+        this.globalData.openid = null;
+        this.globalData.isLoggedIn = false;
+        wx.removeStorageSync('userInfo');
+        wx.removeStorageSync('openid');
+        wx.removeStorageSync('token');
+    },
+
+    _applyRegisterCouponPrompt(result) {
+        try {
+            const { formatPromptBody } = require('./utils/lightPrompt');
+            const merged = mergeDeep(cloneDefaults(), this.globalData.miniProgramConfig || {});
+            const registerCoupon = merged.light_prompt_modals && merged.light_prompt_modals.register_coupon;
+            if (!registerCoupon || !registerCoupon.enabled) return;
+
+            const issued = Number(result.register_coupons_issued || 0);
+            if (issued <= 0 && !registerCoupon.show_without_coupon) return;
+
+            const template = issued > 0 && registerCoupon.body_when_issued
+                ? registerCoupon.body_when_issued
+                : registerCoupon.body;
+
+            this.globalData.pendingRegisterCouponPrompt = {
+                title: registerCoupon.title || '新人礼券',
+                content: formatPromptBody(template, { count: issued })
+            };
+        } catch (e) {
+            console.warn('[light prompt] register coupon', e);
+        }
+    }
+};

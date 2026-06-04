@@ -1,0 +1,127 @@
+<view class="service-page">
+  <view class="content-stack">
+    <view class="hero-shell">
+      <view class="hero-ribbon">
+        <text class="hero-ribbon-text">{{brandName}} 客服中心</text>
+      </view>
+
+      <view class="hero-header">
+        <view class="hero-copy">
+          <text class="screen-title">专属客服</text>
+        </view>
+        <view class="hero-mark">
+          <image class="hero-mark-icon" src="/assets/icons/headphones.svg" mode="aspectFit"></image>
+        </view>
+      </view>
+
+      <view class="hero-meta-row">
+        <view class="meta-pill" wx:if="{{customerServiceHours}}">
+          <image class="meta-pill-icon" src="/assets/icons/clock.svg" mode="aspectFit"></image>
+          <text class="meta-pill-text">{{customerServiceHours}}</text>
+        </view>
+        <view class="meta-pill meta-pill--soft">
+          <image class="meta-pill-icon" src="/assets/icons/shield.svg" mode="aspectFit"></image>
+          <text class="meta-pill-text">优先人工支持</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="surface-card command-card" wx:if="{{hasAny}}">
+      <view class="command-head">
+        <view>
+          <text class="command-title">当前推荐联系渠道</text>
+        </view>
+        <view class="advisor-status">可用</view>
+      </view>
+
+      <view class="command-core">
+        <view class="command-contact">
+          <text class="field-label">{{primaryContactLabel}}</text>
+          <text class="field-value" selectable>{{primaryContactText || '当前暂无可用联系方式'}}</text>
+          <view class="command-phone-row" wx:if="{{servicePhone && primaryContactText !== servicePhone}}">
+            <text class="command-phone-label">客服电话</text>
+            <text class="command-phone-value" selectable>{{servicePhone}}</text>
+          </view>
+          <text class="command-note">产品咨询、订单跟进、售后处理都可直接从这里发起。</text>
+        </view>
+
+        <view class="cta-stack">
+          <view class="btn btn-primary" bindtap="onPrimaryContactTap" hover-class="btn-primary-hover">
+            <text class="btn-label">{{primaryActionText}}</text>
+          </view>
+          <view
+            class="btn btn-secondary"
+            bindtap="onSecondaryContactTap"
+            hover-class="btn-secondary-hover"
+            wx:if="{{secondaryActionText}}"
+          >
+            <text class="btn-label">{{secondaryActionText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="surface-card surface-card--empty" wx:if="{{loaded && !hasAny}}">
+      <text class="empty-title">尚未配置客服方式</text>
+      <text class="empty-desc">当前暂无可用联系方式，请稍后再试。</text>
+    </view>
+
+    <view class="section-heading" wx:if="{{quickChannels.length}}">
+      <text class="section-heading-title">联系方式</text>
+    </view>
+
+    <view class="channel-grid" wx:if="{{quickChannels.length}}">
+      <view
+        class="channel-card"
+        wx:for="{{quickChannels}}"
+        wx:key="key"
+      >
+        <view class="channel-top">
+          <image
+            wx:if="{{item.image}}"
+            class="channel-image"
+            src="{{item.image}}"
+            mode="aspectFill"
+          ></image>
+          <view wx:else class="channel-icon-shell">
+            <image class="channel-icon" src="{{item.icon}}" mode="aspectFit"></image>
+          </view>
+          <view class="channel-copy">
+            <text class="channel-title">{{item.title}}</text>
+            <text class="channel-value" selectable>{{item.value}}</text>
+          </view>
+        </view>
+        <text class="channel-hint">{{item.hint}}</text>
+        <view
+          class="channel-action"
+          hover-class="channel-action-hover"
+          bindtap="onQuickActionTap"
+          data-action="{{item.action}}"
+        >
+          <text class="channel-action-text">{{item.actionText}}</text>
+          <text class="channel-action-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-heading section-heading--faq">
+      <text class="section-heading-title">常见问题</text>
+    </view>
+
+    <view class="surface-card surface-card--list">
+      <view
+        class="list-row"
+        wx:for="{{faqList}}"
+        wx:key="question"
+        bindtap="onFaqTap"
+        data-index="{{index}}"
+      >
+        <view class="list-row-body">
+          <text class="list-row-title">{{item.question}}</text>
+          <text class="list-row-sub">{{item.preview}}</text>
+        </view>
+        <text class="list-row-chevron">›</text>
+      </view>
+    </view>
+  </view>
+</view>

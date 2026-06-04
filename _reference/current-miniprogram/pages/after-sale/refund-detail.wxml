@@ -1,0 +1,206 @@
+<!-- pages/after-sale/refund-detail.wxml - 退款详情 -->
+<view class="container" wx:if="{{refund}}">
+  <!-- 状态卡片 -->
+  <view class="status-card status-{{refund.status}}">
+    <image class="status-icon-img" wx:if="{{refund.status === 'pending'}}" src="/assets/icons/clock.svg" mode="aspectFit"/>
+    <image class="status-icon-img" wx:if="{{refund.status === 'approved'}}" src="/assets/icons/check-circle.svg" mode="aspectFit"/>
+    <image class="status-icon-img" wx:if="{{refund.status === 'rejected'}}" src="/assets/icons/x.svg" mode="aspectFit"/>
+    <image class="status-icon-img" wx:if="{{refund.status === 'completed'}}" src="/assets/icons/check.svg" mode="aspectFit"/>
+    <image class="status-icon-img" wx:if="{{refund.status === 'cancelled'}}" src="/assets/icons/minus.svg" mode="aspectFit"/>
+    <text class="status-text">{{refund.display_status_text || refund.status}}</text>
+    <text class="status-desc" wx:if="{{refund.display_status_desc}}">{{refund.display_status_desc}}</text>
+  </view>
+
+  <view class="hub-link-row" bindtap="onGoOrderAfterSale" wx:if="{{refund.order && (refund.order.id || refund.order._id)}}">
+    <text>查看本单售后总览</text>
+    <text class="hub-link-arrow">›</text>
+  </view>
+
+  <view class="next-card" wx:if="{{refund.status !== 'completed' && refund.status !== 'cancelled' && refund.status !== 'rejected'}}">
+    <text class="next-label">下一步</text>
+    <text class="next-title" wx:if="{{refund.status === 'pending'}}">等待商家审核</text>
+    <text class="next-title" wx:elif="{{refund.type === 'return_refund' && refund.status === 'approved'}}">自行寄回并填写物流</text>
+    <text class="next-title" wx:elif="{{refund.status === 'approved'}}">等待退款到账</text>
+    <text class="next-title" wx:elif="{{refund.status === 'processing'}}">退款处理中</text>
+    <text class="next-title" wx:else>留意退款进度</text>
+    <text class="next-desc" wx:if="{{refund.status === 'pending'}}">审核通过后会继续退款流程。</text>
+    <text class="next-desc" wx:elif="{{refund.type === 'return_refund' && refund.status === 'approved'}}">本店无上门取件：请您自行联系快递寄回下方地址，寄出后在此页填写物流公司与单号。</text>
+    <text class="next-desc" wx:elif="{{refund.status === 'processing'}}">退款正在处理，请留意原支付账户到账情况。</text>
+    <text class="next-desc" wx:else>如长时间未更新，可联系客服处理。</text>
+  </view>
+
+  <view class="detail-actions" wx:if="{{refund.status === 'pending'}}">
+    <button class="cancel-refund-btn" loading="{{cancellingRefund}}" bindtap="onCancelRefund">取消申请</button>
+  </view>
+
+  <!-- 退款金额 -->
+  <view class="amount-card">
+    <text class="amount-label">退款金额</text>
+    <text class="amount-value">¥{{refund.display_amount}}</text>
+  </view>
+
+  <!-- 退款去向 -->
+  <view class="card refund-restore-card" wx:if="{{refund.order}}">
+    <view class="card-title">退款去向</view>
+    <view class="info-row" wx:if="{{refund.display_refund_target_text}}">
+      <text class="info-label">退回方式</text>
+      <text class="info-value restore-tag">{{refund.display_refund_target_text}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">金额说明</text>
+      <text class="info-value">按现金实付退回</text>
+    </view>
+  </view>
+
+  <view class="card points-refund-card" wx:if="{{refund.points_refund_amount > 0}}">
+    <view class="card-title">积分退还</view>
+    <text class="points-refund-body" wx:if="{{refund.status === 'completed'}}">退款已完成，已为您退回下单抵扣时使用的 <text class="points-refund-num">{{refund.points_refund_amount}}</text> 积分，已进入可用积分。您可在「我的 → 我的积分 → 积分流水」查看明细。</text>
+    <text class="points-refund-body" wx:else>退款办结后，将退回您下单时用于抵扣货款的 <text class="points-refund-num">{{refund.points_refund_amount}}</text> 积分（以实际到账为准）。\n这与订单里「奖励积分」是否冻结、是否待发放不是同一回事，请不用担心混淆。</text>
+  </view>
+
+  <view class="card return-guide-card" wx:if="{{refund.type === 'return_refund' && (refund.status === 'approved' || refund.status === 'processing')}}">
+    <view class="card-title">自行邮寄退货</view>
+    <view class="return-mini-steps">
+      <text class="mini-step-line"><text class="mini-step-tag">①</text>自行下单任意快递，收件信息填下方退货地址</text>
+      <text class="mini-step-line"><text class="mini-step-tag">②</text>请勿发到付；建议保留寄件凭证</text>
+      <text class="mini-step-line"><text class="mini-step-tag">③</text>在本页「退货物流」填写公司与运单号</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{refund.type === 'return_refund' && (refund.status === 'approved' || refund.status === 'processing')}}">
+    <view class="card-title address-title-row">
+      <text>退货寄回地址</text>
+      <button class="copy-address-btn" wx:if="{{refund.return_address_text}}" bindtap="onCopyReturnAddress">复制</button>
+    </view>
+    <block wx:if="{{refund.return_address_text}}">
+      <view class="address-row" wx:if="{{refund.return_address.receiver_name || refund.return_address.receiver_phone}}">
+        <text class="address-label">收件人</text>
+        <text class="address-value">{{refund.return_address.receiver_name}}{{refund.return_address.receiver_name && refund.return_address.receiver_phone ? ' ' : ''}}{{refund.return_address.receiver_phone}}</text>
+      </view>
+      <view class="address-row">
+        <text class="address-label">地址</text>
+        <text class="address-value">{{refund.return_address.province}}{{refund.return_address.city}}{{refund.return_address.district}}{{refund.return_address.detail}}</text>
+      </view>
+      <view class="address-row" wx:if="{{refund.return_address.postal_code}}">
+        <text class="address-label">邮编</text>
+        <text class="address-value">{{refund.return_address.postal_code}}</text>
+      </view>
+      <view class="address-note" wx:if="{{refund.return_address.note}}">{{refund.return_address.note}}</view>
+    </block>
+    <view class="address-empty" wx:else>商家暂未配置寄回地址，请联系客服确认后再寄回。</view>
+  </view>
+
+  <view class="card" wx:if="{{refund.type === 'return_refund' && (refund.status === 'approved' || refund.status === 'processing')}}">
+    <view class="card-title">退货物流（自行寄回后填写）</view>
+    <view class="form-row">
+      <text class="form-label">快递公司</text>
+      <input
+        class="form-input"
+        placeholder-class="form-input-placeholder"
+        placeholder="选填，如顺丰速运"
+        value="{{returnShippingForm.return_company}}"
+        bindinput="onInputReturnCompany"
+        cursor-spacing="24"
+      />
+    </view>
+    <view class="form-row">
+      <text class="form-label">物流单号</text>
+      <input
+        class="form-input"
+        placeholder-class="form-input-placeholder"
+        placeholder="请填写退货物流单号"
+        value="{{returnShippingForm.return_tracking_no}}"
+        bindinput="onInputReturnTrackingNo"
+        cursor-spacing="24"
+      />
+    </view>
+    <button class="submit-btn" loading="{{submittingReturnShipping}}" bindtap="onSubmitReturnShipping">
+      {{refund.return_tracking_no ? '更新退货物流' : '提交退货物流'}}
+    </button>
+  </view>
+
+  <!-- 商品信息 -->
+  <view class="card" wx:if="{{refund.order && refund.order.product}}">
+    <view class="card-title">商品信息</view>
+    <view class="product-row">
+      <image class="product-img" src="{{refund.order.product && refund.order.product.images && refund.order.product.images[0] || ''}}" mode="aspectFill" wx:if="{{refund.order.product && refund.order.product.images && refund.order.product.images.length > 0}}"></image>
+      <view class="product-info">
+        <text class="product-name">{{refund.order.product.name}}</text>
+        <text class="product-price">订单金额: ¥{{refund.order.display_total_amount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款信息 -->
+  <view class="card">
+    <view class="card-title">退款信息</view>
+    <view class="info-row">
+      <text class="info-label">退款单号</text>
+      <text class="info-value">{{refund.refund_no}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">退款类型</text>
+      <text class="info-value">{{typeText[refund.type] || '退款'}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.display_payment_method_text}}">
+      <text class="info-label">支付方式</text>
+      <text class="info-value">{{refund.display_payment_method_text}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.display_refund_target_text}}">
+      <text class="info-label">退款去向</text>
+      <text class="info-value">{{refund.display_refund_target_text}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">退款原因</text>
+      <text class="info-value">{{reasonText[refund.reason] || refund.reason}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.description}}">
+      <text class="info-label">问题描述</text>
+      <text class="info-value">{{refund.description}}</text>
+    </view>
+    <view class="info-row evidence-row" wx:if="{{refund.evidence_images && refund.evidence_images.length > 0}}">
+      <text class="info-label">问题凭证</text>
+      <view class="evidence-grid">
+        <image
+          wx:for="{{refund.evidence_images}}"
+          wx:for-item="evidenceImg"
+          wx:key="*this"
+          class="evidence-img"
+          src="{{evidenceImg}}"
+          mode="aspectFill"
+          bindtap="onPreviewEvidence"
+          data-urls="{{refund.evidence_images}}"
+          data-current="{{evidenceImg}}"
+        />
+      </view>
+    </view>
+    <view class="info-row">
+      <text class="info-label">申请时间</text>
+      <text class="info-value">{{refund.display_created_at || refund.created_at}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.display_processed_at}}">
+      <text class="info-label">处理时间</text>
+      <text class="info-value">{{refund.display_processed_at}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.completed_at}}">
+      <text class="info-label">完成时间</text>
+      <text class="info-value">{{refund.completed_at}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.admin_remark}}">
+      <text class="info-label">客服备注</text>
+      <text class="info-value">{{refund.admin_remark}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.return_company}}">
+      <text class="info-label">退货快递公司</text>
+      <text class="info-value">{{refund.return_company}}</text>
+    </view>
+    <view class="info-row" wx:if="{{refund.return_tracking_no}}">
+      <text class="info-label">退货物流单号</text>
+      <text class="info-value">{{refund.return_tracking_no}}</text>
+    </view>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <text>加载中...</text>
+</view>

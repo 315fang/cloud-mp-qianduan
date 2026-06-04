@@ -1,0 +1,67 @@
+<!-- 订单售后中枢：独立视觉层级，不沿用商城卖场信息架构 -->
+<view class="after-sale-root" wx:if="{{!loading && order}}">
+  <view class="hero">
+    <text class="hero-kicker">售后服务</text>
+    <text class="hero-title">订单 {{order.order_no}}</text>
+    <text class="hero-sub">在此查看该订单售后进度；若要退货，请自行邮寄并在退款详情填写物流单号。</text>
+  </view>
+
+  <view class="card order-strip">
+    <view class="order-strip-main">
+      <image class="thumb" wx:if="{{order.product && order.product.images && order.product.images[0]}}" src="{{order.product.images[0]}}" mode="aspectFill" />
+      <view class="thumb placeholder" wx:else><text>订</text></view>
+      <view class="order-strip-info">
+        <text class="p-name">{{order.product && order.product.name || '订单商品'}}</text>
+        <text class="p-meta">实付 ¥{{order.display_pay_amount}} · 共 {{order.quantity}} 件</text>
+      </view>
+    </view>
+    <view class="order-strip-actions">
+      <view class="link-btn" bindtap="onGoOrderDetail">查看订单详情</view>
+      <view class="primary-btn" bindtap="onApplyAfterSale">申请售后</view>
+    </view>
+  </view>
+
+  <view class="card address-card" wx:if="{{configReturnAddressReady}}">
+    <view class="address-head">
+      <text class="address-title">寄回地址</text>
+      <view class="copy-mini" bindtap="onCopyConfigAddress">复制</view>
+    </view>
+    <text class="address-body">{{configReturnAddressText}}</text>
+  </view>
+  <view class="card address-card muted" wx:else>
+    <text class="address-title">寄回地址</text>
+    <text class="address-empty">暂未配置寄回地址，请联系客服。</text>
+  </view>
+
+  <view class="section-head">
+    <text class="section-title">售后记录</text>
+    <text class="section-count" wx:if="{{refunds.length}}">{{refunds.length}} 条</text>
+  </view>
+
+  <view class="refund-stack">
+    <view
+      class="refund-row {{focusRefundId === item.id ? 'refund-row-focus' : ''}}"
+      wx:for="{{refunds}}"
+      wx:key="id"
+      id="refund-row-{{item.id}}"
+      bindtap="onOpenRefundDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="refund-row-top">
+        <text class="rtype">{{typeText[item.type] || '售后'}}</text>
+        <text class="rstat status-{{item.status}}">{{item.display_status_text || item.status}}</text>
+      </view>
+      <text class="rno">退款单 {{item.refund_no}}</text>
+      <text class="ramount">¥{{item.display_amount}}</text>
+      <text class="rcta">查看本条进度 ›</text>
+    </view>
+    <view class="empty-refunds" wx:if="{{!refunds.length}}">
+      <text>暂无售后记录。</text>
+    </view>
+  </view>
+</view>
+
+<view class="loading-wrap" wx:if="{{loading}}">
+  <view class="loading-spinner"></view>
+  <text>加载中...</text>
+</view>

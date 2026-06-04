@@ -1,0 +1,103 @@
+.page {
+  min-height: 100vh;
+  padding: 24rpx;
+  background: linear-gradient(180deg, #e9f2ff 0%, #f7fbff 100%);
+}
+
+.hero-card,
+.order-card,
+.empty,
+.loading {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 12rpx 28rpx rgba(20, 56, 110, 0.06);
+  margin-bottom: 20rpx;
+}
+
+.hero-title,
+.empty-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #14386e;
+}
+
+.hero-sub,
+.empty-desc,
+.order-line {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #6f87aa;
+}
+
+.hero-btn {
+  margin-top: 18rpx;
+  background: linear-gradient(135deg, var(--brand-blue-deep) 0%, var(--brand-blue-ink) 100%);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+}
+
+.order-top,
+.order-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-no {
+  font-size: 24rpx;
+  color: #6f87aa;
+}
+
+.order-status {
+  font-size: 20rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  background: #eff6ff;
+  color: var(--brand-blue-deep);
+}
+
+.order-main {
+  margin-top: 14rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid #e7eef9;
+}
+
+.order-metrics {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+
+.order-metric,
+.order-code {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48rpx;
+  padding: 0 18rpx;
+  border-radius: 999rpx;
+  background: #f4f8ff;
+  color: #315982;
+  font-size: 23rpx;
+  box-sizing: border-box;
+}
+
+.order-code {
+  margin-top: 12rpx;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.order-footer {
+  margin-top: 16rpx;
+}
+
+.order-tap,
+.order-arrow {
+  font-size: 24rpx;
+  color: var(--brand-blue-ink);
+}
