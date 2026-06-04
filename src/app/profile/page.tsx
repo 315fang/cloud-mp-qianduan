@@ -53,7 +53,7 @@ export default function ProfilePage() {
   return (
     <PhoneFrame>
       {/* 顶部大图背景区 */}
-      <div className="relative h-52 w-full overflow-hidden">
+      <div className="relative h-40 w-full overflow-hidden">
         <Image
           src="/images/banner-2.png"
           alt="个人中心背景"
@@ -80,7 +80,7 @@ export default function ProfilePage() {
       </div>
 
       {/* 会员卡 - 上移覆盖照片底部 */}
-      <div className="px-3 -mt-14 relative z-10">
+      <div className="px-3 -mt-10 relative z-10">
         <div
           className="rounded-3xl overflow-hidden"
           style={{
