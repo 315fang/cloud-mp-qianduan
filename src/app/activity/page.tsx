@@ -59,14 +59,14 @@ const activities = [
 export default function ActivityPage() {
   return (
     <PhoneFrame>
-      <div className="bg-[#0F0D0A] min-h-screen">
+      <div className="bg-[#FAF7F4] min-h-screen">
 
         {/* Header */}
         <div className="px-5 pt-10 pb-8">
           <p className="text-[10px] tracking-[0.3em] text-[#B8973A] uppercase mb-3">
             Cloud Beauty · 云肌
           </p>
-          <h1 className="text-[28px] font-light text-white leading-tight">
+          <h1 className="text-[28px] font-light text-[#1A1208] leading-tight">
             美学<br />活动
           </h1>
           <div className="mt-4 w-8 h-px bg-[#B8973A]" />
@@ -82,14 +82,13 @@ export default function ActivityPage() {
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover brightness-75 group-hover:brightness-90 group-hover:scale-105 transition-all duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
                 />
-                {/* subtle top-fade so numbers read clearly */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#FAF7F4]/30" />
               </div>
 
               {/* Text row — always same layout */}
-              <div className="flex items-start justify-between px-5 py-4 border-b border-white/8">
+              <div className="flex items-start justify-between px-5 py-4 border-b border-[#E8DDD0]">
                 <div className="flex items-start gap-4">
                   {/* Index number */}
                   <span className="text-[11px] text-[#B8973A] font-light mt-0.5 tabular-nums">
@@ -97,10 +96,10 @@ export default function ActivityPage() {
                   </span>
                   {/* Title + tagline */}
                   <div>
-                    <h2 className="text-base font-light text-white leading-tight">
+                    <h2 className="text-base font-light text-[#1A1208] leading-tight">
                       {item.title}
                     </h2>
-                    <p className="text-xs text-white/40 font-light mt-1">
+                    <p className="text-xs text-[#8C7B6B] font-light mt-1">
                       {item.tagline}
                     </p>
                   </div>
@@ -108,7 +107,7 @@ export default function ActivityPage() {
                 {/* Arrow */}
                 <ArrowUpRight
                   size={16}
-                  className="text-white/25 group-hover:text-[#B8973A] transition-colors mt-1 flex-shrink-0"
+                  className="text-[#C8BAA8] group-hover:text-[#B8973A] transition-colors mt-1 flex-shrink-0"
                   strokeWidth={1.5}
                 />
               </div>
@@ -117,7 +116,7 @@ export default function ActivityPage() {
           ))}
 
           {/* Footer note */}
-          <p className="text-center text-[10px] text-white/20 tracking-widest py-10 uppercase">
+          <p className="text-center text-[10px] text-[#C8BAA8] tracking-widest py-10 uppercase">
             会员专属 · 登录可参与全部活动
           </p>
         </div>
