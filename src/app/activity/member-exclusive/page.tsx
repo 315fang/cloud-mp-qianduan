@@ -1,123 +1,135 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, Crown } from "lucide-react";
+import { ChevronLeft, ArrowUpRight } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
 
+const levels = [
+  { name: "银卡会员", threshold: "累计消费 ¥500+", discount: "9 折", points: "1.2x 积分" },
+  { name: "金卡会员", threshold: "累计消费 ¥2000+", discount: "8.5 折", points: "1.5x 积分" },
+  { name: "黑卡会员", threshold: "累计消费 ¥5000+", discount: "8 折", points: "2x 积分" },
+  { name: "推广合伙人", threshold: "邀请 3 位新会员", discount: "7.5 折", points: "3x 积分" },
+];
+
+const exclusiveProducts = [
+  {
+    id: 1,
+    name: "黑卡会员专属礼盒",
+    desc: "精选五款核心产品，含限定版香薰蜡烛，仅限黑卡及以上会员",
+    price: 899,
+    originalPrice: 1580,
+    image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&h=300&fit=crop&q=90",
+  },
+  {
+    id: 2,
+    name: "周年纪念限定套装",
+    desc: "品牌七周年特别版，独立编号包装，全球限量 500 套",
+    price: 1299,
+    originalPrice: 2100,
+    image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop&q=90",
+  },
+];
+
 export default function MemberExclusivePage() {
-  const memberBenefits = [
-    { level: "初级会员", discount: "7.5折", savings: "可省至150元" },
-    { level: "中级会员", discount: "8折", savings: "可省至240元" },
-    { level: "高级会员", discount: "9折", savings: "可省至120元", highlight: true },
-    { level: "推广合伙人", discount: "8.5折", savings: "可省至300元" },
-  ];
-
-  const exclusiveProducts = [
-    {
-      id: 1,
-      name: "高级会员专属礼盒",
-      desc: "精选护肤品套装，仅限高级会员购买",
-      price: 899,
-      originalPrice: 1299,
-      image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&q=80",
-    },
-    {
-      id: 2,
-      name: "限量周年纪念装",
-      desc: "品牌周年特别版，数量有限",
-      price: 599,
-      originalPrice: 799,
-      image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&q=80",
-    },
-  ];
-
   return (
     <PhoneFrame>
-      {/* 顶部 */}
-      <header className="sticky top-0 z-40 bg-gradient-to-b from-[#1A3A4A] to-[#2A4A5A]/50 text-white backdrop-blur-sm px-4 py-3 border-b border-[#4A8FC7]/20">
-        <div className="flex items-center justify-between">
-          <Link href="/activity" className="flex items-center">
-            <ChevronLeft size={24} />
-          </Link>
-          <div className="flex items-center gap-2">
-            <Crown size={18} className="text-[#4A8FC7]" />
-            <h1 className="text-base font-bold">会员专享</h1>
-          </div>
-          <div className="w-6" />
-        </div>
-      </header>
+      <div className="bg-[#FAF7F4] min-h-screen">
 
-      <div className="px-4 py-4 space-y-4 pb-20 bg-gradient-to-b from-white to-[#F5F0E8]">
-        {/* 会员权益对比 */}
-        <div className="rounded-2xl overflow-hidden border border-[#4A8FC7]/20">
-          <div className="bg-gradient-to-r from-[#1A3A4A] to-[#2A4A5A] p-4 text-white">
-            <p className="text-sm font-semibold">会员等级权益对比</p>
+        {/* Header */}
+        <div className="sticky top-0 z-50 bg-[#FAF7F4]/95 backdrop-blur-sm border-b border-[#E8DDD0] px-5 py-3 flex items-center gap-3">
+          <Link href="/activity" className="-ml-1">
+            <ChevronLeft size={22} className="text-[#1A1208]" strokeWidth={1.5} />
+          </Link>
+          <div>
+            <p className="text-[10px] tracking-[0.25em] text-[#B8973A] uppercase">02</p>
+            <h1 className="text-sm font-light text-[#1A1208]">会员专享</h1>
           </div>
-          <div className="p-4 space-y-2 bg-white">
-            {memberBenefits.map((benefit) => (
+        </div>
+
+        {/* Hero */}
+        <div className="relative h-56 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=600&h=400&fit=crop&q=90"
+            alt="会员专享"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#FAF7F4] via-transparent to-transparent" />
+        </div>
+
+        {/* Intro */}
+        <div className="px-5 pt-2 pb-6">
+          <p className="text-[10px] tracking-widest text-[#B8973A] uppercase mb-2">Member · 尊享权益</p>
+          <h2 className="text-2xl font-light text-[#1A1208] leading-snug mb-3">
+            每一位会员<br />都值得被珍视
+          </h2>
+          <p className="text-xs text-[#8C7B6B] font-light leading-relaxed">
+            四种会员等级，持续累积积分与消费即可升级。等级越高，折扣越深，专属礼遇越丰厚。
+          </p>
+        </div>
+
+        <div className="mx-5 h-px bg-[#E8DDD0]" />
+
+        {/* Level Table */}
+        <div className="px-5 pt-6 pb-4">
+          <p className="text-[10px] tracking-widest text-[#B8973A] uppercase mb-4">等级权益</p>
+          <div className="space-y-0">
+            {levels.map((level, i) => (
               <div
-                key={benefit.level}
-                className={`p-3 rounded-xl flex justify-between items-center ${
-                  benefit.highlight
-                    ? "bg-gradient-to-r from-[#4A8FC7]/10 to-[#5B7CC7]/10 border border-[#4A8FC7]/30"
-                    : "bg-[#F5F0E8]"
-                }`}
+                key={level.name}
+                className={`flex items-center justify-between py-4 border-b border-[#E8DDD0] ${i === 0 ? "border-t border-[#E8DDD0]" : ""}`}
               >
-                <div>
-                  <p className="text-xs font-semibold text-[#1A1208]">{benefit.level}</p>
-                  <p className="text-[10px] text-[#8C7B6B]">{benefit.savings}</p>
+                <div className="flex items-start gap-4">
+                  <span className="text-[11px] text-[#B8973A] tabular-nums mt-0.5">0{i + 1}</span>
+                  <div>
+                    <p className="text-sm font-light text-[#1A1208]">{level.name}</p>
+                    <p className="text-[10px] text-[#8C7B6B] font-light mt-0.5">{level.threshold}</p>
+                  </div>
                 </div>
-                <span className={`text-sm font-bold ${benefit.highlight ? "text-[#4A7CC7]" : "text-[#B8973A]"}`}>
-                  {benefit.discount}
-                </span>
+                <div className="text-right">
+                  <p className="text-sm font-light text-[#B8973A]">{level.discount}</p>
+                  <p className="text-[10px] text-[#8C7B6B] font-light mt-0.5">{level.points}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 专属产品 */}
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-[#1A1208]">会员专属产品</h2>
-          {exclusiveProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-2xl overflow-hidden border border-[#E8DDD0] hover:shadow-md transition-shadow"
-            >
-              <div className="flex gap-3 p-3">
-                <div className="w-24 h-24 rounded-xl bg-[#F5EFE8] flex-shrink-0">
+        <div className="mx-5 h-px bg-[#E8DDD0] mt-2" />
+
+        {/* Exclusive Products */}
+        <div className="px-5 pt-6 pb-28">
+          <p className="text-[10px] tracking-widest text-[#B8973A] uppercase mb-4">专属产品</p>
+          <div className="space-y-0">
+            {exclusiveProducts.map((product, i) => (
+              <Link key={product.id} href={`/products/${product.id}`} className="group block">
+                <div className="relative h-40 -mx-5 overflow-hidden">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#FAF7F4] via-transparent to-transparent" />
                 </div>
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <p className="text-xs font-bold text-[#1A1208]">{product.name}</p>
-                    <p className="text-[10px] text-[#8C7B6B] mt-1">{product.desc}</p>
+                <div className="flex items-start justify-between py-4 border-b border-[#E8DDD0]">
+                  <div className="flex items-start gap-4 flex-1 min-w-0">
+                    <span className="text-[11px] text-[#B8973A] tabular-nums mt-0.5">0{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-light text-[#1A1208]">{product.name}</h3>
+                      <p className="text-[10px] text-[#8C7B6B] font-light mt-1 leading-relaxed line-clamp-2">{product.desc}</p>
+                      <div className="flex items-baseline gap-2 mt-2">
+                        <span className="text-sm text-[#B8973A] font-light">¥{product.price}</span>
+                        <span className="text-[10px] text-[#C8BAA8] line-through">¥{product.originalPrice}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-base font-black text-[#4A7CC7]">¥{product.price}</span>
-                    <span className="text-[10px] text-[#8C7B6B] line-through">¥{product.originalPrice}</span>
-                  </div>
+                  <ArrowUpRight size={15} className="text-[#C8BAA8] group-hover:text-[#B8973A] transition-colors mt-0.5 flex-shrink-0 ml-3" strokeWidth={1.5} />
                 </div>
-              </div>
-            </div>
-          ))}
-        </section>
-
-        {/* 活动说明 */}
-        <div className="p-4 rounded-2xl bg-[#EBF1FB] border border-[#4A8FC7]/20">
-          <p className="text-xs font-semibold text-[#4A7CC7] mb-2">活动须知</p>
-          <ul className="text-xs text-[#2A4A5A] space-y-1">
-            <li>• 每月8日为会员专享购物日，额外享受折扣</li>
-            <li>• 产品需于活动期间使用会员账户购买</li>
-            <li>• 享受权益需满足对应会员等级要求</li>
-          </ul>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
-
       <BottomNav />
     </PhoneFrame>
   );
