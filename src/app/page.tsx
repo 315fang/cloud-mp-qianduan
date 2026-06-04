@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Bell, ChevronRight, Flame, Sparkles, Leaf, Shield, Clock } from "lucide-react";
+import { Search, Bell, ChevronRight, Flame, Sparkles } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BannerCarousel from "@/components/BannerCarousel";
 import ProductCard from "@/components/ProductCard";
@@ -10,16 +10,6 @@ import { products } from "@/lib/data";
 
 const hotProducts = products.filter((p) => p.isHot || p.isNew).slice(0, 4);
 const allProducts = products.slice(0, 6);
-
-// 秒杀商品
-const flashSaleProducts = [products[0], products[4], products[5]];
-
-// 品牌承诺
-const brandPromises = [
-  { icon: Leaf, label: "纯净配方", desc: "无添加" },
-  { icon: Shield, label: "皮肤科测试", desc: "过敏测试" },
-  { icon: Clock, label: "28天见效", desc: "承诺" },
-];
 
 // 倒计时 hook
 function useCountdown(initialSeconds: number) {
@@ -166,44 +156,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 品牌承诺 */}
-        <section className="bg-white rounded-2xl px-5 py-5" aria-labelledby="brand-promise-heading">
-          <p className="text-[10px] tracking-[0.25em] text-[#B8973A] font-medium mb-1">BRAND PROMISE</p>
-          <h2 id="brand-promise-heading" className="text-base font-bold text-[#1A1208] mb-4">云肌品质承诺</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {brandPromises.map(({ icon: Icon, label, desc }) => (
-              <div key={label} className="flex flex-col items-center gap-2 text-center">
-                <div className="w-12 h-12 rounded-2xl bg-[#F5EFE8] flex items-center justify-center">
-                  <Icon size={20} className="text-[#B8973A]" strokeWidth={1.5} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#1A1208]">{label}</p>
-                  <p className="text-[10px] text-[#8C7B6B]">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 精选系列 */}
-        <section aria-labelledby="series-heading">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Leaf size={16} className="text-[#B8973A]" />
-              <h2 id="series-heading" className="text-base font-bold text-[#1A1208]">精选系列</h2>
-            </div>
-            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
-              查看全部 <ChevronRight size={13} />
-            </Link>
-          </div>
-          <div className="flex flex-col gap-3">
-            {allProducts.map((product) => (
-              <ProductCard key={product.id} product={product} layout="list" />
-            ))}
-          </div>
-        </section>
-
-        {/* 底部品牌信息 */}
+{/* 底部品牌信息 */}
         <div className="text-center py-6">
           <div className="gold-divider mb-4" aria-hidden="true" />
           <p className="text-[10px] tracking-[0.25em] text-[#8C7B6B] font-medium">CLOUD BEAUTY · 云肌</p>
