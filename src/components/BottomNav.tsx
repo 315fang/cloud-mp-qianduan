@@ -51,30 +51,32 @@ export default function BottomNav() {
         ))}
 
         {/* 中间突出圆形「问小兰」按钮 */}
-        <div className="flex flex-col items-center gap-0.5 flex-1 -mt-6 relative z-10">
+        <div className="flex-1 flex flex-col items-center relative" style={{ marginTop: "-28px" }}>
           <Link
             href="/ai"
             aria-label="问小兰 AI 助手"
-            className={`flex flex-col items-center gap-1 group`}
+            className="flex flex-col items-center gap-1 group"
           >
-            <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
-                isActive("/ai")
-                  ? "ring-2 ring-[#B8973A] ring-offset-2 ring-offset-white"
-                  : "ring-1 ring-[#B8973A]/40 group-active:ring-[#B8973A]/80"
-              }`}
-              style={{
-                background: "rgba(245,197,24,0.08)",
-                boxShadow: "0 0 12px 2px rgba(184,151,58,0.18), 0 0 0 1px rgba(184,151,58,0.12)",
-              }}
-            >
-              <MessageCircle
-                size={19}
-                strokeWidth={1.3}
-                className={`transition-colors duration-300 ${isActive("/ai") ? "text-[#B8973A]" : "text-[#B8973A]/70"}`}
+            {/* 外圈光晕 */}
+            <div className="relative">
+              <div
+                className="absolute inset-0 rounded-full blur-md opacity-40 transition-opacity duration-300 group-active:opacity-70"
+                style={{ background: "radial-gradient(circle, #D4AF5A, transparent 70%)", transform: "scale(1.3)" }}
               />
+              {/* 圆形主体 */}
+              <div
+                className={`relative w-[52px] h-[52px] rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 group-active:scale-95 ${
+                  isActive("/ai") ? "ring-[1.5px] ring-white/60 ring-offset-1 ring-offset-[#C9A43A]" : ""
+                }`}
+                style={{
+                  background: "linear-gradient(145deg, #D4AF5A 0%, #B8973A 60%, #9A7D28 100%)",
+                  boxShadow: "0 4px 14px rgba(184,151,58,0.45), 0 1px 3px rgba(0,0,0,0.12)",
+                }}
+              >
+                <MessageCircle size={20} strokeWidth={1.6} className="text-white drop-shadow-sm" />
+              </div>
             </div>
-            <span className="text-[10px] font-medium text-[#B8973A] tracking-wide">
+            <span className={`text-[10px] font-medium tracking-wide transition-colors duration-200 ${isActive("/ai") ? "text-[#B8973A]" : "text-[#8C7B6B]"}`}>
               问小兰
             </span>
           </Link>
