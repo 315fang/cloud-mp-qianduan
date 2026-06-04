@@ -148,25 +148,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 活动横幅 */}
-        <section className="rounded-2xl bg-[#1A1208] overflow-hidden" aria-label="新会员专属礼遇">
-          <div className="flex items-center justify-between px-5 py-4">
-            <div>
-              <p className="text-[10px] tracking-[0.2em] text-[#B8973A] font-medium">LIMITED OFFER</p>
-              <p className="text-base font-bold text-white mt-0.5">新会员专属礼遇</p>
-              <p className="text-xs text-white/60 mt-0.5">首单立减 ¥50 · 满 299 享 8 折</p>
-            </div>
-            <Link
-              href="/products"
-              className="flex items-center gap-1 bg-[#B8973A] text-white text-xs font-medium px-4 py-2 rounded-full"
-            >
-              立即领取
-              <ChevronRight size={12} />
-            </Link>
-          </div>
-        </section>
 
-        {/* 热门推荐 */}
         <section aria-labelledby="hot-heading">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
