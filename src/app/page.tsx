@@ -6,7 +6,7 @@ import { Search, Bell, ChevronRight, Flame, Sparkles, Leaf, Shield, Clock } from
 import PhoneFrame from "@/components/PhoneFrame";
 import BannerCarousel from "@/components/BannerCarousel";
 import ProductCard from "@/components/ProductCard";
-import { products, categories } from "@/lib/data";
+import { products } from "@/lib/data";
 
 const hotProducts = products.filter((p) => p.isHot || p.isNew).slice(0, 4);
 const allProducts = products.slice(0, 6);
@@ -84,27 +84,7 @@ export default function HomePage() {
         {/* Banner 轮播 */}
         <BannerCarousel />
 
-        {/* 功效分类 */}
-        <section aria-labelledby="category-heading">
-          <h2 id="category-heading" className="sr-only">商品分类</h2>
-          <div className="grid grid-cols-6 gap-2 py-2">
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/products?category=${cat.id}`}
-                className="flex flex-col items-center gap-1.5 group"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-[#F5EFE8] flex items-center justify-center group-active:bg-[#F0E6C8] transition-colors">
-                  <span className="text-xl text-[#B8973A]" aria-hidden="true">{cat.icon}</span>
-                </div>
-                <span className="text-[11px] text-[#3D2B1A] font-medium">{cat.name}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
 
-        {/* 金色分隔线 */}
-        <div className="gold-divider" aria-hidden="true" />
 
         {/* 限时秒杀 */}
         <section aria-labelledby="flash-sale-heading">

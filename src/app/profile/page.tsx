@@ -14,6 +14,7 @@ import {
   Truck,
   RotateCcw,
   Clock,
+  ShoppingCart,
   History,
   Sparkles,
   BadgePercent,
@@ -39,6 +40,7 @@ const orderTabs = [
   { label: "待发货", icon: Package, href: "/orders?status=paid", badge: "" },
   { label: "待收货", icon: Truck, href: "/orders?status=shipped", badge: "2" },
   { label: "退换货", icon: RotateCcw, href: "/orders?status=refund", badge: "1" },
+  { label: "购物车", icon: ShoppingCart, href: "/cart", badge: "" },
 ];
 
 // 资产数据
@@ -189,7 +191,7 @@ export default function ProfilePage() {
               查看全部 <ChevronRight size={13} />
             </Link>
           </div>
-          <div className="grid grid-cols-4 py-4">
+          <div className="grid grid-cols-5 py-4">
             {orderTabs.map(({ label, icon: Icon, href, badge }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-2 relative">
                 <div className="relative w-11 h-11 rounded-full bg-[#F5EFE8] flex items-center justify-center">
