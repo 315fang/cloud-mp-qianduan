@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Grid3x3, ShoppingCart, User } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 const navItems = [
   { href: "/", label: "首页", icon: Home },
@@ -13,15 +14,14 @@ const navItems = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { totalCount } = useCart();
 
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] z-50 bg-white border-t border-[#E8DDD0]">
       <div className="flex items-center justify-around h-16 px-4">
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive =
-            href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(href);
+            href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
             <Link
               key={href}
@@ -34,9 +34,9 @@ export default function BottomNav() {
                 }`}
               >
                 <Icon size={22} strokeWidth={isActive ? 2 : 1.5} />
-                {href === "/cart" && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#B8973A] rounded-full text-white text-[9px] flex items-center justify-center font-medium">
-                    2
+                {href === "/cart" && totalCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 bg-[#B8973A] rounded-full text-white text-[9px] flex items-center justify-center font-medium px-0.5">
+                    {totalCount > 99 ? "99+" : totalCount}
                   </span>
                 )}
               </span>
@@ -47,14 +47,10 @@ export default function BottomNav() {
               >
                 {label}
               </span>
-              {isActive && (
-                <span className="absolute bottom-1 w-4 h-0.5 bg-[#B8973A] rounded-full" />
-              )}
             </Link>
           );
         })}
       </div>
-      {/* iPhone 底部安全区 */}
       <div className="h-safe-area-inset-bottom bg-white" />
     </nav>
   );

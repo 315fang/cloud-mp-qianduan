@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
 
 export const metadata: Metadata = {
   title: "云肌 · 轻奢护肤",
@@ -21,7 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN" className="bg-[#FAF7F4]">
-      <body>{children}</body>
+      <body>
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 }

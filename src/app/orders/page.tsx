@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronRight, Package, MapPin, CheckCircle2, Truck, CircleDot } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import { products } from "@/lib/data";
@@ -77,8 +78,10 @@ const mockOrders = [
 ];
 
 export default function OrdersPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<OrderStatus>("all");
   const [expandedLogistics, setExpandedLogistics] = useState<string | null>(null);
+  const [confirmOrderId, setConfirmOrderId] = useState<string | null>(null);
 
   const filtered =
     activeTab === "all" ? mockOrders : mockOrders.filter((o) => o.status === activeTab);
@@ -88,9 +91,9 @@ export default function OrdersPage() {
       {/* 顶栏 */}
       <header className="sticky top-0 z-40 bg-[#FAF7F4]/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-5 pt-4 pb-3">
-          <Link href="/profile" className="w-8 h-8 flex items-center justify-center rounded-full bg-[#F5EFE8]">
+          <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-[#F5EFE8]">
             <ArrowLeft size={18} className="text-[#1A1208]" />
-          </Link>
+          </button>
           <h1 className="text-base font-bold text-[#1A1208]">我的订单</h1>
           <div className="w-8" />
         </div>
