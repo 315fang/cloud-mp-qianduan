@@ -58,17 +58,20 @@ export default function BottomNav() {
             className={`flex flex-col items-center gap-1 group`}
           >
             <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center shadow-md border-2 transition-all duration-200 ${
+              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
                 isActive("/ai")
-                  ? "bg-[#F5C518]/40 border-[#B8973A]"
-                  : "bg-[#F5C518]/30 border-[#B8973A]/50 group-active:bg-[#F5C518]/50"
+                  ? "ring-2 ring-[#B8973A] ring-offset-2 ring-offset-white"
+                  : "ring-1 ring-[#B8973A]/40 group-active:ring-[#B8973A]/80"
               }`}
-              style={{ backdropFilter: "blur(6px)" }}
+              style={{
+                background: "transparent",
+                boxShadow: "0 0 12px 2px rgba(184,151,58,0.18), 0 0 0 1px rgba(184,151,58,0.12)",
+              }}
             >
               <MessageCircle
-                size={20}
-                strokeWidth={1.5}
-                className="text-[#B8973A]"
+                size={19}
+                strokeWidth={1.3}
+                className={`transition-colors duration-300 ${isActive("/ai") ? "text-[#B8973A]" : "text-[#B8973A]/70"}`}
               />
             </div>
             <span className="text-[10px] font-medium text-[#B8973A] tracking-wide">
