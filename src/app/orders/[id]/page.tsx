@@ -12,7 +12,7 @@ import { products } from "@/lib/data";
 
 const order = {
   id: "2024120100001",
-  status: "shipped" as const,
+  status: "shipped" as "pending" | "paid" | "shipped" | "completed" | "refund",
   date: "2024-12-01 14:32",
   paidAt: "2024-12-01 14:35",
   confirmedAt: "2024-12-02 09:00",
