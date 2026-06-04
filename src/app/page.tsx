@@ -97,7 +97,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-            {flashSaleProducts.map((product) => (
+            {products.slice(0, 4).map((product) => (
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
