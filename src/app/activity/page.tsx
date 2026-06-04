@@ -1,137 +1,149 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
 
 export default function ActivityPage() {
   const activities = [
     {
-      icon: "🌟",
+      id: "new-launch",
       title: "新品首发",
-      desc: "焕活修护精华",
-      href: "/activity/new-launch",
-      gradient: "from-[#F8F1E4] to-[#EDD9BC]",
-      borderColor: "border-[#D4AF5A]/30",
-      tagBg: "bg-[#D4AF5A]/10",
-      tagText: "text-[#B8973A]",
+      subtitle: "焕活修护·感受新生",
+      description: "全新焕活修护系列，专为肌肤新生而设计。蕴含天然植物精粹，唤醒肌肤活力。",
+      image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&h=300&fit=crop",
+      cta: "发现新品",
     },
     {
-      icon: "👑",
+      id: "member-exclusive",
       title: "会员专享",
-      desc: "限额9折特权",
-      href: "/activity/member-exclusive",
-      gradient: "from-[#1A3A4A] to-[#2A4A5A]",
-      borderColor: "border-[#4A8FC7]/30",
-      tagBg: "bg-[#4A8FC7]/10",
-      tagText: "text-[#4A7CC7]",
+      subtitle: "尊享高达75折权益",
+      description: "Lv.2及以上会员限定。专属折扣、积分加倍、优先发售权，尽享高级待遇。",
+      image: "https://images.unsplash.com/photo-1570194676281-a16d3f1c6c0d?w=500&h=300&fit=crop",
+      cta: "查看权益",
     },
     {
-      icon: "✨",
+      id: "limited-experience",
       title: "限时体验",
-      desc: "线下沙龙邀约",
-      href: "/activity/limited-experience",
-      gradient: "from-[#3A2A4A] to-[#4A3A5A]",
-      borderColor: "border-[#9B59B6]/30",
-      tagBg: "bg-[#9B59B6]/10",
-      tagText: "text-[#7C4AC7]",
+      subtitle: "线下高端沙龙邀约",
+      description: "私享VIP体验，名额有限。与美学大师面对面，感受品牌独特的美学理念。",
+      image: "https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=500&h=300&fit=crop",
+      cta: "立即报名",
     },
     {
-      icon: "🎁",
-      title: "积分抽奖",
-      desc: "转盘赢好礼",
-      href: "/lottery",
-      gradient: "from-[#2A3A5A] to-[#3A4A6A]",
-      borderColor: "border-[#5B7CC7]/30",
-      tagBg: "bg-[#5B7CC7]/10",
-      tagText: "text-[#4A7CC7]",
-    },
-    {
-      icon: "🛍",
+      id: "custom-choice",
       title: "特惠随心选",
-      desc: "DIY组合优惠",
-      href: "/activity/custom-choice",
-      gradient: "from-[#2A4A2A] to-[#3A5A3A]",
-      borderColor: "border-[#5FA86C]/30",
-      tagBg: "bg-[#5FA86C]/10",
-      tagText: "text-[#2D8C5E]",
+      subtitle: "自选组合·享受优惠",
+      description: "DIY美妆组合，自由搭配。3件88折，4件85折，5件更低至8折。",
+      image: "https://images.unsplash.com/photo-1631702281081-e088ca1e9a19?w=500&h=300&fit=crop",
+      cta: "开始组合",
     },
     {
-      icon: "🤝",
+      id: "lottery",
+      title: "积分抽奖",
+      subtitle: "转盘赢好礼",
+      description: "积分可兑，好礼相送。每日签到积累积分，幸运大转盘等你转动。",
+      image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=500&h=300&fit=crop",
+      cta: "去抽奖",
+      href: "/lottery",
+    },
+    {
+      id: "group-buy",
       title: "拼团优惠",
-      desc: "3人团购至低价",
+      subtitle: "三人成团·共享折扣",
+      description: "邀请好友参团，人数越多折扣越大。3人成团享受团购价，最高省100元。",
+      image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=500&h=300&fit=crop",
+      cta: "发起拼团",
       href: "/group",
-      gradient: "from-[#4A2A1A] to-[#5A3A2A]",
-      borderColor: "border-[#B85A2A]/30",
-      tagBg: "bg-[#B85A2A]/10",
-      tagText: "text-[#A04820]",
     },
   ];
 
   return (
     <PhoneFrame>
-      {/* 顶部标题 */}
-      <header className="sticky top-0 z-40 bg-[#FAF7F4]/95 backdrop-blur-sm px-5 pt-4 pb-3 border-b border-[#E8DDD0]">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[10px] tracking-[0.2em] text-[#B8973A] font-medium uppercase">Luxe Moments</p>
-            <h1 className="text-lg font-bold text-[#1A1208]">活动中心</h1>
-          </div>
-          <Link href="/activity/rules" className="text-[12px] text-[#B8973A] font-medium flex items-center gap-0.5">
-            活动规则 <ChevronRight size={13} />
+      <div className="bg-[#FAF8F5] min-h-screen">
+        {/* Header */}
+        <div className="sticky top-0 z-50 bg-[#FAF8F5] border-b border-[#E8DDD2] px-4 py-4 flex items-center gap-3">
+          <Link href="/" className="p-1 -ml-2">
+            <ChevronLeft size={24} className="text-[#1A1208]" strokeWidth={1.5} />
           </Link>
-        </div>
-      </header>
-
-      <div className="px-4 py-5 space-y-3 pb-20">
-        {/* 品牌宣传图 */}
-        <div className="relative h-32 rounded-2xl overflow-hidden bg-gradient-to-r from-[#1A1208]/80 to-[#3D2B1A]/60 backdrop-blur-sm border border-[#D4AF5A]/20 flex items-center justify-center">
-          <div className="absolute inset-0 opacity-10" style={{backgroundImage: "linear-gradient(45deg, #D4AF5A 1px, transparent 1px)", backgroundSize: "20px 20px"}} />
-          <div className="relative text-center px-6">
-            <Sparkles size={28} className="text-[#D4AF5A] mx-auto mb-2" />
-            <p className="text-xs font-semibold text-[#D4AF5A] tracking-widest uppercase">CLOUD BEAUTY</p>
-            <p className="text-xs text-[#B8973A] mt-1">精选美学 · 焕活之旅</p>
+          <div>
+            <p className="text-xs tracking-widest text-[#B8973A] font-light">精选活动</p>
+            <h1 className="text-sm font-light text-[#1A1208]">云肌美学</h1>
           </div>
         </div>
 
-        {/* 6个高级活动卡片 */}
-        <section className="space-y-2 mt-4">
-          <h2 className="text-sm font-semibold text-[#1A1208] px-1 mb-3">精选活动</h2>
-          {activities.map((activity) => (
-            <Link
-              key={activity.title}
-              href={activity.href}
-              className={`group relative block rounded-2xl overflow-hidden border ${activity.borderColor} transition-all hover:shadow-lg`}
-            >
-              {/* 渐变背景 */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${activity.gradient}`} />
-              
-              {/* 装饰元素 */}
-              <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full pointer-events-none" style={{background: "radial-gradient(circle, rgba(212,175,90,0.15), transparent 70%)"}} />
+        {/* Main Content */}
+        <div className="px-4 py-8 pb-24 space-y-8">
+          {/* 品牌简语 */}
+          <div className="text-center space-y-2 mt-2">
+            <h2 className="text-2xl font-light text-[#1A1208] tracking-wide">每一刻美好</h2>
+            <p className="text-xs text-[#8C7B6B] font-light leading-relaxed">
+              精选美学生活方式<br />
+              发现属于你的焕活时刻
+            </p>
+          </div>
 
-              {/* 内容 */}
-              <div className="relative px-4 py-3.5 flex items-center justify-between">
-                <div className="flex items-center gap-3 flex-1">
-                  <span className="text-2xl">{activity.icon}</span>
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-bold text-[#1A1208]">{activity.title}</h3>
-                    <p className="text-xs text-[#8C7B6B] line-clamp-1">{activity.desc}</p>
+          {/* Activities Grid - 2列 */}
+          <div className="grid grid-cols-2 gap-5">
+            {activities.map((activity) => (
+              <Link
+                key={activity.id}
+                href={activity.href || `/activity/${activity.id}`}
+                className="group"
+              >
+                <div className="space-y-3">
+                  {/* Image */}
+                  <div className="relative overflow-hidden rounded-xl aspect-square bg-[#E8DDD2]">
+                    <img
+                      src={activity.image}
+                      alt={activity.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+
+                  {/* Info */}
+                  <div className="space-y-1.5">
+                    <h3 className="text-sm font-light text-[#1A1208]">
+                      {activity.title}
+                    </h3>
+                    <p className="text-xs text-[#B8973A] font-light line-clamp-1">
+                      {activity.subtitle}
+                    </p>
                   </div>
                 </div>
-                <div className={`${activity.tagBg} ${activity.tagText} text-[10px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap`}>
-                  进入
-                </div>
-              </div>
-            </Link>
-          ))}
-        </section>
+              </Link>
+            ))}
+          </div>
 
-        {/* 活动说明 */}
-        <div className="mt-6 p-4 rounded-xl bg-[#F5EFE8] border border-[#E8DDD0]">
-          <p className="text-xs text-[#8C7B6B] leading-relaxed">
-            <span className="font-semibold text-[#B8973A]">提示：</span>所有活动均为会员尊享权益。登录即可参与，更多惊喜敬请期待。
-          </p>
+          {/* Featured Card */}
+          <Link
+            href="/activity/new-launch"
+            className="block overflow-hidden rounded-2xl"
+          >
+            <div className="relative h-56 bg-[#E8DDD2] overflow-hidden group">
+              <img
+                src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&h=400&fit=crop"
+                alt="Featured"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-5">
+                <h3 className="text-xl font-light text-white mb-2">新品首发</h3>
+                <p className="text-xs text-[#E8DDD2] font-light line-clamp-2">
+                  焕活修护精华系列，只为更好的你
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          {/* Tip */}
+          <div className="rounded-lg bg-white border border-[#E8DDD2] p-4 space-y-2">
+            <p className="text-xs text-[#8C7B6B] font-light leading-relaxed">
+              所有活动均为会员专享权益。登录账户即可参与，更多惊喜敬请期待。
+            </p>
+          </div>
         </div>
       </div>
 
