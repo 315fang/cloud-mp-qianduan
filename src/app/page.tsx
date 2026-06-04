@@ -73,6 +73,56 @@ export default function HomePage() {
         {/* Banner 轮播 */}
         <BannerCarousel />
 
+        {/* 热门活动卡片 */}
+        <section aria-label="热门活动">
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            {[
+              {
+                icon: "⏰",
+                label: "限时秒杀",
+                desc: "红色渐变",
+                href: "/flash-sale",
+                bg: "from-[#E8573A]/10 to-[#C74523]/5",
+                border: "border-[#E8573A]/20",
+              },
+              {
+                icon: "🎁",
+                label: "优惠券中心",
+                desc: "领取优惠",
+                href: "/profile/coupons",
+                bg: "from-[#4A7CC7]/10 to-[#2D5FA8]/5",
+                border: "border-[#4A7CC7]/20",
+              },
+              {
+                icon: "✨",
+                label: "积分抽奖",
+                desc: "赢大奖",
+                href: "/lottery",
+                bg: "from-[#B8973A]/10 to-[#9A7D28]/5",
+                border: "border-[#B8973A]/20",
+              },
+              {
+                icon: "👥",
+                label: "拼团活动",
+                desc: "共享优惠",
+                href: "/group",
+                bg: "from-[#059669]/10 to-[#047857]/5",
+                border: "border-[#059669]/20",
+              },
+            ].map(({ icon, label, desc, href, bg, border }) => (
+              <Link
+                key={label}
+                href={href}
+                className={`bg-gradient-to-br ${bg} ${border} border rounded-2xl p-3 text-center`}
+              >
+                <span className="text-2xl">{icon}</span>
+                <p className="text-xs font-semibold text-[#1A1208] mt-1">{label}</p>
+                <p className="text-[9px] text-[#8C7B6B]">{desc}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* 热门推荐 */}
         <section aria-labelledby="hot-heading">
           <div className="flex items-center justify-between mb-3">

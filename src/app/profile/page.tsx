@@ -22,6 +22,7 @@ import {
   CheckCircle2,
   Crown,
   BookOpen,
+  Briefcase,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
@@ -51,6 +52,7 @@ const serviceItems = [
   { icon: Crown, label: "权益中心", href: "/profile/rights-benefits", color: "#7C3AED" },
   { icon: Headphones, label: "专属客服", href: "/profile/customer-service", color: "#0891B2" },
   { icon: BookOpen, label: "品牌故事", href: "/profile/brand-story", color: "#92400E" },
+  { icon: Briefcase, label: "购物袋", href: "/profile/shopping-bags", color: "#E8573A" },
   { icon: Users, label: "我的团队", href: "/distributor/team", color: "#4A7CC7" },
   { icon: TrendingUp, label: "分佣中心", href: "/distributor", color: "#B85A2A" },
   { icon: Settings, label: "设置", href: "/profile/settings", color: "#8C7B6B" },
@@ -188,7 +190,7 @@ export default function ProfilePage() {
           <div className="px-4 pt-3 pb-1 border-b border-[#F0E8DC]">
             <span className="text-sm font-bold text-[#1A1208]">我的服务</span>
           </div>
-          <div className="grid grid-cols-3 gap-y-4 px-4 py-4">
+          <div className="grid grid-cols-4 gap-y-4 px-4 py-4">
             {serviceItems.map(({ icon: Icon, label, href, color, badge }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
                 <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>

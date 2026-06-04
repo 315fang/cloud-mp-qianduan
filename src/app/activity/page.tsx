@@ -56,7 +56,7 @@ const festivals = [
 
 // 快捷入口
 const quickEntries = [
-  { icon: Zap, label: "限时秒杀", href: "/products?category=serum", color: "#B8973A", bg: "#FBF5E6" },
+  { icon: Zap, label: "限时秒杀", href: "/flash-sale", color: "#B8973A", bg: "#FBF5E6" },
   { icon: Users, label: "拼团活动", href: "/group", color: "#4A7CC7", bg: "#EBF1FB" },
   { icon: Scissors, label: "砍价专区", href: "/slash", color: "#B85A2A", bg: "#FBF0E8" },
   { icon: Trophy, label: "抽奖大转盘", href: "/lottery", color: "#7C4AC7", bg: "#F3EBFB" },
