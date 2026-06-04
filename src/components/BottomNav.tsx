@@ -64,7 +64,7 @@ export default function BottomNav() {
                   : "ring-1 ring-[#B8973A]/40 group-active:ring-[#B8973A]/80"
               }`}
               style={{
-                background: "transparent",
+                background: "rgba(245,197,24,0.08)",
                 boxShadow: "0 0 12px 2px rgba(184,151,58,0.18), 0 0 0 1px rgba(184,151,58,0.12)",
               }}
             >
