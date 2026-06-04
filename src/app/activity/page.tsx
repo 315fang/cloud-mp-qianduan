@@ -62,52 +62,49 @@ export default function ActivityPage() {
       <div className="bg-[#FAF7F4] min-h-screen">
 
         {/* Header */}
-        <div className="px-5 pt-10 pb-8">
-          <p className="text-[10px] tracking-[0.3em] text-[#B8973A] uppercase mb-3">
+        <div className="px-5 pt-8 pb-5">
+          <p className="text-[10px] tracking-[0.3em] text-[#B8973A] uppercase mb-2">
             Cloud Beauty · 云肌
           </p>
-          <h1 className="text-[28px] font-light text-[#1A1208] leading-tight">
-            美学<br />活动
-          </h1>
-          <div className="mt-4 w-8 h-px bg-[#B8973A]" />
+          <div className="flex items-end justify-between">
+            <h1 className="text-[26px] font-light text-[#1A1208] leading-tight">
+              美学活动
+            </h1>
+            <div className="w-6 h-px bg-[#B8973A] mb-2" />
+          </div>
         </div>
 
-        {/* Cards — every card is identical in structure */}
-        <div className="pb-24">
+        {/* Cards */}
+        <div className="px-4 pb-24 space-y-4">
           {activities.map((item) => (
-            <Link key={item.id} href={item.href} className="group block">
+            <Link key={item.id} href={item.href} className="group block rounded-2xl overflow-hidden bg-white shadow-sm">
 
-              {/* Image — full-bleed, fixed height */}
-              <div className="relative h-52 overflow-hidden">
+              {/* Image */}
+              <div className="relative h-48 overflow-hidden">
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#FAF7F4]/30" />
+                {/* index badge 叠在图片左上角 */}
+                <span className="absolute top-3 left-3 text-[10px] text-white/80 font-light tabular-nums bg-black/20 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                  {item.index}
+                </span>
               </div>
 
-              {/* Text row — always same layout */}
-              <div className="flex items-start justify-between px-5 py-4 border-b border-[#E8DDD0]">
-                <div className="flex items-start gap-4">
-                  {/* Index number */}
-                  <span className="text-[11px] text-[#B8973A] font-light mt-0.5 tabular-nums">
-                    {item.index}
-                  </span>
-                  {/* Title + tagline */}
-                  <div>
-                    <h2 className="text-base font-light text-[#1A1208] leading-tight">
-                      {item.title}
-                    </h2>
-                    <p className="text-xs text-[#8C7B6B] font-light mt-1">
-                      {item.tagline}
-                    </p>
-                  </div>
+              {/* Text row */}
+              <div className="flex items-center justify-between px-4 py-3">
+                <div>
+                  <h2 className="text-[15px] font-medium text-[#1A1208] leading-tight">
+                    {item.title}
+                  </h2>
+                  <p className="text-xs text-[#8C7B6B] font-light mt-0.5">
+                    {item.tagline}
+                  </p>
                 </div>
-                {/* Arrow */}
                 <ArrowUpRight
                   size={16}
-                  className="text-[#C8BAA8] group-hover:text-[#B8973A] transition-colors mt-1 flex-shrink-0"
+                  className="text-[#C8BAA8] group-hover:text-[#B8973A] transition-colors flex-shrink-0"
                   strokeWidth={1.5}
                 />
               </div>
@@ -116,7 +113,7 @@ export default function ActivityPage() {
           ))}
 
           {/* Footer note */}
-          <p className="text-center text-[10px] text-[#C8BAA8] tracking-widest py-10 uppercase">
+          <p className="text-center text-[10px] text-[#C8BAA8] tracking-widest pt-4 pb-2 uppercase">
             会员专属 · 登录可参与全部活动
           </p>
         </div>
