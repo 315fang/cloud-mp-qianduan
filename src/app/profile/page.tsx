@@ -7,9 +7,7 @@ import {
   ChevronRight,
   MapPin,
   Gift,
-  Bell,
   Settings,
-  Headphones,
   Clock,
   Package,
   Truck,
@@ -17,6 +15,7 @@ import {
   ShoppingCart,
   Store,
   CheckCircle2,
+  Users,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
@@ -39,10 +38,9 @@ const orderTabs = [
 const serviceItems = [
   { icon: MapPin, label: "地址管理", href: "/profile/address", color: "#E8573A" },
   { icon: Gift, label: "优惠券", href: "/profile/coupons", color: "#F59E0B" },
-  { icon: Bell, label: "消息通知", href: "/profile/notifications", color: "#7C4AC7", badge: "3" },
   { icon: Store, label: "店长工作台", href: "/distributor/manager", color: "#DC2626" },
   { icon: CheckCircle2, label: "自提核销", href: "/distributor/pickup-verify", color: "#059669" },
-  { icon: Headphones, label: "专属客服", href: "/profile/customer-service", color: "#0891B2" },
+  { icon: Users, label: "团队中心", href: "/distributor/team", color: "#4A7CC7" },
   { icon: Settings, label: "设置", href: "/profile/settings", color: "#8C7B6B" },
 ];
 
@@ -83,27 +81,6 @@ export default function ProfilePage() {
           <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full pointer-events-none" style={{background: "radial-gradient(circle, rgba(212,175,90,0.22), transparent 70%)"}} aria-hidden="true"/>
 
           <div className="relative px-5 pt-5 pb-5">
-            {/* 快捷按钮 - 客服和消息 */}
-            <div className="absolute top-4 right-4 flex items-center gap-1">
-              <Link
-                href="/profile/customer-service"
-                className="w-7 h-7 flex items-center justify-center rounded-full"
-                style={{background: "rgba(8,145,178,0.15)"}}
-                aria-label="客服"
-              >
-                <Headphones size={13} className="text-[#0891B2]" strokeWidth={2.5}/>
-              </Link>
-              <Link
-                href="/profile/notifications"
-                className="relative w-7 h-7 flex items-center justify-center rounded-full"
-                style={{background: "rgba(124,74,193,0.15)"}}
-                aria-label="消息"
-              >
-                <Bell size={13} className="text-[#7C4AC7]" strokeWidth={2.5}/>
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#E8573A] rounded-full text-white text-[7px] flex items-center justify-center font-bold">3</span>
-              </Link>
-            </div>
-
             {/* 头像 + 昵称 + 会员号 */}
             <div className="flex items-center gap-3 mb-4">
               <div
