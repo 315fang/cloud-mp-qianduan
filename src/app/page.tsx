@@ -25,7 +25,15 @@ function useCountdown(initialSeconds: number) {
 }
 
 export default function HomePage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const countdown = useCountdown(4 * 3600 + 23 * 60 + 15);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+    }
+  };
 
   return (
     <PhoneFrame>
@@ -60,13 +68,18 @@ export default function HomePage() {
 
         {/* 搜索栏 */}
         <div className="px-5 pb-3">
-          <Link
-            href="/products"
-            className="flex items-center gap-2 bg-[#F5EFE8] rounded-full px-4 py-2.5"
-          >
-            <Search size={14} className="text-[#8C7B6B]" />
-            <span className="text-[13px] text-[#8C7B6B]">搜索精华、面霜、护肤套装...</span>
-          </Link>
+          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+            <div className="flex-1 bg-[#F5EFE8] rounded-full px-4 py-2.5 flex items-center gap-2 border border-[#E8DDD0] focus-within:border-[#B8973A]">
+              <Search size={14} className="text-[#8C7B6B]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="搜索精华、面霜、护肤套装..."
+                className="flex-1 bg-transparent text-sm outline-none text-[#1A1208] placeholder-[#8C7B6B]"
+              />
+            </div>
+          </form>
         </div>
       </header>
 
@@ -80,83 +93,46 @@ export default function HomePage() {
         <section aria-labelledby="flash-sale-heading">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Flame size={16} className="text-[#B8973A]" />
-              <h2 id="flash-sale-heading" className="text-base font-bold text-[#1A1208]">限时特惠</h2>
+              <Flame size={18} className="text-[#E8573A]" />
+              <h2 id="flash-sale-heading" className="text-sm font-bold text-[#1A1208]">限时秒杀</h2>
+              <span className="text-[10px] text-[#8C7B6B]">
+                {countdown.h}:{countdown.m}:{countdown.s}
+              </span>
             </div>
-            {/* 倒计时 */}
-            <div className="flex items-center gap-1.5" aria-label={`剩余时间 ${countdown.h}小时${countdown.m}分${countdown.s}秒`}>
-              <span className="text-[10px] text-[#8C7B6B]">距结束</span>
-              {[countdown.h, countdown.m, countdown.s].map((unit, i) => (
-                <span key={i} className="flex items-center">
-                  <span className="min-w-[22px] text-center text-[12px] font-bold text-white bg-[#1A1208] rounded-md px-1 py-0.5 tabular-nums">
-                    {unit}
-                  </span>
-                  {i < 2 && <span className="text-[#8C7B6B] mx-0.5 text-[12px] font-bold">:</span>}
-                </span>
-              ))}
-            </div>
+            <Link href="/activity" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+              查看全部 <ChevronRight size={13} />
+            </Link>
           </div>
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
+          <div className="space-y-2">
             {products.slice(0, 4).map((product) => (
-              <Link
-                key={product.id}
-                href={`/products/${product.id}`}
-                className="flex-shrink-0 w-36 bg-white rounded-2xl overflow-hidden"
-              >
-                <div className="relative aspect-square bg-[#F5EFE8]">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-contain p-4"
-                  />
-                  {product.originalPrice && (
-                    <div className="absolute top-2 left-2 bg-[#B8973A] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                      -{Math.round((1 - product.price / product.originalPrice) * 10) * 10}%
-                    </div>
-                  )}
-                </div>
-                <div className="p-2.5">
-                  <p className="text-xs font-semibold text-[#1A1208] line-clamp-1">{product.name}</p>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-sm font-bold text-[#1A1208]">¥{product.price}</span>
-                    {product.originalPrice && (
-                      <span className="text-[10px] text-[#8C7B6B] line-through">¥{product.originalPrice}</span>
-                    )}
-                  </div>
-                  <div className="mt-1.5 w-full bg-[#E8DDD0] rounded-full h-1 overflow-hidden">
-                    <div
-                      className="h-full bg-[#B8973A] rounded-full"
-                      style={{ width: `${Math.min(85, 30 + Math.random() * 55).toFixed(0)}%` }}
-                    />
-                  </div>
-                  <p className="text-[9px] text-[#8C7B6B] mt-0.5">
-                    仅剩 {product.stock > 20 ? "少量" : product.stock + "件"}
-                  </p>
-                </div>
+              <Link key={product.id} href={`/products/${product.id}`} className="block">
+                <ProductCard product={product} layout="list" />
               </Link>
             ))}
           </div>
         </section>
 
-
+        {/* 热门推荐 */}
         <section aria-labelledby="hot-heading">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Sparkles size={16} className="text-[#B8973A]" />
-              <h2 id="hot-heading" className="text-base font-bold text-[#1A1208]">热门推荐</h2>
+              <Sparkles size={18} className="text-[#B8973A]" />
+              <h2 id="hot-heading" className="text-sm font-bold text-[#1A1208]">热门推荐</h2>
             </div>
             <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
               查看全部 <ChevronRight size={13} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
             {hotProducts.map((product) => (
-              <ProductCard key={product.id} product={product} layout="grid" />
+              <Link key={product.id} href={`/products/${product.id}`} className="block">
+                <ProductCard product={product} layout="list" />
+              </Link>
             ))}
           </div>
         </section>
 
-{/* 底部品牌信息 */}
+        {/* 底部品牌信息 */}
         <div className="text-center py-6">
           <div className="gold-divider mb-4" aria-hidden="true" />
           <p className="text-[10px] tracking-[0.25em] text-[#8C7B6B] font-medium">CLOUD BEAUTY · 云肌</p>
