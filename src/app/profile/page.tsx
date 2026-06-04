@@ -166,15 +166,10 @@ export default function ProfilePage() {
             <span className="text-sm font-bold text-[#1A1208]">我的服务</span>
           </div>
           <div className="grid grid-cols-3 gap-y-4 px-4 py-4">
-            {serviceItems.map(({ icon: Icon, label, href, color, badge }) => (
+            {serviceItems.map(({ icon: Icon, label, href, color }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
                 <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>
                   <Icon size={20} strokeWidth={1.5} style={{ color }} />
-                  {badge && (
-                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 bg-[#E8573A] rounded-full text-white text-[9px] flex items-center justify-center px-1 font-medium">
-                      {badge}
-                    </span>
-                  )}
                 </div>
                 <span className="text-[11px] text-[#3D2B1A] font-medium text-center">{label}</span>
               </Link>
