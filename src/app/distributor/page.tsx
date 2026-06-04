@@ -67,7 +67,7 @@ export default function DistributorPage() {
           <ArrowLeft size={17} className="text-white" />
         </button>
         <span className="text-sm font-bold text-white tracking-wide">分销工作台</span>
-        <Link href="/distributor/notifications" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 relative">
+        <Link href="/profile/notifications" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 relative">
           <Bell size={16} className="text-white" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-[#B8973A] rounded-full" />
         </Link>
@@ -123,8 +123,8 @@ export default function DistributorPage() {
                 { icon: Users, label: "我的团队", href: "/distributor/team" },
                 { icon: BookImage, label: "推广素材", href: "/distributor/materials" },
                 { icon: ShoppingBag, label: "选品下单", href: "/products" },
-                { icon: BarChart3, label: "销售报表", href: "/distributor/report" },
-                { icon: Star, label: "等级权益", href: "/distributor/benefits" },
+                { icon: BarChart3, label: "佣金日志", href: "/distributor/commission-logs" },
+                { icon: Star, label: "分销规则", href: "/distributor/rules" },
                 { icon: Package, label: "申请经销", href: "/distributor/apply" },
               ].map(({ icon: Icon, label, href }) => (
                 <Link key={label} href={href} className="flex flex-col items-center gap-1.5">

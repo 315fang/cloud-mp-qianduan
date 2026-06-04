@@ -58,7 +58,7 @@ const menuItems = [
       { icon: Gift, label: "优惠券", href: "/profile/coupons", badge: "3张" },
       { icon: Star, label: "积分中心", href: "/profile/points", badge: "1,280" },
       { icon: MapPin, label: "收货地址", href: "/profile/address", badge: "" },
-      { icon: Scissors, label: "砍价活动", href: "/activity/slash", badge: "" },
+      { icon: Scissors, label: "砍价活动", href: "/slash", badge: "" },
     ],
   },
   {
