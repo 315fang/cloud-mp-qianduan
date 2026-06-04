@@ -60,14 +60,14 @@ export default function BottomNav() {
             <div
               className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg border-2 transition-all duration-200 ${
                 isActive("/ai")
-                  ? "bg-[#1A1208] border-[#B8973A]"
-                  : "bg-[#1A1208] border-[#B8973A]/60 group-active:border-[#B8973A]"
+                  ? "bg-[#F5C518] border-[#D4A800]"
+                  : "bg-[#F5C518] border-[#D4A800]/60 group-active:border-[#D4A800]"
               }`}
             >
               <MessageCircle
-                size={24}
+                size={20}
                 strokeWidth={1.5}
-                className="text-[#D4AF5A]"
+                className="text-[#1A1208]"
               />
             </div>
             <span className="text-[10px] font-medium text-[#B8973A] tracking-wide">
