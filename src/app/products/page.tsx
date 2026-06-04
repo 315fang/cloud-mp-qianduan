@@ -130,7 +130,7 @@ export default function ProductsPage() {
 
   const handleAddToCart = () => {
     if (!selectedProduct) return;
-    addItem({ ...selectedProduct, id: selectedProduct.id });
+    addItem(selectedProduct, quantity, selectedSku);
     setAddedMap((prev) => ({
       ...prev,
       [selectedProduct.id]: { quantity: (prev[selectedProduct.id]?.quantity || 0) + quantity, sku: selectedSku },
