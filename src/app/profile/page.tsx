@@ -18,6 +18,11 @@ import {
   Sparkles,
   BadgePercent,
   Camera,
+  LayoutDashboard,
+  Wallet,
+  TrendingUp,
+  Users,
+  BookImage,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import { products } from "@/lib/data";
@@ -246,6 +251,48 @@ export default function ProfilePage() {
             </div>
           </div>
         ))}
+
+        {/* 分销工作台入口 */}
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#F0E8DC]">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={15} className="text-[#B8973A]" />
+              <span className="text-sm font-bold text-[#1A1208]">我的分销</span>
+            </div>
+            <Link href="/distributor" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+              工作台 <ChevronRight size={13} />
+            </Link>
+          </div>
+          {/* 分销数据速览 */}
+          <div className="grid grid-cols-3 divide-x divide-[#F0E8DC] px-1 py-3">
+            {[
+              { label: "本月佣金", value: "¥1,280", href: "/distributor/commission" },
+              { label: "钱包余额", value: "¥3,420", href: "/distributor/wallet" },
+              { label: "我的团队", value: "16人", href: "/distributor" },
+            ].map(({ label, value, href }) => (
+              <Link key={label} href={href} className="flex flex-col items-center gap-0.5 py-1">
+                <span className="text-base font-bold text-[#1A1208]">{value}</span>
+                <span className="text-[10px] text-[#8C7B6B]">{label}</span>
+              </Link>
+            ))}
+          </div>
+          {/* 快捷入口 */}
+          <div className="grid grid-cols-4 gap-2 px-4 pb-4">
+            {[
+              { icon: LayoutDashboard, label: "工作台", href: "/distributor" },
+              { icon: Wallet, label: "我的钱包", href: "/distributor/wallet" },
+              { icon: TrendingUp, label: "佣金明细", href: "/distributor/commission" },
+              { icon: BookImage, label: "素材中心", href: "/distributor/materials" },
+            ].map(({ icon: Icon, label, href }) => (
+              <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
+                <div className="w-11 h-11 rounded-full bg-[#F5EFE8] flex items-center justify-center">
+                  <Icon size={18} className="text-[#B8973A]" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-[#3D2B1A] font-medium text-center">{label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
 
         {/* 邀请好友 */}
         <div className="bg-[#1A1208] rounded-2xl px-5 py-4 flex items-center justify-between">
