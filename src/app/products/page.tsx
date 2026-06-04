@@ -1,338 +1,448 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  ArrowLeft,
   Search,
-  SlidersHorizontal,
-  LayoutGrid,
-  List,
   X,
   ShoppingBag,
   ChevronRight,
-  Flame,
+  Star,
+  Plus,
+  Minus,
+  ShoppingCart,
+  Check,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
-import ProductCard from "@/components/ProductCard";
-import { products, categories } from "@/lib/data";
+import BottomNav from "@/components/BottomNav";
+import { products, categories, Product } from "@/lib/data";
+import { useCart } from "@/context/CartContext";
 
-const sortOptions = ["综合", "销量", "价格↑", "价格↓", "评分"];
-
-const priceRanges = [
-  { label: "全部", min: 0, max: Infinity },
-  { label: "¥0-199", min: 0, max: 199 },
-  { label: "¥200-399", min: 200, max: 399 },
-  { label: "¥400+", min: 400, max: Infinity },
+// 三级分类体系：一级 → 二级 → 商品
+const leftCategories = [
+  { id: "all", name: "全部", icon: "◎" },
+  { id: "serum", name: "精华液", icon: "✦" },
+  { id: "cream", name: "面霜", icon: "◈" },
+  { id: "toner", name: "水乳", icon: "◇" },
+  { id: "mask", name: "面膜", icon: "◆" },
+  { id: "eye", name: "眼霜", icon: "○" },
+  { id: "sunscreen", name: "防晒", icon: "◉" },
 ];
+
+// 二级标签（功效分类）
+const subCategories: Record<string, { id: string; name: string }[]> = {
+  all: [
+    { id: "all", name: "全部" },
+    { id: "hot", name: "热销" },
+    { id: "new", name: "新品" },
+    { id: "set", name: "套装" },
+  ],
+  serum: [
+    { id: "all", name: "全部" },
+    { id: "brightening", name: "提亮" },
+    { id: "anti-age", name: "抗老" },
+    { id: "hydrating", name: "补水" },
+  ],
+  cream: [
+    { id: "all", name: "全部" },
+    { id: "hydrating", name: "保湿" },
+    { id: "repair", name: "修护" },
+    { id: "anti-age", name: "抗老" },
+  ],
+  toner: [
+    { id: "all", name: "全部" },
+    { id: "set", name: "套装" },
+    { id: "hydrating", name: "补水" },
+    { id: "balance", name: "平衡" },
+  ],
+  mask: [
+    { id: "all", name: "全部" },
+    { id: "hydrating", name: "补水" },
+    { id: "brightening", name: "提亮" },
+    { id: "repair", name: "修护" },
+  ],
+  eye: [
+    { id: "all", name: "全部" },
+    { id: "anti-age", name: "抗皱" },
+    { id: "brightening", name: "淡纹" },
+    { id: "hydrating", name: "补水" },
+  ],
+  sunscreen: [
+    { id: "all", name: "全部" },
+    { id: "daily", name: "日常" },
+    { id: "sport", name: "户外" },
+    { id: "sensitive", name: "敏感肌" },
+  ],
+};
+
+// SKU 规格
+const skuOptions = ["30ml", "50ml", "100ml"];
+
+type CartItem = { quantity: number; sku: string };
 
 export default function ProductsPage() {
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [activeSort, setActiveSort] = useState("综合");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [activePriceRange, setActivePriceRange] = useState(0);
-  const [onlyNew, setOnlyNew] = useState(false);
-  const [onlyHot, setOnlyHot] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [activeLeft, setActiveLeft] = useState("all");
+  const [activeSub, setActiveSub] = useState("all");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedSku, setSelectedSku] = useState(skuOptions[0]);
+  const [quantity, setQuantity] = useState(1);
+  const [addedMap, setAddedMap] = useState<Record<string, CartItem>>({});
+  const [justAdded, setJustAdded] = useState(false);
+  const { addItem } = useCart();
 
-  // 筛选逻辑
+  // 过滤逻辑
   const filtered = products.filter((p) => {
-    const matchCat = activeCategory === "all" || p.category === activeCategory;
-    const range = priceRanges[activePriceRange];
-    const matchPrice = p.price >= range.min && p.price <= range.max;
-    const matchNew = onlyNew ? p.isNew : true;
-    const matchHot = onlyHot ? p.isHot : true;
+    const matchLeft = activeLeft === "all" || p.category === activeLeft;
+    const matchSub =
+      activeSub === "all"
+        ? true
+        : activeSub === "hot"
+        ? p.isHot
+        : activeSub === "new"
+        ? p.isNew
+        : activeSub === "set"
+        ? p.tags.includes("套装")
+        : p.tags.some((t) =>
+            t.includes(activeSub) ||
+            activeSub.includes(t)
+          );
     const matchQuery = query.trim()
-      ? p.name.includes(query.trim()) ||
-        p.subtitle.includes(query.trim()) ||
-        p.tags.some((t) => t.includes(query.trim()))
+      ? p.name.includes(query.trim()) || p.subtitle.includes(query.trim())
       : true;
-    return matchCat && matchPrice && matchNew && matchHot && matchQuery;
+    return matchLeft && matchSub && matchQuery;
   });
 
-  const sorted = [...filtered].sort((a, b) => {
-    if (activeSort === "销量") return b.reviewCount - a.reviewCount;
-    if (activeSort === "价格↑") return a.price - b.price;
-    if (activeSort === "价格↓") return b.price - a.price;
-    if (activeSort === "评分") return b.rating - a.rating;
-    return 0;
-  });
+  const handleLeftChange = useCallback((id: string) => {
+    setActiveLeft(id);
+    setActiveSub("all");
+  }, []);
 
-  const hasActiveFilter =
-    activePriceRange !== 0 || onlyNew || onlyHot;
-
-  const resetFilters = () => {
-    setActivePriceRange(0);
-    setOnlyNew(false);
-    setOnlyHot(false);
+  const openSheet = (product: Product) => {
+    setSelectedProduct(product);
+    setSelectedSku(skuOptions[0]);
+    setQuantity(1);
+    setJustAdded(false);
   };
+
+  const closeSheet = () => setSelectedProduct(null);
+
+  const handleAddToCart = () => {
+    if (!selectedProduct) return;
+    addItem({ ...selectedProduct, id: selectedProduct.id });
+    setAddedMap((prev) => ({
+      ...prev,
+      [selectedProduct.id]: { quantity: (prev[selectedProduct.id]?.quantity || 0) + quantity, sku: selectedSku },
+    }));
+    setJustAdded(true);
+    setTimeout(() => {
+      setJustAdded(false);
+      closeSheet();
+    }, 800);
+  };
+
+  const cartTotal = Object.values(addedMap).reduce((s, v) => s + v.quantity, 0);
 
   return (
     <PhoneFrame>
-      {/* 顶部 */}
-      <header className="sticky top-0 z-40 bg-[#FAF7F4]/95 backdrop-blur-sm">
-        {/* 搜索行 */}
-        <div className="flex items-center gap-3 px-4 pt-4 pb-3">
-          <Link
-            href="/"
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-[#F5EFE8] flex-shrink-0"
-          >
-            <ArrowLeft size={18} className="text-[#1A1208]" />
-          </Link>
-
+      {/* 顶部搜索栏 */}
+      <header className="sticky top-0 z-40 bg-[#FAF7F4]/95 backdrop-blur-sm px-4 pt-4 pb-3 border-b border-[#E8DDD0]">
+        <div className="flex items-center gap-3">
           <div className="flex-1 flex items-center gap-2 bg-[#F5EFE8] rounded-full px-4 py-2.5">
             <Search size={14} className="text-[#8C7B6B] flex-shrink-0" />
             <input
-              ref={inputRef}
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="搜索精华、面霜、眼霜..."
+              placeholder="搜索商品..."
               className="flex-1 text-[13px] text-[#1A1208] bg-transparent outline-none placeholder:text-[#8C7B6B] min-w-0"
               aria-label="搜索商品"
             />
             {query && (
-              <button onClick={() => setQuery("")} aria-label="清除搜索">
+              <button onClick={() => setQuery("")} aria-label="清除">
                 <X size={14} className="text-[#8C7B6B]" />
               </button>
             )}
           </div>
-
-          <button
-            onClick={() => setFilterOpen(true)}
-            className={`relative w-8 h-8 flex items-center justify-center rounded-full flex-shrink-0 transition-colors ${
-              hasActiveFilter ? "bg-[#1A1208]" : "bg-[#F5EFE8]"
-            }`}
-            aria-label="筛选"
+          <Link
+            href="/cart"
+            className="relative w-9 h-9 flex items-center justify-center rounded-full bg-[#F5EFE8] flex-shrink-0"
+            aria-label="购物车"
           >
-            <SlidersHorizontal
-              size={16}
-              className={hasActiveFilter ? "text-white" : "text-[#1A1208]"}
-            />
-            {hasActiveFilter && (
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#B8973A] rounded-full" />
+            <ShoppingCart size={18} className="text-[#1A1208]" />
+            {cartTotal > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[16px] h-4 bg-[#B8973A] rounded-full text-white text-[9px] flex items-center justify-center px-0.5 font-medium">
+                {cartTotal > 99 ? "99+" : cartTotal}
+              </span>
             )}
-          </button>
-        </div>
-
-        {/* 分类标签横滑 */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
-          <button
-            onClick={() => setActiveCategory("all")}
-            className={`flex-shrink-0 text-xs font-medium px-4 py-1.5 rounded-full transition-all ${
-              activeCategory === "all"
-                ? "bg-[#1A1208] text-white"
-                : "bg-[#F5EFE8] text-[#3D2B1A]"
-            }`}
-          >
-            全部
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`flex-shrink-0 flex items-center gap-1 text-xs font-medium px-4 py-1.5 rounded-full transition-all ${
-                activeCategory === cat.id
-                  ? "bg-[#1A1208] text-white"
-                  : "bg-[#F5EFE8] text-[#3D2B1A]"
-              }`}
-            >
-              <span aria-hidden="true">{cat.icon}</span>
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
-        {/* 排序栏 */}
-        <div className="flex items-center justify-between px-4 pb-2 border-b border-[#E8DDD0]">
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-            {sortOptions.map((opt) => (
-              <button
-                key={opt}
-                onClick={() => setActiveSort(opt)}
-                className={`flex-shrink-0 text-[12px] pb-1.5 border-b-2 transition-all ${
-                  activeSort === opt
-                    ? "border-[#B8973A] text-[#B8973A] font-semibold"
-                    : "border-transparent text-[#8C7B6B]"
-                }`}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            className="ml-3 text-[#8C7B6B] flex-shrink-0"
-            aria-label={viewMode === "grid" ? "切换为列表视图" : "切换为网格视图"}
-          >
-            {viewMode === "grid" ? <List size={18} /> : <LayoutGrid size={18} />}
-          </button>
+          </Link>
         </div>
       </header>
 
-      {/* 活动横幅（仅在无搜索时展示） */}
-      {!query && activeCategory === "all" && (
-        <div className="mx-4 mt-3 bg-[#1A1208] rounded-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-2">
-              <Flame size={14} className="text-[#B8973A]" />
+      {/* 三级分栏主体 */}
+      <div className="flex flex-1 overflow-hidden" style={{ height: "calc(100% - 116px)" }}>
+        {/* 左侧一级分类边栏 */}
+        <aside className="w-[72px] flex-shrink-0 bg-[#F5EFE8] overflow-y-auto scrollbar-hide">
+          {leftCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleLeftChange(cat.id)}
+              className={`w-full flex flex-col items-center gap-1 py-4 px-1 relative transition-all ${
+                activeLeft === cat.id
+                  ? "bg-[#FAF7F4] text-[#B8973A]"
+                  : "text-[#8C7B6B]"
+              }`}
+            >
+              {activeLeft === cat.id && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-[#B8973A] rounded-r-full" />
+              )}
+              <span className="text-base" aria-hidden="true">{cat.icon}</span>
+              <span className="text-[11px] font-medium leading-tight text-center">{cat.name}</span>
+            </button>
+          ))}
+        </aside>
+
+        {/* 右侧内容区 */}
+        <main className="flex-1 overflow-y-auto bg-[#FAF7F4]">
+          {/* 二级标签横滑 */}
+          <div className="sticky top-0 z-10 bg-[#FAF7F4] px-3 pt-3 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
+            {(subCategories[activeLeft] || subCategories.all).map((sub) => (
+              <button
+                key={sub.id}
+                onClick={() => setActiveSub(sub.id)}
+                className={`flex-shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full transition-all ${
+                  activeSub === sub.id
+                    ? "bg-[#1A1208] text-white"
+                    : "bg-white text-[#3D2B1A] border border-[#E8DDD0]"
+                }`}
+              >
+                {sub.name}
+              </button>
+            ))}
+          </div>
+
+          {/* 商品网格 */}
+          <div className="px-3 pb-4">
+            {filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-[#8C7B6B]">
+                <div className="w-16 h-16 rounded-full bg-[#F5EFE8] flex items-center justify-center mb-3">
+                  <ShoppingBag size={28} strokeWidth={1} className="text-[#E8DDD0]" />
+                </div>
+                <p className="text-sm font-medium text-[#3D2B1A]">暂无相关商品</p>
+                <button
+                  onClick={() => { setQuery(""); setActiveSub("all"); }}
+                  className="mt-4 text-xs text-[#B8973A] font-medium"
+                >
+                  查看全部
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2.5">
+                {filtered.map((product) => {
+                  const inCart = addedMap[product.id];
+                  return (
+                    <div key={product.id} className="bg-white rounded-2xl overflow-hidden">
+                      <Link href={`/products/${product.id}`} className="block">
+                        <div className="relative aspect-square bg-[#F5EFE8]">
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            fill
+                            className="object-contain p-4"
+                          />
+                          {/* 角标 */}
+                          {product.isNew && (
+                            <span className="absolute top-2 left-2 bg-[#4A7CC7] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                              NEW
+                            </span>
+                          )}
+                          {product.isHot && !product.isNew && (
+                            <span className="absolute top-2 left-2 bg-[#B8973A] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                              热销
+                            </span>
+                          )}
+                          {product.originalPrice && (
+                            <span className="absolute top-2 right-2 bg-[#E8573A] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                              -{Math.round((1 - product.price / product.originalPrice) * 10) * 10}%
+                            </span>
+                          )}
+                        </div>
+                        <div className="px-2.5 pt-2.5 pb-1">
+                          <p className="text-xs font-semibold text-[#1A1208] line-clamp-1">{product.name}</p>
+                          <p className="text-[10px] text-[#8C7B6B] mt-0.5 line-clamp-1">{product.subtitle}</p>
+                          {/* 评分 */}
+                          <div className="flex items-center gap-1 mt-1">
+                            <Star size={10} fill="#B8973A" className="text-[#B8973A]" />
+                            <span className="text-[10px] text-[#8C7B6B]">{product.rating} ({product.reviewCount > 999 ? (product.reviewCount / 1000).toFixed(1) + "k" : product.reviewCount})</span>
+                          </div>
+                        </div>
+                      </Link>
+                      <div className="px-2.5 pb-2.5 flex items-center justify-between">
+                        <div>
+                          <span className="text-sm font-bold text-[#1A1208]">¥{product.price}</span>
+                          {product.originalPrice && (
+                            <span className="text-[10px] text-[#8C7B6B] line-through ml-1">¥{product.originalPrice}</span>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => openSheet(product)}
+                          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                            inCart ? "bg-[#4A7C59]" : "bg-[#1A1208]"
+                          }`}
+                          aria-label={`加入购物车 ${product.name}`}
+                        >
+                          {inCart ? (
+                            <Check size={13} className="text-white" />
+                          ) : (
+                            <Plus size={13} className="text-white" />
+                          )}
+                        </button>
+                      </div>
+                      {inCart && (
+                        <p className="text-[9px] text-[#4A7C59] font-medium text-center pb-1.5">
+                          已加 {inCart.quantity} 件 · {inCart.sku}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+
+      {/* 快捷购物车底栏 */}
+      {cartTotal > 0 && !selectedProduct && (
+        <div className="absolute bottom-16 left-0 right-0 px-4 z-30">
+          <Link
+            href="/cart"
+            className="flex items-center justify-between bg-[#1A1208] rounded-2xl px-5 py-3 shadow-lg"
+          >
+            <div className="flex items-center gap-3">
+              <div className="relative w-9 h-9 bg-[#B8973A] rounded-full flex items-center justify-center">
+                <ShoppingCart size={17} className="text-white" />
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 bg-white rounded-full text-[#1A1208] text-[9px] flex items-center justify-center font-bold px-0.5">
+                  {cartTotal}
+                </span>
+              </div>
               <div>
-                <p className="text-[10px] text-[#B8973A] font-medium tracking-wider">FLASH SALE</p>
-                <p className="text-xs font-bold text-white">本周特惠 · 最高直降 ¥180</p>
+                <p className="text-xs font-bold text-white">查看购物车</p>
+                <p className="text-[10px] text-white/50">{cartTotal} 件商品</p>
               </div>
             </div>
-            <Link
-              href="/?section=flash"
-              className="flex items-center gap-0.5 text-[11px] text-[#D4AF5A] font-medium"
-            >
-              抢购 <ChevronRight size={12} />
-            </Link>
-          </div>
+            <div className="flex items-center gap-1 text-[#B8973A] text-xs font-medium">
+              去结算 <ChevronRight size={14} />
+            </div>
+          </Link>
         </div>
       )}
 
-      {/* 商品列表 */}
-      <div className="px-4 py-4">
-        {/* 结果统计 */}
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[11px] text-[#8C7B6B]">
-            {query
-              ? `"${query}" 共找到 ${sorted.length} 件商品`
-              : `共 ${sorted.length} 件商品`}
-          </p>
-          {hasActiveFilter && (
-            <button
-              onClick={resetFilters}
-              className="text-[11px] text-[#B8973A] font-medium flex items-center gap-0.5"
-            >
-              <X size={11} />
-              重置筛选
-            </button>
-          )}
-        </div>
-
-        {/* 空状态 */}
-        {sorted.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#8C7B6B]">
-            <div className="w-20 h-20 rounded-full bg-[#F5EFE8] flex items-center justify-center mb-4">
-              <ShoppingBag size={32} strokeWidth={1} className="text-[#E8DDD0]" />
-            </div>
-            <p className="text-sm font-medium text-[#3D2B1A]">
-              {query ? `未找到与"${query}"相关的商品` : "该分类暂无商品"}
-            </p>
-            <p className="text-xs text-[#8C7B6B] mt-1">换个关键词或分类试试吧</p>
-            <button
-              onClick={() => {
-                setQuery("");
-                setActiveCategory("all");
-                resetFilters();
-              }}
-              className="mt-5 bg-[#1A1208] text-white text-sm font-medium px-8 py-3 rounded-full"
-            >
-              查看全部商品
-            </button>
-          </div>
-        ) : viewMode === "grid" ? (
-          <div className="grid grid-cols-2 gap-3">
-            {sorted.map((product) => (
-              <ProductCard key={product.id} product={product} layout="grid" />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {sorted.map((product) => (
-              <ProductCard key={product.id} product={product} layout="list" />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* 筛选抽屉 */}
-      {filterOpen && (
-        <div
-          className="fixed inset-0 z-[60] flex items-end"
-          style={{ left: "50%", transform: "translateX(-50%)", maxWidth: 390, width: "100%" }}
-        >
+      {/* SKU 选购弹窗 */}
+      {selectedProduct && (
+        <div className="absolute inset-0 z-50 flex items-end">
           <div
             className="absolute inset-0 bg-black/40"
-            onClick={() => setFilterOpen(false)}
+            onClick={closeSheet}
           />
-          <div className="relative w-full bg-white rounded-t-[24px] px-5 pt-5 pb-8 z-10">
-            {/* 抽屉头部 */}
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-base font-bold text-[#1A1208]">筛选</h2>
-              <button onClick={() => setFilterOpen(false)} aria-label="关闭筛选">
+          <div className="relative w-full bg-white rounded-t-[24px] px-5 pt-5 pb-6 z-10 max-h-[80%] overflow-y-auto">
+            {/* 商品信息行 */}
+            <div className="flex gap-4 mb-5">
+              <div className="w-24 h-24 rounded-2xl bg-[#F5EFE8] flex-shrink-0 overflow-hidden relative">
+                <Image
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  fill
+                  className="object-contain p-3"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-bold text-[#1A1208] leading-tight">{selectedProduct.name}</p>
+                <p className="text-[11px] text-[#8C7B6B] mt-1">{selectedProduct.subtitle}</p>
+                <p className="text-xl font-bold text-[#1A1208] mt-2">
+                  ¥{selectedProduct.price}
+                  {selectedProduct.originalPrice && (
+                    <span className="text-sm text-[#8C7B6B] line-through ml-2 font-normal">
+                      ¥{selectedProduct.originalPrice}
+                    </span>
+                  )}
+                </p>
+                <p className="text-[11px] text-[#8C7B6B] mt-1">库存 {selectedProduct.stock} 件</p>
+              </div>
+              <button onClick={closeSheet} aria-label="关闭">
                 <X size={20} className="text-[#8C7B6B]" />
               </button>
             </div>
 
-            {/* 价格区间 */}
+            {/* SKU 规格选择 */}
             <div className="mb-5">
-              <p className="text-sm font-semibold text-[#1A1208] mb-3">价格区间</p>
+              <p className="text-sm font-semibold text-[#1A1208] mb-3">选择规格</p>
               <div className="flex gap-2 flex-wrap">
-                {priceRanges.map(({ label }, i) => (
+                {skuOptions.map((sku) => (
                   <button
-                    key={label}
-                    onClick={() => setActivePriceRange(i)}
-                    className={`text-xs font-medium px-4 py-2 rounded-full border transition-all ${
-                      activePriceRange === i
+                    key={sku}
+                    onClick={() => setSelectedSku(sku)}
+                    className={`text-sm font-medium px-5 py-2 rounded-full border transition-all ${
+                      selectedSku === sku
                         ? "bg-[#1A1208] text-white border-[#1A1208]"
                         : "bg-white text-[#3D2B1A] border-[#E8DDD0]"
                     }`}
                   >
-                    {label}
+                    {sku}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* 商品标签 */}
-            <div className="mb-6">
-              <p className="text-sm font-semibold text-[#1A1208] mb-3">商品标签</p>
-              <div className="flex gap-2">
+            {/* 数量选择 */}
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-sm font-semibold text-[#1A1208]">购买数量</p>
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setOnlyNew(!onlyNew)}
-                  className={`text-xs font-medium px-4 py-2 rounded-full border transition-all ${
-                    onlyNew
-                      ? "bg-[#1A1208] text-white border-[#1A1208]"
-                      : "bg-white text-[#3D2B1A] border-[#E8DDD0]"
-                  }`}
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                  className="w-8 h-8 rounded-full border border-[#E8DDD0] flex items-center justify-center disabled:opacity-40"
+                  aria-label="减少数量"
                 >
-                  新品
+                  <Minus size={14} className="text-[#3D2B1A]" />
                 </button>
+                <span className="text-base font-bold text-[#1A1208] min-w-[24px] text-center tabular-nums">
+                  {quantity}
+                </span>
                 <button
-                  onClick={() => setOnlyHot(!onlyHot)}
-                  className={`text-xs font-medium px-4 py-2 rounded-full border transition-all ${
-                    onlyHot
-                      ? "bg-[#1A1208] text-white border-[#1A1208]"
-                      : "bg-white text-[#3D2B1A] border-[#E8DDD0]"
-                  }`}
+                  onClick={() => setQuantity((q) => Math.min(selectedProduct.stock, q + 1))}
+                  disabled={quantity >= selectedProduct.stock}
+                  className="w-8 h-8 rounded-full border border-[#E8DDD0] flex items-center justify-center disabled:opacity-40"
+                  aria-label="增加数量"
                 >
-                  热销
+                  <Plus size={14} className="text-[#3D2B1A]" />
                 </button>
               </div>
             </div>
 
             {/* 操作按钮 */}
             <div className="flex gap-3">
-              <button
-                onClick={resetFilters}
-                className="flex-1 py-3 rounded-full border border-[#E8DDD0] text-sm font-semibold text-[#3D2B1A]"
+              <Link
+                href={`/products/${selectedProduct.id}`}
+                className="flex-1 py-3 rounded-full border border-[#E8DDD0] text-sm font-semibold text-[#3D2B1A] text-center"
               >
-                重置
-              </button>
+                商品详情
+              </Link>
               <button
-                onClick={() => setFilterOpen(false)}
-                className="flex-2 flex-grow-[2] py-3 rounded-full bg-[#1A1208] text-sm font-semibold text-white"
+                onClick={handleAddToCart}
+                className={`flex-[2] py-3 rounded-full text-sm font-semibold text-white text-center transition-all ${
+                  justAdded ? "bg-[#4A7C59]" : "bg-[#1A1208]"
+                }`}
               >
-                查看 {sorted.length} 件商品
+                {justAdded ? "已加入购物车" : `加入购物车 ¥${(selectedProduct.price * quantity).toLocaleString()}`}
               </button>
             </div>
           </div>
         </div>
       )}
+
+      <BottomNav />
     </PhoneFrame>
   );
 }
