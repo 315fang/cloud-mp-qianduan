@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Search, Bell, ChevronRight, Flame, Sparkles } from "lucide-react";
+import { Search, Bell, ChevronRight, Sparkles } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BannerCarousel from "@/components/BannerCarousel";
 import ProductCard from "@/components/ProductCard";
@@ -11,22 +11,8 @@ import { products } from "@/lib/data";
 const hotProducts = products.filter((p) => p.isHot || p.isNew).slice(0, 4);
 const allProducts = products.slice(0, 6);
 
-// 倒计时 hook
-function useCountdown(initialSeconds: number) {
-  const [seconds, setSeconds] = useState(initialSeconds);
-  useEffect(() => {
-    const t = setInterval(() => setSeconds((s) => (s > 0 ? s - 1 : 0)), 1000);
-    return () => clearInterval(t);
-  }, []);
-  const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
-  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
-  const s = String(seconds % 60).padStart(2, "0");
-  return { h, m, s };
-}
-
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const countdown = useCountdown(4 * 3600 + 23 * 60 + 15);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,31 +72,6 @@ export default function HomePage() {
       <div className="px-4 space-y-5 pb-4">
         {/* Banner 轮播 */}
         <BannerCarousel />
-
-
-
-        {/* 限时秒杀 */}
-        <section aria-labelledby="flash-sale-heading">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Flame size={18} className="text-[#E8573A]" />
-              <h2 id="flash-sale-heading" className="text-sm font-bold text-[#1A1208]">限时秒杀</h2>
-              <span className="text-[10px] text-[#8C7B6B]">
-                {countdown.h}:{countdown.m}:{countdown.s}
-              </span>
-            </div>
-            <Link href="/activity" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
-              查看全部 <ChevronRight size={13} />
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {products.slice(0, 4).map((product) => (
-              <Link key={product.id} href={`/products/${product.id}`} className="block">
-                <ProductCard product={product} layout="list" />
-              </Link>
-            ))}
-          </div>
-        </section>
 
         {/* 热门推荐 */}
         <section aria-labelledby="hot-heading">
