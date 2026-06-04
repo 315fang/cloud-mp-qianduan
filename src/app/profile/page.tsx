@@ -3,6 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { products } from "@/lib/data";
 import {
   ChevronRight,
   MapPin,
@@ -16,6 +17,9 @@ import {
   Store,
   CheckCircle2,
   Users,
+  Wallet,
+  BookImage,
+  History,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
@@ -38,9 +42,12 @@ const orderTabs = [
 const serviceItems = [
   { icon: MapPin, label: "地址管理", href: "/profile/address", color: "#E8573A" },
   { icon: Gift, label: "优惠券", href: "/profile/coupons", color: "#F59E0B" },
+  { icon: Wallet, label: "我的钱包", href: "/distributor/wallet", color: "#B8973A" },
+  { icon: BookImage, label: "推广素材", href: "/distributor/materials", color: "#4A7CC7" },
   { icon: Store, label: "店长工作台", href: "/distributor/manager", color: "#DC2626" },
   { icon: CheckCircle2, label: "自提核销", href: "/distributor/pickup-verify", color: "#059669" },
-  { icon: Users, label: "团队中心", href: "/distributor/team", color: "#4A7CC7" },
+  { icon: Users, label: "团队中心", href: "/distributor/team", color: "#6B4EC7" },
+  { icon: History, label: "浏览足迹", href: "/profile/history", color: "#8C7B6B" },
   { icon: Settings, label: "设置", href: "/profile/settings", color: "#8C7B6B" },
 ];
 
@@ -172,6 +179,29 @@ export default function ProfilePage() {
                   <Icon size={20} strokeWidth={1.5} style={{ color }} />
                 </div>
                 <span className="text-[11px] text-[#3D2B1A] font-medium text-center">{label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* 浏览足迹 */}
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#F0E8DC]">
+            <div className="flex items-center gap-1.5">
+              <History size={14} className="text-[#B8973A]" strokeWidth={1.5} />
+              <span className="text-sm font-bold text-[#1A1208]">浏览足迹</span>
+            </div>
+            <Link href="/profile/history" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+              全部 <ChevronRight size={13} />
+            </Link>
+          </div>
+          <div className="flex gap-3 px-4 py-3 overflow-x-auto scrollbar-hide">
+            {products.slice(0, 5).map((product) => (
+              <Link key={product.id} href={`/products/${product.id}`} className="flex-shrink-0 flex flex-col gap-1.5 w-20">
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#F5EFE8]">
+                  <Image src={product.image} alt={product.name} fill className="object-contain p-2" />
+                </div>
+                <p className="text-[11px] font-bold text-[#1A1208] text-center">¥{product.price}</p>
               </Link>
             ))}
           </div>
