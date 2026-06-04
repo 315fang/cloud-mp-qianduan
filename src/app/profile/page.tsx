@@ -53,23 +53,24 @@ const serviceItems = [
 export default function ProfilePage() {
   return (
     <PhoneFrame>
-      {/* 1. 黑金会员卡 */}
+      {/* 1. 轻奢会员卡 - 米白暖金色系 */}
       <div
         className="relative mx-3 mt-3 rounded-3xl overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, #1A1208 0%, #2E2010 40%, #1A1208 70%, #0E0B04 100%)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+          background: "linear-gradient(135deg, #F5EDE0 0%, #EDD9BC 45%, #F0E4CC 75%, #F8F0E4 100%)",
+          boxShadow: "0 4px 20px rgba(184,151,58,0.15)",
+          border: "1px solid rgba(184,151,58,0.2)",
         }}
       >
         {/* 装饰光圈 */}
         <div
-          className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, #D4AF5A, transparent 70%)" }}
+          className="absolute -top-8 -right-8 w-36 h-36 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(212,175,90,0.2), transparent 70%)" }}
           aria-hidden="true"
         />
         <div
-          className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, #B8973A, transparent 70%)" }}
+          className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(184,151,58,0.12), transparent 70%)" }}
           aria-hidden="true"
         />
 
@@ -77,44 +78,47 @@ export default function ProfilePage() {
           {/* 右上角设置 */}
           <Link
             href="/profile/settings"
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10"
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[#B8973A]/10"
             aria-label="设置"
           >
-            <Settings size={15} className="text-white/80" strokeWidth={1.5} />
+            <Settings size={15} className="text-[#8C6E2A]" strokeWidth={1.5} />
           </Link>
 
           {/* 头像 + 昵称 + 会员号 */}
           <div className="flex items-center gap-3 mb-5">
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 border border-[#B8973A]/40"
-              style={{ background: "linear-gradient(135deg, #2E2010, #3D2B1A)" }}
+              className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{
+                background: "linear-gradient(135deg, #EDD9BC, #D4AF5A)",
+                boxShadow: "0 2px 8px rgba(184,151,58,0.3)",
+              }}
             >
-              <span className="text-xl font-bold text-[#D4AF5A]">云</span>
+              <span className="text-xl font-bold text-[#6B4E1A]">云</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-base font-bold text-white">云肌用户</span>
+                <span className="text-base font-bold text-[#3D2B1A]">云肌用户</span>
                 <span
-                  className="text-[9px] px-2 py-0.5 rounded-full font-medium tracking-wide"
+                  className="text-[9px] px-2 py-0.5 rounded-full font-semibold tracking-wide"
                   style={{
-                    background: "linear-gradient(90deg, #D4AF5A, #B8973A)",
-                    color: "#1A1208",
+                    background: "linear-gradient(90deg, #B8973A, #D4AF5A)",
+                    color: "#fff",
                   }}
                 >
                   黄金会员
                 </span>
               </div>
-              <p className="text-[11px] text-white/40 mt-0.5 font-mono tracking-wider">NO. 2024 0001</p>
+              <p className="text-[11px] text-[#8C7B6B] mt-0.5 font-mono tracking-wider">NO. 2024 0001</p>
             </div>
           </div>
 
           {/* 成长值进度条 */}
           <div className="mb-5">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] text-[#D4AF5A]/80">成长值 2,480</span>
-              <span className="text-[10px] text-white/40">距铂金还差 520</span>
+              <span className="text-[10px] text-[#8C6E2A] font-medium">成长值 2,480</span>
+              <span className="text-[10px] text-[#A08050]">距铂金还差 520</span>
             </div>
-            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-[#B8973A]/15 overflow-hidden">
               <div
                 className="h-full rounded-full"
                 style={{
@@ -124,17 +128,17 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex justify-between mt-1">
-              <span className="text-[9px] text-white/30">黄金</span>
-              <span className="text-[9px] text-white/30">铂金</span>
+              <span className="text-[9px] text-[#A08050]">黄金</span>
+              <span className="text-[9px] text-[#A08050]">铂金</span>
             </div>
           </div>
 
           {/* 资产四格 */}
-          <div className="grid grid-cols-4 divide-x divide-white/10 border-t border-white/10 pt-4">
+          <div className="grid grid-cols-4 divide-x divide-[#B8973A]/20 border-t border-[#B8973A]/20 pt-4">
             {assets.map(({ label, value, href }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-0.5">
-                <span className="text-sm font-bold text-[#D4AF5A]">{value}</span>
-                <span className="text-[10px] text-white/50">{label}</span>
+                <span className="text-sm font-bold text-[#8C6E2A]">{value}</span>
+                <span className="text-[10px] text-[#A08050]">{label}</span>
               </Link>
             ))}
           </div>
