@@ -20,6 +20,8 @@ import {
   Wallet,
   BookImage,
   History,
+  Headphones,
+  Star,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
@@ -39,16 +41,21 @@ const orderTabs = [
   { label: "售后", icon: RotateCcw, href: "/orders/refund/list", badge: "1" },
 ];
 
-const serviceItems = [
-  { icon: MapPin, label: "地址管理", href: "/profile/address", color: "#E8573A" },
-  { icon: Gift, label: "优惠券", href: "/profile/coupons", color: "#F59E0B" },
-  { icon: Wallet, label: "我的钱包", href: "/distributor/wallet", color: "#B8973A" },
-  { icon: BookImage, label: "推广素材", href: "/distributor/materials", color: "#4A7CC7" },
-  { icon: Store, label: "店长工作台", href: "/distributor/manager", color: "#DC2626" },
-  { icon: CheckCircle2, label: "自提核销", href: "/distributor/pickup-verify", color: "#059669" },
-  { icon: Users, label: "团队中心", href: "/distributor/team", color: "#6B4EC7" },
-  { icon: History, label: "浏览足迹", href: "/profile/history", color: "#8C7B6B" },
-  { icon: Settings, label: "设置", href: "/profile/settings", color: "#8C7B6B" },
+// 买家工具区
+const buyerServices = [
+  { icon: MapPin,    label: "地址管理", href: "/profile/address",           color: "#E8573A" },
+  { icon: Gift,      label: "优惠券",   href: "/profile/coupons",            color: "#F59E0B" },
+  { icon: Star,      label: "我的收藏", href: "/profile/favorites",          color: "#B8973A" },
+  { icon: Headphones,label: "客服中心", href: "/profile/customer-service",   color: "#4A7CC7" },
+];
+
+// 分销工作区
+const distributorServices = [
+  { icon: Wallet,       label: "我的钱包",   href: "/distributor/wallet",         color: "#B8973A" },
+  { icon: BookImage,    label: "推广素材",   href: "/distributor/materials",      color: "#4A7CC7" },
+  { icon: Store,        label: "店长工作台", href: "/distributor/manager",        color: "#DC2626" },
+  { icon: CheckCircle2, label: "自提核销",   href: "/distributor/pickup-verify",  color: "#059669" },
+  { icon: Users,        label: "团队中心",   href: "/distributor/team",           color: "#6B4EC7" },
 ];
 
 export default function ProfilePage() {
@@ -167,15 +174,15 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 我的服务 */}
+        {/* 买家工具 */}
         <div className="bg-white rounded-2xl overflow-hidden">
           <div className="px-4 pt-3 pb-1 border-b border-[#F0E8DC]">
-            <span className="text-sm font-bold text-[#1A1208]">我的服务</span>
+            <span className="text-sm font-bold text-[#1A1208]">买家工具</span>
           </div>
-          <div className="grid grid-cols-3 gap-y-4 px-4 py-4">
-            {serviceItems.map(({ icon: Icon, label, href, color }) => (
+          <div className="grid grid-cols-4 gap-y-4 px-2 py-4">
+            {buyerServices.map(({ icon: Icon, label, href, color }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
-                <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}15` }}>
                   <Icon size={20} strokeWidth={1.5} style={{ color }} />
                 </div>
                 <span className="text-[11px] text-[#3D2B1A] font-medium text-center">{label}</span>
@@ -184,7 +191,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 浏览足迹 */}
+        {/* 浏览足迹 — 紧跟买家工具下方，逻辑归属一致 */}
         <div className="bg-white rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#F0E8DC]">
             <div className="flex items-center gap-1.5">
@@ -205,6 +212,39 @@ export default function ProfilePage() {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* 分销工作台 — 独立分区，与买家工具视觉隔离 */}
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 pt-3 pb-1 border-b border-[#F0E8DC]">
+            <span className="text-sm font-bold text-[#1A1208]">分销工作台</span>
+            <Link href="/distributor/manager" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+              工作台 <ChevronRight size={13} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-5 gap-y-4 px-1 py-4">
+            {distributorServices.map(({ icon: Icon, label, href, color }) => (
+              <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
+                <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}15` }}>
+                  <Icon size={18} strokeWidth={1.5} style={{ color }} />
+                </div>
+                <span className="text-[10px] text-[#3D2B1A] font-medium text-center leading-tight">{label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* 设置 — 独立列表行，系统级操作不混入功能区 */}
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <Link href="/profile/settings" className="flex items-center justify-between px-4 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#8C7B6B15] flex items-center justify-center">
+                <Settings size={17} strokeWidth={1.5} className="text-[#8C7B6B]" />
+              </div>
+              <span className="text-sm text-[#1A1208]">设置</span>
+            </div>
+            <ChevronRight size={16} className="text-[#C8BAA8]" />
+          </Link>
         </div>
 
         <div className="pb-2" />
