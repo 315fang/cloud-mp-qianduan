@@ -10,19 +10,13 @@ import {
   Bell,
   Settings,
   Headphones,
-  Star,
-  Users,
   Clock,
   Package,
   Truck,
   RotateCcw,
   ShoppingCart,
-  TrendingUp,
   Store,
   CheckCircle2,
-  Crown,
-  BookOpen,
-  Briefcase,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
@@ -45,16 +39,10 @@ const orderTabs = [
 const serviceItems = [
   { icon: MapPin, label: "地址管理", href: "/profile/address", color: "#E8573A" },
   { icon: Gift, label: "优惠券", href: "/profile/coupons", color: "#F59E0B" },
-  { icon: Star, label: "积分中心", href: "/profile/points", color: "#B8973A" },
   { icon: Bell, label: "消息通知", href: "/profile/notifications", color: "#7C4AC7", badge: "3" },
   { icon: Store, label: "店长工作台", href: "/distributor/manager", color: "#DC2626" },
   { icon: CheckCircle2, label: "自提核销", href: "/distributor/pickup-verify", color: "#059669" },
-  { icon: Crown, label: "权益中心", href: "/profile/rights-benefits", color: "#7C3AED" },
   { icon: Headphones, label: "专属客服", href: "/profile/customer-service", color: "#0891B2" },
-  { icon: BookOpen, label: "品牌故事", href: "/profile/brand-story", color: "#92400E" },
-  { icon: Briefcase, label: "购物袋", href: "/profile/shopping-bags", color: "#E8573A" },
-  { icon: Users, label: "我的团队", href: "/distributor/team", color: "#4A7CC7" },
-  { icon: TrendingUp, label: "分佣中心", href: "/distributor", color: "#B85A2A" },
   { icon: Settings, label: "设置", href: "/profile/settings", color: "#8C7B6B" },
 ];
 
@@ -90,22 +78,32 @@ export default function ProfilePage() {
 
       {/* 会员卡 - 上移覆盖照片底部 */}
       <div className="px-3 -mt-10 relative z-10">
-        <div
-          className="rounded-3xl overflow-hidden"
-          style={{
-            background: "linear-gradient(135deg, #F8F1E4 0%, #EDD9BC 45%, #F0E4CC 75%, #F8F0E4 100%)",
-            boxShadow: "0 8px 28px rgba(184,151,58,0.18)",
-            border: "1px solid rgba(184,151,58,0.22)",
-          }}
-        >
+        <div className="relative mx-3 mt-3 rounded-3xl overflow-hidden" style={{background: "linear-gradient(135deg, #F8F1E4 0%, #EDD9BC 45%, #F0E4CC 75%, #F8F0E4 100%)", boxShadow: "0 8px 28px rgba(184,151,58,0.18)", border: "1px solid rgba(184,151,58,0.22)"}}>
           {/* 装饰光圈 */}
-          <div
-            className="absolute -top-6 -right-6 w-32 h-32 rounded-full pointer-events-none"
-            style={{ background: "radial-gradient(circle, rgba(212,175,90,0.22), transparent 70%)" }}
-            aria-hidden="true"
-          />
+          <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full pointer-events-none" style={{background: "radial-gradient(circle, rgba(212,175,90,0.22), transparent 70%)"}} aria-hidden="true"/>
 
           <div className="relative px-5 pt-5 pb-5">
+            {/* 快捷按钮 - 客服和消息 */}
+            <div className="absolute top-4 right-4 flex items-center gap-1">
+              <Link
+                href="/profile/customer-service"
+                className="w-7 h-7 flex items-center justify-center rounded-full"
+                style={{background: "rgba(8,145,178,0.15)"}}
+                aria-label="客服"
+              >
+                <Headphones size={13} className="text-[#0891B2]" strokeWidth={2.5}/>
+              </Link>
+              <Link
+                href="/profile/notifications"
+                className="relative w-7 h-7 flex items-center justify-center rounded-full"
+                style={{background: "rgba(124,74,193,0.15)"}}
+                aria-label="消息"
+              >
+                <Bell size={13} className="text-[#7C4AC7]" strokeWidth={2.5}/>
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#E8573A] rounded-full text-white text-[7px] flex items-center justify-center font-bold">3</span>
+              </Link>
+            </div>
+
             {/* 头像 + 昵称 + 会员号 */}
             <div className="flex items-center gap-3 mb-4">
               <div
@@ -190,7 +188,7 @@ export default function ProfilePage() {
           <div className="px-4 pt-3 pb-1 border-b border-[#F0E8DC]">
             <span className="text-sm font-bold text-[#1A1208]">我的服务</span>
           </div>
-          <div className="grid grid-cols-5 gap-y-4 px-4 py-4">
+          <div className="grid grid-cols-3 gap-y-4 px-4 py-4">
             {serviceItems.map(({ icon: Icon, label, href, color, badge }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
                 <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>
