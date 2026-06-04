@@ -53,52 +53,91 @@ const serviceItems = [
 export default function ProfilePage() {
   return (
     <PhoneFrame>
-      {/* 1. 顶部背景图 */}
-      <div className="relative h-44 overflow-hidden">
-        <Image
-          src="/images/banner-2.png"
-          alt="个人中心背景"
-          fill
-          className="object-cover"
+      {/* 1. 黑金会员卡 */}
+      <div
+        className="relative mx-3 mt-3 rounded-3xl overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #1A1208 0%, #2E2010 40%, #1A1208 70%, #0E0B04 100%)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+        }}
+      >
+        {/* 装饰光圈 */}
+        <div
+          className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, #D4AF5A, transparent 70%)" }}
+          aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/50" />
+        <div
+          className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, #B8973A, transparent 70%)" }}
+          aria-hidden="true"
+        />
 
-        {/* 右上角设置 */}
-        <Link
-          href="/profile/settings"
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20"
-          aria-label="设置"
-        >
-          <Settings size={16} className="text-white" strokeWidth={1.5} />
-        </Link>
-      </div>
+        <div className="relative px-5 pt-5 pb-5">
+          {/* 右上角设置 */}
+          <Link
+            href="/profile/settings"
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10"
+            aria-label="设置"
+          >
+            <Settings size={15} className="text-white/80" strokeWidth={1.5} />
+          </Link>
 
-      {/* 2. 白色卡片 - 悬浮覆盖背景 */}
-      <div className="relative -mt-10 mx-3 bg-white rounded-2xl shadow-lg px-5 pt-5 pb-4">
-        {/* 头像 + 昵称 + 等级 */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 rounded-full bg-[#F0E6C8] flex items-center justify-center border-2 border-[#B8973A]/40 flex-shrink-0">
-            <span className="text-xl font-bold text-[#B8973A]">云</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-base font-bold text-[#1A1208]">云肌用户</span>
-              <span className="text-[10px] text-[#B8973A] border border-[#B8973A]/50 px-2 py-0.5 rounded-full font-medium">
-                黄金会员
-              </span>
+          {/* 头像 + 昵称 + 会员号 */}
+          <div className="flex items-center gap-3 mb-5">
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 border border-[#B8973A]/40"
+              style={{ background: "linear-gradient(135deg, #2E2010, #3D2B1A)" }}
+            >
+              <span className="text-xl font-bold text-[#D4AF5A]">云</span>
             </div>
-            <p className="text-xs text-[#8C7B6B] mt-0.5">完善信息可获得奖励 &gt;</p>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-white">云肌用户</span>
+                <span
+                  className="text-[9px] px-2 py-0.5 rounded-full font-medium tracking-wide"
+                  style={{
+                    background: "linear-gradient(90deg, #D4AF5A, #B8973A)",
+                    color: "#1A1208",
+                  }}
+                >
+                  黄金会员
+                </span>
+              </div>
+              <p className="text-[11px] text-white/40 mt-0.5 font-mono tracking-wider">NO. 2024 0001</p>
+            </div>
           </div>
-        </div>
 
-        {/* 资产四格 */}
-        <div className="grid grid-cols-4 divide-x divide-[#F0E8DC] border-t border-[#F0E8DC] pt-4">
-          {assets.map(({ label, value, href }) => (
-            <Link key={label} href={href} className="flex flex-col items-center gap-0.5">
-              <span className="text-sm font-bold text-[#1A1208]">{value}</span>
-              <span className="text-[10px] text-[#8C7B6B]">{label}</span>
-            </Link>
-          ))}
+          {/* 成长值进度条 */}
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] text-[#D4AF5A]/80">成长值 2,480</span>
+              <span className="text-[10px] text-white/40">距铂金还差 520</span>
+            </div>
+            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: "82%",
+                  background: "linear-gradient(90deg, #B8973A, #D4AF5A)",
+                }}
+              />
+            </div>
+            <div className="flex justify-between mt-1">
+              <span className="text-[9px] text-white/30">黄金</span>
+              <span className="text-[9px] text-white/30">铂金</span>
+            </div>
+          </div>
+
+          {/* 资产四格 */}
+          <div className="grid grid-cols-4 divide-x divide-white/10 border-t border-white/10 pt-4">
+            {assets.map(({ label, value, href }) => (
+              <Link key={label} href={href} className="flex flex-col items-center gap-0.5">
+                <span className="text-sm font-bold text-[#D4AF5A]">{value}</span>
+                <span className="text-[10px] text-white/50">{label}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
