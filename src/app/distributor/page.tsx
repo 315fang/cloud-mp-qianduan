@@ -79,7 +79,7 @@ export default function DistributorPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-white font-bold text-base">云肌用户</span>
+                <span className="text-white font-bold text-base">问兰用户</span>
                 <span className="text-[10px] font-semibold text-[#B8973A] border border-[#B8973A]/50 px-2 py-0.5 rounded-full">
                   L2 高级经销商
                 </span>

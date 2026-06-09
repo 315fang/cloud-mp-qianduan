@@ -38,7 +38,7 @@ export default function DistributorRulesPage() {
           <div className="bg-[#1A1208] rounded-2xl p-5 text-white space-y-3">
             <h2 className="font-bold text-base text-[#B8973A]">分销体系说明</h2>
             <p className="text-sm text-white/80 leading-relaxed">
-              云肌采用三层分销体系。您分享商品后，通过您的专属链接/二维码产生的订单，按等级比例计算直销佣金。您的直接下级的销售额，您还可获得相应的团队分佣。
+              问兰采用三层分销体系。您分享商品后，通过您的专属链接/二维码产生的订单，按等级比例计算直销佣金。您的直接下级的销售额，您还可获得相应的团队分佣。
             </p>
           </div>
 

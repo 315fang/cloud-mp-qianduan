@@ -95,7 +95,7 @@ export default function ProfilePage() {
           {/* 头像 */}
           <div className="relative flex-shrink-0">
             <div className="w-16 h-16 rounded-full bg-[#F0E6C8] flex items-center justify-center border-2 border-[#B8973A]/40">
-              <span className="text-2xl font-bold text-[#B8973A]">云</span>
+              <span className="text-2xl font-bold text-[#B8973A]">问</span>
             </div>
             <button className="absolute bottom-0 right-0 w-5 h-5 bg-[#B8973A] rounded-full flex items-center justify-center" aria-label="更换头像">
               <Camera size={10} className="text-white" />
@@ -104,7 +104,7 @@ export default function ProfilePage() {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg font-bold text-white">云肌用户</h2>
+              <h2 className="text-lg font-bold text-white">问兰用户</h2>
               <span className="text-[10px] font-medium text-[#B8973A] border border-[#B8973A]/50 px-2 py-0.5 rounded-full">
                 黄金会员
               </span>
@@ -313,7 +313,7 @@ export default function ProfilePage() {
         {/* 隐私保护提示 */}
         <div className="flex items-center gap-2 px-2">
           <Lock size={12} className="text-[#8C7B6B]" />
-          <p className="text-[10px] text-[#8C7B6B]">您的个人信息已受到严格保护 · 云肌护肤</p>
+            <p className="text-[10px] text-[#8C7B6B]">您的个人信息已受到严格保护 · 问兰护肤</p>
         </div>
 
         {/* 邀请好友 */}

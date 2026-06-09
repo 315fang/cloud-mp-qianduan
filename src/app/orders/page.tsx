@@ -150,9 +150,9 @@ export default function OrdersPage() {
                   <div className="flex items-start gap-2.5 px-4 py-3 border-b border-[#F9F5F0] bg-[#FAF7F4]">
                     <MapPin size={14} className="text-[#B8973A] mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-semibold text-[#1A1208]">王小美  138 0000 0000</p>
+                      <p className="text-xs font-semibold text-[#1A1208]">李静茵  158 2288 8888</p>
                       <p className="text-[10px] text-[#8C7B6B] mt-0.5">
-                        上海市静安区南京西路 1111 号云肌大厦 101 室
+                        上海市静安区南京西路 1111 号问兰大厦 101 室
                       </p>
                     </div>
                   </div>

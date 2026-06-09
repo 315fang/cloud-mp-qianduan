@@ -15,7 +15,7 @@ export default function SettingsPage() {
     { label: "实名认证", desc: "已认证", action: () => {} },
     { label: "隐私设置", desc: "", action: () => router.push("/profile/privacy") },
     { label: "帮助中心", desc: "", action: () => router.push("/profile/help") },
-    { label: "关于云肌", desc: "v1.0.0", action: () => {} },
+    { label: "关于问兰", desc: "v1.0.0", action: () => {} },
     { label: "清除缓存", desc: "12.5 MB", action: () => {} },
   ];
 

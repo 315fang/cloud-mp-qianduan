@@ -8,9 +8,9 @@ import PhoneFrame from "@/components/PhoneFrame";
 const initialAddresses = [
   {
     id: 1,
-    name: "王小美",
-    phone: "138 0000 0000",
-    address: "上海市静安区南京西路 1111 号云肌大厦 101 室",
+    name: "李静茵",
+    phone: "158 2288 8888",
+    address: "上海市静安区南京西路 1111 号问兰大厦 101 室",
     isDefault: true,
   },
   {

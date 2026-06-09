@@ -29,10 +29,10 @@ export default function PrivacyPage() {
         <div className="flex-1 overflow-y-auto p-4">
           <div className="bg-white rounded-2xl p-5 space-y-5">
             <div className="pb-4 border-b border-[#F0E8DC]">
-              <h1 className="text-base font-bold text-[#1A1208]">云肌隐私政策</h1>
+              <h1 className="text-base font-bold text-[#1A1208]">问兰隐私政策</h1>
               <p className="text-xs text-[#8C7B6B] mt-1">更新日期：2024 年 12 月 1 日 &nbsp;|&nbsp; 生效日期：2024 年 12 月 1 日</p>
               <p className="text-sm text-[#3D2B1A] mt-3 leading-relaxed">
-                云肌（以下简称"我们"）深知个人信息对您的重要性，我们将按照法律法规要求，采取相应安全保护措施，尽力保护您的个人信息安全可控。
+                问兰（以下简称"我们"）深知个人信息对您的重要性，我们将按照法律法规要求，采取相应安全保护措施，尽力保护您的个人信息安全可控。
               </p>
             </div>
             {sections.map(s => (

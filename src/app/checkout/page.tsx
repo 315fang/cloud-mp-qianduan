@@ -79,10 +79,10 @@ export default function CheckoutPage() {
           </div>
           <div className="flex-1">
             <p className="text-sm font-bold text-[#1A1208]">
-              王小美 &nbsp; 138 0000 0000
+              李静茵 &nbsp; 158 2288 8888
             </p>
             <p className="text-xs text-[#8C7B6B] mt-0.5">
-              上海市静安区南京西路 1111 号云肌大厦 101 室
+              上海市静安区南京西路 1111 号问兰大厦 101 室
             </p>
           </div>
           <ChevronRight size={16} className="text-[#C0B0A0]" />

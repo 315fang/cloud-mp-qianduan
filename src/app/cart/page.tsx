@@ -22,7 +22,7 @@ import { useState } from "react";
 const recommendProducts = products.slice(2, 5);
 
 const coupons = [
-  { code: "CLOUD50", label: "新人专享 ¥50 优惠码", discount: 50, min: 299 },
+  { code: "WENLAN50", label: "新人专享 ¥50 优惠码", discount: 50, min: 299 },
   { code: "VIP30", label: "会员 ¥30 优惠码", discount: 30, min: 200 },
 ];
 
@@ -115,7 +115,7 @@ export default function CartPage() {
                   王小美 &nbsp; 138 0000 0000
                 </p>
                 <p className="text-xs text-[#8C7B6B] mt-0.5 truncate">
-                  上海市静安区南京西路 1111 号云肌大厦 101 室
+                  上海市静安区南京西路 1111 号问兰大厦 101 室
                 </p>
               </div>
               <ChevronRight size={16} className="text-[#C0B0A0] flex-shrink-0" />

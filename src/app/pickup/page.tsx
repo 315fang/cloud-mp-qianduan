@@ -7,15 +7,15 @@ import PhoneFrame from "@/components/PhoneFrame";
 
 const stations = [
   {
-    id: "1", name: "云肌美妆旗舰店", address: "上海市浦东新区张江高科技园区科苑路XXX号",
+    id: "1", name: "问兰美妆旗舰店", address: "上海市浦东新区张江高科技园区科苑路XXX号",
     phone: "021-12345678", distance: "0.8km", hours: "10:00-22:00", available: 3,
   },
   {
-    id: "2", name: "云肌体验中心（陆家嘴）", address: "上海市浦东新区陆家嘴环路XXX号正大广场B1",
+    id: "2", name: "问兰体验中心（陆家嘴）", address: "上海市浦东新区陆家嘴环路XXX号正大广场B1",
     phone: "021-87654321", distance: "2.3km", hours: "10:00-22:00", available: 8,
   },
   {
-    id: "3", name: "云肌专柜（静安大悦城）", address: "上海市静安区大宁路XXX号大悦城L3",
+    id: "3", name: "问兰专柜（静安大悦城）", address: "上海市静安区大宁路XXX号大悦城L3",
     phone: "021-11223344", distance: "5.6km", hours: "10:00-21:30", available: 0,
   },
 ];

@@ -236,7 +236,7 @@ export default function DealerApplyPage() {
             </div>
 
             <p className="text-[10px] text-[#8C7B6B] text-center leading-relaxed">
-              提交后由云肌商务团队在 1 个工作日内审核并联系您。<br />
+              提交后由问兰商务团队在 1 个工作日内审核并联系您。<br />
               审核通过后等级立即生效，可开始享受专属佣金。
             </p>
 

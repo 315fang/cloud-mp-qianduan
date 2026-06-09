@@ -44,8 +44,8 @@ export default function HomePage() {
 
         <div className="flex items-center justify-between px-5 pt-3 pb-2">
           <div>
-            <p className="text-[10px] font-medium tracking-[0.2em] text-[#B8973A] uppercase">Cloud Beauty</p>
-            <h1 className="text-lg font-bold text-[#1A1208] leading-tight">云肌护肤</h1>
+            <p className="text-[10px] font-medium tracking-[0.2em] text-[#B8973A] uppercase">Wenlan Beauty</p>
+            <h1 className="text-lg font-bold text-[#1A1208] leading-tight">问兰护肤</h1>
           </div>
           <div className="flex items-center gap-3">
             <button className="relative w-8 h-8 flex items-center justify-center" aria-label="消息通知">
@@ -159,7 +159,7 @@ export default function HomePage() {
 {/* 底部品牌信息 */}
         <div className="text-center py-6">
           <div className="gold-divider mb-4" aria-hidden="true" />
-          <p className="text-[10px] tracking-[0.25em] text-[#8C7B6B] font-medium">CLOUD BEAUTY · 云肌</p>
+          <p className="text-[10px] tracking-[0.25em] text-[#8C7B6B] font-medium">WENLAN BEAUTY · 问兰</p>
           <p className="text-[10px] text-[#8C7B6B]/60 mt-1">源自自然 · 精于科技 · 美于生活</p>
         </div>
       </div>

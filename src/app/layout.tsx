@@ -3,7 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 
 export const metadata: Metadata = {
-  title: "云肌 · 轻奢护肤",
+  title: "问兰 · 轻奢护肤",
   description: "精选轻奢护肤品，焕活肌肤自然光泽。发现属于你的美丽仪式。",
   keywords: "护肤, 轻奢, 精华, 面霜, 护肤品",
 };
