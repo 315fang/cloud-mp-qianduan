@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Bell, ChevronRight, Sparkles } from "lucide-react";
+import { Search, Bell, ChevronRight, Flame, Sparkles } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BannerCarousel from "@/components/BannerCarousel";
 import ProductCard from "@/components/ProductCard";
@@ -11,15 +11,21 @@ import { products } from "@/lib/data";
 const hotProducts = products.filter((p) => p.isHot || p.isNew).slice(0, 4);
 const allProducts = products.slice(0, 6);
 
-export default function HomePage() {
-  const [searchQuery, setSearchQuery] = useState("");
+// 倒计时 hook
+function useCountdown(initialSeconds: number) {
+  const [seconds, setSeconds] = useState(initialSeconds);
+  useEffect(() => {
+    const t = setInterval(() => setSeconds((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
+  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+  const s = String(seconds % 60).padStart(2, "0");
+  return { h, m, s };
+}
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-    }
-  };
+export default function HomePage() {
+  const countdown = useCountdown(4 * 3600 + 23 * 60 + 15);
 
   return (
     <PhoneFrame>
@@ -54,18 +60,13 @@ export default function HomePage() {
 
         {/* 搜索栏 */}
         <div className="px-5 pb-3">
-          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
-            <div className="flex-1 bg-[#F5EFE8] rounded-full px-4 py-2.5 flex items-center gap-2 border border-[#E8DDD0] focus-within:border-[#B8973A]">
-              <Search size={14} className="text-[#8C7B6B]" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="搜索精华、面霜、护肤套装..."
-                className="flex-1 bg-transparent text-sm outline-none text-[#1A1208] placeholder-[#8C7B6B]"
-              />
-            </div>
-          </form>
+          <Link
+            href="/products"
+            className="flex items-center gap-2 bg-[#F5EFE8] rounded-full px-4 py-2.5"
+          >
+            <Search size={14} className="text-[#8C7B6B]" />
+            <span className="text-[13px] text-[#8C7B6B]">搜索精华、面霜、护肤套装...</span>
+          </Link>
         </div>
       </header>
 
@@ -73,99 +74,89 @@ export default function HomePage() {
         {/* Banner 轮播 */}
         <BannerCarousel />
 
-        {/* 热门推荐 */}
-        <section aria-labelledby="hot-heading">
+
+
+        {/* 限时秒杀 */}
+        <section aria-labelledby="flash-sale-heading">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Sparkles size={18} className="text-[#B8973A]" />
-              <h2 id="hot-heading" className="text-sm font-bold text-[#1A1208]">热门推荐</h2>
+              <Flame size={16} className="text-[#B8973A]" />
+              <h2 id="flash-sale-heading" className="text-base font-bold text-[#1A1208]">限时特惠</h2>
             </div>
-            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
-              查看全部 <ChevronRight size={13} />
-            </Link>
+            {/* 倒计时 */}
+            <div className="flex items-center gap-1.5" aria-label={`剩余时间 ${countdown.h}小时${countdown.m}分${countdown.s}秒`}>
+              <span className="text-[10px] text-[#8C7B6B]">距结束</span>
+              {[countdown.h, countdown.m, countdown.s].map((unit, i) => (
+                <span key={i} className="flex items-center">
+                  <span className="min-w-[22px] text-center text-[12px] font-bold text-white bg-[#1A1208] rounded-md px-1 py-0.5 tabular-nums">
+                    {unit}
+                  </span>
+                  {i < 2 && <span className="text-[#8C7B6B] mx-0.5 text-[12px] font-bold">:</span>}
+                </span>
+              ))}
+            </div>
           </div>
-          <div className="space-y-2">
-            {hotProducts.map((product) => (
-              <Link key={product.id} href={`/products/${product.id}`} className="block">
-                <ProductCard product={product} layout="list" />
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
+            {products.slice(0, 4).map((product) => (
+              <Link
+                key={product.id}
+                href={`/products/${product.id}`}
+                className="flex-shrink-0 w-36 bg-white rounded-2xl overflow-hidden"
+              >
+                <div className="relative aspect-square bg-[#F5EFE8]">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-contain p-4"
+                  />
+                  {product.originalPrice && (
+                    <div className="absolute top-2 left-2 bg-[#B8973A] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                      -{Math.round((1 - product.price / product.originalPrice) * 10) * 10}%
+                    </div>
+                  )}
+                </div>
+                <div className="p-2.5">
+                  <p className="text-xs font-semibold text-[#1A1208] line-clamp-1">{product.name}</p>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="text-sm font-bold text-[#1A1208]">¥{product.price}</span>
+                    {product.originalPrice && (
+                      <span className="text-[10px] text-[#8C7B6B] line-through">¥{product.originalPrice}</span>
+                    )}
+                  </div>
+                  <div className="mt-1.5 w-full bg-[#E8DDD0] rounded-full h-1 overflow-hidden">
+                    <div
+                      className="h-full bg-[#B8973A] rounded-full"
+                      style={{ width: `${Math.min(85, 30 + Math.random() * 55).toFixed(0)}%` }}
+                    />
+                  </div>
+                  <p className="text-[9px] text-[#8C7B6B] mt-0.5">
+                    仅剩 {product.stock > 20 ? "少量" : product.stock + "件"}
+                  </p>
+                </div>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* 品牌专区 */}
-        <section className="rounded-2xl overflow-hidden bg-white shadow-sm" aria-labelledby="brand-heading">
-          {/* 品牌大图 */}
-          <div className="relative h-40 bg-gradient-to-b from-[#E8D9C8] to-[#F5EDE0] flex items-center justify-center overflow-hidden">
-            <img
-              src="/images/banner-2.png"
-              alt="间兰药业"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/40" />
-          </div>
 
-          {/* 品牌介绍卡片 */}
-          <div className="px-4 py-4">
-            <h2 id="brand-heading" className="text-center text-[10px] tracking-[0.2em] text-[#8C7B6B] uppercase mb-3">品牌专区</h2>
-            <div className="bg-[#F8F4EE] rounded-2xl px-4 py-4 text-center border border-[#E8DDD0]">
-              <p className="text-base font-bold text-[#1A1208]">云肌护肤</p>
-              <p className="text-xs text-[#8C7B6B] mt-1">专业皮肤修护 · 始于2024</p>
-              <Link
-                href="/distributor"
-                className="inline-block mt-3 text-xs font-medium text-[#B8973A] bg-white px-3 py-1.5 rounded-full border border-[#B8973A]/30"
-              >
-                了解更多
-              </Link>
+        <section aria-labelledby="hot-heading">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-[#B8973A]" />
+              <h2 id="hot-heading" className="text-base font-bold text-[#1A1208]">热门推荐</h2>
             </div>
-
-            {/* 三个快捷卡片 */}
-            <div className="grid grid-cols-3 gap-3 mt-4">
-              {[
-                { icon: "📰", label: "最新活动", href: "/activity" },
-                { icon: "📰", label: "行业动态", href: "/feed" },
-                { icon: "📋", label: "商城公告", href: "/profile/notifications" },
-              ].map(({ icon, label, href }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-[#F5EFE8] hover:bg-[#E8DDD0] transition-colors"
-                >
-                  <span className="text-lg">{icon}</span>
-                  <span className="text-[10px] text-[#1A1208] font-medium">{label}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 海报分享 */}
-        <section className="rounded-2xl bg-gradient-to-r from-[#D4AF5A] to-[#B8973A] px-5 py-4 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold">生成分享海报</p>
-              <p className="text-xs text-white/80 mt-1">邀请好友享优惠，赚取佣金</p>
-            </div>
-            <Link href="/distributor/materials" className="flex-shrink-0 bg-white/20 text-white text-xs font-medium px-3 py-1.5 rounded-full">
-              生成
+            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+              查看全部 <ChevronRight size={13} />
             </Link>
           </div>
-        </section>
-
-        {/* 店长工作台入口 */}
-        <section className="rounded-2xl bg-[#F5EFE8] px-5 py-4 border border-[#B8973A]/20">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold text-[#1A1208]">店长工作台</p>
-              <p className="text-xs text-[#8C7B6B] mt-1">管理团队 · 查看数据 · 提现佣金</p>
-            </div>
-            <Link href="/distributor" className="flex-shrink-0 text-[#B8973A] font-semibold text-xs">
-              进入 →
-            </Link>
+          <div className="grid grid-cols-2 gap-3">
+            {hotProducts.map((product) => (
+              <ProductCard key={product.id} product={product} layout="grid" />
+            ))}
           </div>
         </section>
 
-        {/* 底部品牌信息 */}
+{/* 底部品牌信息 */}
         <div className="text-center py-6">
           <div className="gold-divider mb-4" aria-hidden="true" />
           <p className="text-[10px] tracking-[0.25em] text-[#8C7B6B] font-medium">CLOUD BEAUTY · 云肌</p>
