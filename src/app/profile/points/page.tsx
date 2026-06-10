@@ -30,7 +30,23 @@ const redeemGoods = products.slice(0, 4).map((p, i) => ({
   cost: [800, 1200, 1500, 2000][i],
 }));
 
+// 赚积分任务
+const tasks = [
+  { id: "t1", title: "每日签到", desc: "连续签到得更多", points: 5, done: false },
+  { id: "t2", title: "完成一笔订单", desc: "消费 1 元得 1 积分", points: 100, done: false },
+  { id: "t3", title: "分享好物", desc: "分享商品给好友", points: 20, done: true },
+  { id: "t4", title: "完善个人资料", desc: "补全资料信息", points: 50, done: true },
+  { id: "t5", title: "邀请新用户", desc: "好友注册成功", points: 200, done: false },
+];
 
+// 积分流水
+const transactions = [
+  { id: "x1", title: "购物消费奖励", date: "2024-12-08 14:32", points: 128 },
+  { id: "x2", title: "积分抽奖消耗", date: "2024-12-07 20:15", points: -100 },
+  { id: "x3", title: "每日签到", date: "2024-12-07 09:02", points: 15 },
+  { id: "x4", title: "分享好物奖励", date: "2024-12-06 18:44", points: 20 },
+  { id: "x5", title: "兑换优惠券", date: "2024-12-05 11:20", points: -500 },
+];
 
 export default function PointsPage() {
   const router = useRouter();

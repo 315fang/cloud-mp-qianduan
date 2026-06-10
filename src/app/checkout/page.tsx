@@ -1,23 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, MapPin, ChevronRight, Tag, Check, ShoppingBag } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft, MapPin, ChevronRight, Tag, Check, ShoppingBag, Truck, Store, Phone, Clock } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import { useCart } from "@/context/CartContext";
+import { pickupStores, stockMeta } from "@/lib/pickup-stores";
 
-export default function CheckoutPage() {
+function CheckoutInner() {
   const router = useRouter();
+  const params = useSearchParams();
   const { items, selectedIds, total, clearSelected } = useCart();
   const [payMethod, setPayMethod] = useState<"wechat" | "alipay" | "card">("wechat");
   const [orderPlaced, setOrderPlaced] = useState(false);
 
+  // 配送方式：快递 / 门店自提
+  const delivery: "express" | "pickup" = params.get("delivery") === "pickup" ? "pickup" : "express";
+  const selectedStore = pickupStores.find((s) => s.id === params.get("store")) || null;
+
+  const setDelivery = (mode: "express" | "pickup") => {
+    const q = new URLSearchParams(Array.from(params.entries()));
+    q.set("delivery", mode);
+    if (mode === "express") q.delete("store");
+    router.replace(`/checkout?${q.toString()}`);
+  };
+
   const itemKey = (id: string, spec: string) => `${id}-${spec}`;
   const selectedItems = items.filter((i) => selectedIds.has(itemKey(i.product.id, i.spec)));
   const totalQty = selectedItems.reduce((s, i) => s + i.qty, 0);
-  const shipping = total >= 299 ? 0 : 12;
+  const shipping = delivery === "pickup" ? 0 : total >= 299 ? 0 : 12;
   const finalTotal = total + shipping;
 
   const handlePlaceOrder = () => {
@@ -69,24 +82,83 @@ export default function CheckoutPage() {
       </header>
 
       <div className="px-4 pb-32 space-y-3">
-        {/* 收货地址 */}
-        <Link
-          href="/profile/address"
-          className="flex items-center gap-3 bg-white rounded-2xl px-4 py-4"
-        >
-          <div className="w-10 h-10 rounded-full bg-[#F5EFE8] flex items-center justify-center flex-shrink-0">
-            <MapPin size={18} className="text-[#B8973A]" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-bold text-[#1A1208]">
-              李静茵 &nbsp; 158 2288 8888
-            </p>
-            <p className="text-xs text-[#8C7B6B] mt-0.5">
-              上海市静安区南京西路 1111 号问兰大厦 101 室
-            </p>
-          </div>
-          <ChevronRight size={16} className="text-[#C0B0A0]" />
-        </Link>
+        {/* 配送方式切换 */}
+        <div className="bg-white rounded-2xl p-1.5 flex gap-1.5">
+          {[
+            { key: "express" as const, label: "快递配送", icon: Truck },
+            { key: "pickup" as const, label: "门店自提", icon: Store },
+          ].map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setDelivery(key)}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                delivery === key ? "bg-[#1A1208] text-white" : "text-[#8C7B6B]"
+              }`}
+            >
+              <Icon size={15} /> {label}
+            </button>
+          ))}
+        </div>
+
+        {/* 收货地址 / 自提门店 */}
+        {delivery === "express" ? (
+          <Link
+            href="/profile/address"
+            className="flex items-center gap-3 bg-white rounded-2xl px-4 py-4"
+          >
+            <div className="w-10 h-10 rounded-full bg-[#F5EFE8] flex items-center justify-center flex-shrink-0">
+              <MapPin size={18} className="text-[#B8973A]" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-[#1A1208]">
+                李静茵 &nbsp; 158 2288 8888
+              </p>
+              <p className="text-xs text-[#8C7B6B] mt-0.5">
+                上海市静安区南京西路 1111 号问兰大厦 101 室
+              </p>
+            </div>
+            <ChevronRight size={16} className="text-[#C0B0A0]" />
+          </Link>
+        ) : selectedStore ? (
+          <Link
+            href={`/checkout/store?store=${selectedStore.id}`}
+            className="block bg-white rounded-2xl px-4 py-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#F5EFE8] flex items-center justify-center flex-shrink-0">
+                <Store size={18} className="text-[#B8973A]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-bold text-[#1A1208] truncate">{selectedStore.name}</p>
+                  <span className="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ color: stockMeta[selectedStore.stock].color, backgroundColor: stockMeta[selectedStore.stock].bg }}>
+                    {stockMeta[selectedStore.stock].label}
+                  </span>
+                </div>
+                <p className="text-xs text-[#8C7B6B] mt-0.5 line-clamp-1">{selectedStore.address}</p>
+              </div>
+              <ChevronRight size={16} className="text-[#C0B0A0]" />
+            </div>
+            <div className="flex items-center gap-4 mt-2.5 pt-2.5 border-t border-[#F5EFE8] text-[11px] text-[#8C7B6B]">
+              <span className="flex items-center gap-1"><Phone size={12} className="text-[#B8973A]" /> {selectedStore.phone}</span>
+              <span className="flex items-center gap-1"><Clock size={12} className="text-[#B8973A]" /> {selectedStore.hours}</span>
+            </div>
+          </Link>
+        ) : (
+          <Link
+            href="/checkout/store"
+            className="flex items-center gap-3 bg-white rounded-2xl px-4 py-4 border border-dashed border-[#D6C4A0]"
+          >
+            <div className="w-10 h-10 rounded-full bg-[#F5EFE8] flex items-center justify-center flex-shrink-0">
+              <Store size={18} className="text-[#B8973A]" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-[#1A1208]">请选择自提门店</p>
+              <p className="text-xs text-[#8C7B6B] mt-0.5">选择就近门店到店自提，免运费</p>
+            </div>
+            <ChevronRight size={16} className="text-[#C0B0A0]" />
+          </Link>
+        )}
 
         {/* 商品清单 */}
         <div className="bg-white rounded-2xl overflow-hidden">
