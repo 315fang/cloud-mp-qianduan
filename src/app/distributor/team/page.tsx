@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -143,7 +144,7 @@ export default function TeamPage() {
               filtered.map((member) => {
                 const statusStyle = statusColors[member.status] || statusColors.活跃;
                 return (
-                  <div key={member.id} className="flex items-center gap-3 px-4 py-3">
+                  <Link key={member.id} href={`/distributor/team/${member.id}`} className="flex items-center gap-3 px-4 py-3 active:bg-[#FAF7F4] transition-colors">
                     {/* 头像 */}
                     <div className="w-10 h-10 rounded-full bg-[#F5EFE8] flex items-center justify-center flex-shrink-0">
                       <span className="text-sm font-bold" style={{ color: levelColors[member.level] || "#8C7B6B" }}>
@@ -175,7 +176,7 @@ export default function TeamPage() {
                     </div>
 
                     <ChevronRight size={15} className="text-[#C0B0A0] flex-shrink-0" />
-                  </div>
+                  </Link>
                 );
               })
             )}

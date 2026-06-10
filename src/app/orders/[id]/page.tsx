@@ -205,22 +205,20 @@ export default function OrderDetailPage() {
 
         {/* 底部操作栏 */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] bg-white border-t border-[#F0E8DC] px-4 py-3 flex gap-2">
+          <Link href={`/orders/${order.id}/aftersale`} className="flex-1 py-2.5 rounded-full border border-[#E8DDD0] text-[#3D2B1A] text-sm font-medium text-center flex items-center justify-center gap-1">
+            <RotateCcw size={14} />
+            售后
+          </Link>
           {order.status === "shipped" && (
             <button className="flex-1 py-2.5 rounded-full border border-[#E8DDD0] text-[#3D2B1A] text-sm font-medium">
               确认收货
             </button>
           )}
-          {(order.status === "completed" || order.status === "shipped") && (
-            <Link href={`/orders/refund/apply?orderId=${order.id}`} className="flex-1 py-2.5 rounded-full border border-[#E8DDD0] text-[#3D2B1A] text-sm font-medium text-center flex items-center justify-center gap-1">
-              <RotateCcw size={14} />
-              申请退款
-            </Link>
-          )}
           {order.status === "completed" && (
-            <button className="flex-1 py-2.5 rounded-full bg-[#1A1208] text-white text-sm font-medium flex items-center justify-center gap-1">
+            <Link href={`/order/review?orderId=${order.id}`} className="flex-1 py-2.5 rounded-full bg-[#1A1208] text-white text-sm font-medium flex items-center justify-center gap-1">
               <Star size={14} />
               评价晒单
-            </button>
+            </Link>
           )}
           {order.status === "pending" && (
             <button className="flex-1 py-2.5 rounded-full bg-[#B8973A] text-white text-sm font-bold">

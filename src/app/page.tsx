@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Bell, ChevronRight, Flame, Sparkles } from "lucide-react";
+import { Search, Bell, ChevronRight, Flame, Sparkles, Crown, Ticket, Zap, Gift, Users, Scissors, Newspaper, Palette } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BannerCarousel from "@/components/BannerCarousel";
 import ProductCard from "@/components/ProductCard";
@@ -48,10 +48,10 @@ export default function HomePage() {
             <h1 className="text-lg font-bold text-[#1A1208] leading-tight">问兰护肤</h1>
           </div>
           <div className="flex items-center gap-3">
-            <button className="relative w-8 h-8 flex items-center justify-center" aria-label="消息通知">
+            <Link href="/profile/notifications" className="relative w-8 h-8 flex items-center justify-center" aria-label="消息通知">
               <Bell size={20} strokeWidth={1.5} className="text-[#3D2B1A]" />
               <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-[#B8973A] rounded-full" />
-            </button>
+            </Link>
             <Link href="/products" className="w-8 h-8 flex items-center justify-center" aria-label="搜索商品">
               <Search size={20} strokeWidth={1.5} className="text-[#3D2B1A]" />
             </Link>
@@ -73,6 +73,31 @@ export default function HomePage() {
       <div className="px-4 space-y-5 pb-4">
         {/* Banner 轮播 */}
         <BannerCarousel />
+
+        {/* 金刚区 - 运营功能入口 */}
+        <section aria-label="功能入口">
+          <div className="grid grid-cols-5 gap-y-4 gap-x-1 bg-white rounded-2xl py-4 px-2">
+            {[
+              { icon: Crown, label: "品牌专区", href: "/brand" },
+              { icon: Zap, label: "限时专场", href: "/activity/flash" },
+              { icon: Ticket, label: "领券中心", href: "/coupons/center" },
+              { icon: Gift, label: "幸运抽奖", href: "/lottery" },
+              { icon: Users, label: "拼团", href: "/group" },
+              { icon: Scissors, label: "砍价", href: "/slash" },
+              { icon: Palette, label: "随心配", href: "/activity/diy" },
+              { icon: Newspaper, label: "品牌资讯", href: "/brand/news" },
+              { icon: Sparkles, label: "新品上市", href: "/products" },
+              { icon: Gift, label: "兑换码", href: "/coupons/redeem" },
+            ].map(({ icon: Icon, label, href }) => (
+              <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
+                <div className="w-11 h-11 rounded-full bg-[#F5EFE8] flex items-center justify-center">
+                  <Icon size={19} className="text-[#B8973A]" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-[#3D2B1A] font-medium text-center leading-tight">{label}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
 
 
 
@@ -126,7 +151,7 @@ export default function HomePage() {
                   <div className="mt-1.5 w-full bg-[#E8DDD0] rounded-full h-1 overflow-hidden">
                     <div
                       className="h-full bg-[#B8973A] rounded-full"
-                      style={{ width: `${Math.min(85, 30 + Math.random() * 55).toFixed(0)}%` }}
+                      style={{ width: `${30 + ((product.id.charCodeAt(0) * 7) % 56)}%` }}
                     />
                   </div>
                   <p className="text-[9px] text-[#8C7B6B] mt-0.5">

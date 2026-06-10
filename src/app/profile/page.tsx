@@ -30,6 +30,12 @@ import {
   MessageCircle,
   FileText,
   Scissors,
+  Crown,
+  Award,
+  PiggyBank,
+  Coins as CoinsIcon,
+  KeyRound,
+  Headphones,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
@@ -64,17 +70,29 @@ const menuItems = [
     ],
   },
   {
+    group: "会员与资金",
+    items: [
+      { icon: Crown, label: "会员中心", href: "/profile/member", badge: "黄金" },
+      { icon: Award, label: "身份权益", href: "/profile/rights", badge: "" },
+      { icon: PiggyBank, label: "押金订单", href: "/profile/deposit", badge: "" },
+      { icon: CoinsIcon, label: "货款余额", href: "/distributor/goods-balance", badge: "" },
+      { icon: PiggyBank, label: "基金贡献", href: "/distributor/fund-pool", badge: "" },
+    ],
+  },
+  {
     group: "帮助与反馈",
     items: [
-      { icon: MessageCircle, label: "联系客服", href: "/profile/service", badge: "" },
+      { icon: Headphones, label: "专属客服", href: "/profile/service", badge: "" },
+      { icon: MessageCircle, label: "联系客服", href: "/profile/help", badge: "" },
       { icon: FileText, label: "我的评价", href: "/profile/reviews", badge: "" },
       { icon: Bell, label: "消息通知", href: "/profile/notifications", badge: "3" },
       { icon: HelpCircle, label: "帮助中心", href: "/profile/help", badge: "" },
     ],
   },
   {
-    group: "账号与隐私",
+    group: "账号与安全",
     items: [
+      { icon: KeyRound, label: "业务密码", href: "/profile/biz-password", badge: "" },
       { icon: ShieldCheck, label: "隐私设置", href: "/profile/privacy", badge: "" },
       { icon: Settings, label: "账号设置", href: "/profile/settings", badge: "" },
     ],
@@ -97,9 +115,9 @@ export default function ProfilePage() {
             <div className="w-16 h-16 rounded-full bg-[#F0E6C8] flex items-center justify-center border-2 border-[#B8973A]/40">
               <span className="text-2xl font-bold text-[#B8973A]">问</span>
             </div>
-            <button className="absolute bottom-0 right-0 w-5 h-5 bg-[#B8973A] rounded-full flex items-center justify-center" aria-label="更换头像">
+            <Link href="/profile/edit" className="absolute bottom-0 right-0 w-5 h-5 bg-[#B8973A] rounded-full flex items-center justify-center" aria-label="编辑资料">
               <Camera size={10} className="text-white" />
-            </button>
+            </Link>
           </div>
 
           <div className="flex-1 min-w-0">
@@ -172,16 +190,16 @@ export default function ProfilePage() {
 
       <div className="px-4 space-y-4 py-4">
         {/* 会员权益卡 */}
-        <div className="bg-gradient-to-r from-[#3D2B1A] to-[#2A1D10] rounded-2xl px-4 py-3.5 flex items-center gap-3 shadow">
+        <Link href="/profile/member" className="bg-gradient-to-r from-[#3D2B1A] to-[#2A1D10] rounded-2xl px-4 py-3.5 flex items-center gap-3 shadow">
           <Sparkles size={18} className="text-[#D4AF5A] flex-shrink-0" />
           <div className="flex-1">
             <p className="text-xs font-bold text-[#D4AF5A]">会员专属权益</p>
             <p className="text-[10px] text-white/50 mt-0.5">每月礼品 · 积分加速 · 专属折扣</p>
           </div>
-          <button className="text-xs text-[#D4AF5A] border border-[#D4AF5A]/40 px-3 py-1.5 rounded-full font-medium flex-shrink-0">
+          <span className="text-xs text-[#D4AF5A] border border-[#D4AF5A]/40 px-3 py-1.5 rounded-full font-medium flex-shrink-0">
             查看权益
-          </button>
-        </div>
+          </span>
+        </Link>
 
         {/* 我的订单 */}
         <div className="bg-white rounded-2xl overflow-hidden">

@@ -16,6 +16,15 @@ import {
   Check,
   BarChart3,
   ShoppingBag,
+  Coins,
+  ArrowLeftRight,
+  CreditCard,
+  Rocket,
+  PiggyBank,
+  Gift,
+  Image as ImageIcon,
+  UserPlus,
+  ArrowDownToLine,
 } from "lucide-react";
 import { useState } from "react";
 import PhoneFrame from "@/components/PhoneFrame";
@@ -138,6 +147,54 @@ export default function DistributorPage() {
           </div>
         </div>
 
+        {/* 货款与资金 */}
+        <div className="px-4 mt-4">
+          <div className="bg-white rounded-2xl p-4">
+            <p className="text-xs font-bold text-[#1A1208] mb-3 tracking-wide">货款与资金</p>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { icon: Coins, label: "货款余额", href: "/distributor/goods-balance" },
+                { icon: CreditCard, label: "充值订单", href: "/distributor/recharge-order" },
+                { icon: ArrowLeftRight, label: "划拨记录", href: "/distributor/transfer-history" },
+                { icon: ArrowLeftRight, label: "划拨申请", href: "/distributor/transfer-apply" },
+                { icon: PiggyBank, label: "基金贡献", href: "/distributor/fund-pool" },
+                { icon: Gift, label: "存钱罐", href: "/distributor/savings" },
+                { icon: Rocket, label: "升级进度", href: "/distributor/promotion-progress" },
+                { icon: ArrowDownToLine, label: "提现记录", href: "/distributor/withdraw-history" },
+              ].map(({ icon: Icon, label, href }) => (
+                <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
+                  <div className="w-11 h-11 rounded-full bg-[#F5EFE8] flex items-center justify-center">
+                    <Icon size={18} className="text-[#B8973A]" strokeWidth={1.5} />
+                  </div>
+                  <span className="text-[10px] text-[#3D2B1A] font-medium text-center leading-tight">{label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 邀约与推广 */}
+        <div className="px-4 mt-4">
+          <div className="bg-white rounded-2xl p-4">
+            <p className="text-xs font-bold text-[#1A1208] mb-3 tracking-wide">邀约与推广</p>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { icon: UserPlus, label: "邀请好友", href: "/distributor/invite" },
+                { icon: UserPlus, label: "合伙人邀约", href: "/distributor/invite/partner" },
+                { icon: Users, label: "邀约管理", href: "/distributor/invite/manage" },
+                { icon: ImageIcon, label: "品牌海报", href: "/distributor/brand-poster" },
+              ].map(({ icon: Icon, label, href }) => (
+                <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
+                  <div className="w-11 h-11 rounded-full bg-[#F5EFE8] flex items-center justify-center">
+                    <Icon size={18} className="text-[#B8973A]" strokeWidth={1.5} />
+                  </div>
+                  <span className="text-[10px] text-[#3D2B1A] font-medium text-center leading-tight">{label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* 邀请码 */}
         <div className="px-4 mt-4">
           <div className="bg-[#1A1208] rounded-2xl px-5 py-4 flex items-center justify-between">
@@ -156,7 +213,7 @@ export default function DistributorPage() {
           </div>
         </div>
 
-        {/* 团队排行 */}
+        {/* 团队排�� */}
         <div className="px-4 mt-4">
           <div className="bg-white rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#F0E8DC]">
