@@ -61,8 +61,8 @@ const menuItems = [
   {
     group: "我的服务",
     items: [
-      { icon: Heart, label: "我的收藏", href: "/profile/favorites", badge: "12" },
-      { icon: History, label: "浏览足迹", href: "/profile/history", badge: "" },
+      { icon: Heart, label: "我的收藏", href: "/profile/collection", badge: "12" },
+      { icon: History, label: "浏览足迹", href: "/profile/collection?tab=history", badge: "" },
       { icon: Gift, label: "优惠券", href: "/profile/coupons", badge: "3张" },
       { icon: Star, label: "积分中心", href: "/profile/points", badge: "1,280" },
       { icon: MapPin, label: "收货地址", href: "/profile/address", badge: "" },
@@ -153,7 +153,7 @@ export default function ProfilePage() {
           {[
             { label: "关注", value: "23", href: "#" },
             { label: "粉丝", value: "8", href: "#" },
-            { label: "收藏", value: "12", href: "/profile/favorites" },
+            { label: "收藏", value: "12", href: "/profile/collection" },
             { label: "积分", value: "1,280", href: "/profile/points" },
           ].map(({ label, value, href }) => (
             <Link key={label} href={href} className="text-center">
@@ -275,7 +275,7 @@ export default function ProfilePage() {
               <History size={15} className="text-[#B8973A]" />
               <span className="text-sm font-bold text-[#1A1208]">浏览足迹</span>
             </div>
-            <Link href="/profile/history" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+            <Link href="/profile/collection?tab=history" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
               全部 <ChevronRight size={13} />
             </Link>
           </div>
