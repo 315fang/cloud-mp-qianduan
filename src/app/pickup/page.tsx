@@ -14,6 +14,7 @@ import {
   Store,
   CalendarDays,
   ChevronUp,
+  MapPinOff,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 
@@ -83,6 +84,8 @@ export default function PickupPage() {
   const [selectedId, setSelectedId] = useState<string>(stations[0].id);
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
+  // 地图能力是否可用（门店缺少经纬度 / 地图组件不可用时为 false，演示可切换）
+  const [mapAvailable, setMapAvailable] = useState(true);
 
   const selected = stations.find((s) => s.id === selectedId) ?? stations[0];
 
@@ -113,9 +116,16 @@ export default function PickupPage() {
             <ArrowLeft size={18} className="text-[#1A1208]" />
           </button>
           <span className="font-bold text-white drop-shadow">门店地图</span>
+          <button
+            onClick={() => setMapAvailable((v) => !v)}
+            className="ml-auto text-[10px] text-white/70 underline drop-shadow"
+          >
+            演示地图不可用
+          </button>
         </header>
 
         {/* 上半区：地图 */}
+        {mapAvailable ? (
         <div className="relative h-[46%] w-full overflow-hidden">
           {/* 样式化地图底图（小程序端替换为原生 <map>） */}
           <div
@@ -185,6 +195,18 @@ export default function PickupPage() {
             <span className="text-xs font-semibold text-[#1A1208]">选点查最近店</span>
           </button>
         </div>
+        ) : (
+          /* 地图不可用降级方案 */
+          <div className="relative h-[46%] w-full bg-[#ECEAE4] flex flex-col items-center justify-center px-8 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-sm">
+              <MapPinOff size={30} className="text-[#B8973A]" strokeWidth={1.5} />
+            </div>
+            <h2 className="text-base font-bold text-[#1A1208]">地图暂不可用</h2>
+            <p className="text-xs text-[#8C7B6B] mt-2 leading-relaxed max-w-[260px]">
+              部分门店缺少经纬度信息，暂时无法在地图上标记位置。您仍可在下方查看门店列表、地址与联系方式，并使用导航前往。
+            </p>
+          </div>
+        )}
 
         {/* 下半区：门店列表 */}
         <div className="relative h-[54%] bg-[#F5EFE8] rounded-t-3xl -mt-4 z-20 flex flex-col">

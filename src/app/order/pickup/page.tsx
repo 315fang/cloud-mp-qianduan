@@ -2,21 +2,28 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, MapPin, Phone, Navigation, Copy, Check, Clock, QrCode, ShieldAlert } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Navigation, Copy, Check, Clock, QrCode, ShieldAlert, PackageX, AlertCircle, RefreshCw } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 
 const credential = {
-  status: "待提货" as "待提货" | "已核销",
+  status: "待提货" as "待发货" | "待提货" | "已核销",
   code: "8472 3915 6024",
   orderId: "ORD202412080012",
   pickupDeadline: "2024-12-15 前",
   store: { name: "问兰美学旗舰店（园区店）", address: "苏州市工业园区星海街 200 号问兰中心 1 层", phone: "0512-62917333" },
 };
 
+type PageState = "ready" | "error";
+
 export default function PickupPage() {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
-  const verified = credential.status === "已核销";
+  // 凭证状态（演示可切换）：待发货不可核销
+  const [status, setStatus] = useState<typeof credential.status>(credential.status);
+  // 整页运行态（演示可切换）：ready / error（加载失败或无权查看）
+  const [pageState, setPageState] = useState<PageState>("ready");
+  const verified = status === "已核销";
+  const notShipped = status === "待发货";
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(credential.code.replace(/\s/g, ""));
@@ -32,15 +39,58 @@ export default function PickupPage() {
             <ArrowLeft size={18} className="text-[#1A1208]" />
           </button>
           <span className="flex-1 text-center text-base font-bold text-[#1A1208]">提货凭证</span>
-          <span className="w-8" />
+          <button
+            onClick={() => {
+              // 演示循环：待提货 -> 待发货 -> 加载失败 -> 待提货
+              if (pageState === "error") { setPageState("ready"); setStatus("待提货"); }
+              else if (notShipped) { setPageState("error"); }
+              else { setStatus("待发货"); }
+            }}
+            className="text-[10px] text-[#A89685] underline w-8 text-right"
+          >
+            演示
+          </button>
         </div>
 
+        {pageState === "error" ? (
+          /* 整页加载失败 / 无权查看异常态 */
+          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+            <div className="w-20 h-20 rounded-3xl bg-[#FBEDEC] flex items-center justify-center mb-5">
+              <AlertCircle size={36} className="text-[#B5564E]" strokeWidth={1.5} />
+            </div>
+            <h2 className="text-lg font-bold text-[#1A1208]">凭证加载失败</h2>
+            <p className="text-sm text-[#8C7B6B] mt-2.5 leading-relaxed">
+              凭证信息加载失败，或您没有查看该提货凭证的权限。请确认登录账号后重试，或联系客服处理。
+            </p>
+            <button
+              onClick={() => { setPageState("ready"); setStatus("待提货"); }}
+              className="mt-6 flex items-center gap-1.5 bg-[#1A1208] text-white text-sm font-bold px-8 py-3 rounded-xl active:opacity-80"
+            >
+              <RefreshCw size={15} /> 重新加载
+            </button>
+            <button onClick={() => router.back()} className="mt-3 text-sm text-[#8C7B6B]">
+              返回上一页
+            </button>
+          </div>
+        ) : (
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* 状态 */}
-          <div className="flex items-center justify-center">
-            <span className={`text-sm font-bold px-4 py-1.5 rounded-full ${verified ? "bg-[#F5EFE8] text-[#8C7B6B]" : "bg-[#E8F5EC] text-[#3D8B5F]"}`}>
-              {credential.status}
+          <div className="flex flex-col items-center gap-2">
+            <span className={`text-sm font-bold px-4 py-1.5 rounded-full ${
+              verified
+                ? "bg-[#F5EFE8] text-[#8C7B6B]"
+                : notShipped
+                ? "bg-[#FBF0E6] text-[#B8763A]"
+                : "bg-[#E8F5EC] text-[#3D8B5F]"
+            }`}>
+              {status}
             </span>
+            {notShipped && (
+              <div className="flex items-center gap-1.5 bg-[#FBF0E6] text-[#B8763A] text-xs px-3 py-1.5 rounded-full">
+                <PackageX size={13} />
+                <span>商家未发货，暂不可核销，请等待发货后再到店核销</span>
+              </div>
+            )}
           </div>
 
           {/* 凭证票券 */}
@@ -61,11 +111,12 @@ export default function PickupPage() {
               </div>
               <p className="relative text-center text-[11px] text-[#C9B68C]/70 mt-4 tracking-wider">向门店店员出示核销码</p>
               <div className="relative text-center mt-2">
-                <span className="text-[32px] font-bold tracking-[0.12em] bg-gradient-to-b from-[#F8EBC6] to-[#CDA047] bg-clip-text text-transparent" style={{ filter: verified ? "blur(6px)" : "none" }}>
+                <span className="text-[32px] font-bold tracking-[0.12em] bg-gradient-to-b from-[#F8EBC6] to-[#CDA047] bg-clip-text text-transparent" style={{ filter: verified || notShipped ? "blur(6px)" : "none" }}>
                   {credential.code}
                 </span>
               </div>
               {verified && <p className="relative text-center text-xs text-[#E7C977] mt-2">该凭证已核销</p>}
+              {notShipped && <p className="relative text-center text-xs text-[#E7C977] mt-2">商家发货后核销码生效</p>}
             </div>
 
             {/* 撕裂线 + 两侧缺口 */}
@@ -90,11 +141,12 @@ export default function PickupPage() {
           <div className="bg-white rounded-2xl p-6 flex flex-col items-center">
             <p className="text-sm font-bold text-[#1A1208] mb-1">出示二维码</p>
             <p className="text-[11px] text-[#8C7B6B] mb-4">店员扫码即可完成核销</p>
-            <div className={`w-44 h-44 rounded-2xl bg-[#FAF7F4] border border-[#F0E8DC] flex items-center justify-center ${verified ? "opacity-40" : ""}`}>
-              <QrCode size={140} className="text-[#1A1208]" strokeWidth={1} style={{ filter: verified ? "blur(4px)" : "none" }} />
+            <div className={`w-44 h-44 rounded-2xl bg-[#FAF7F4] border border-[#F0E8DC] flex items-center justify-center ${verified || notShipped ? "opacity-40" : ""}`}>
+              <QrCode size={140} className="text-[#1A1208]" strokeWidth={1} style={{ filter: verified || notShipped ? "blur(4px)" : "none" }} />
             </div>
             <p className="text-xs text-[#8C7B6B] mt-4 tracking-[0.1em]">{credential.code}</p>
             {verified && <p className="text-xs text-[#B85A2A] mt-1">该二维码已核销</p>}
+            {notShipped && <p className="text-xs text-[#B8763A] mt-1">商家发货后二维码生效</p>}
           </div>
 
           {/* 门店信息 */}
@@ -145,6 +197,7 @@ export default function PickupPage() {
             </ul>
           </div>
         </div>
+        )}
       </div>
     </PhoneFrame>
   );

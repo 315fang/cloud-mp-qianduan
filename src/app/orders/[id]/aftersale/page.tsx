@@ -1,15 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, FileText, MapPin, ChevronRight, Copy,
-  RotateCcw, Clock, CheckCircle2,
+  RotateCcw, Clock, CheckCircle2, Headset, Info,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 
 export default function OrderAfterSalePage() {
   const router = useRouter();
+  // 商家是否已配置退货寄回地址（演示可切换）
+  const [hasReturnAddr, setHasReturnAddr] = useState(true);
 
   const order = { no: "WL202412010088", date: "2024-12-01 14:30" };
 
@@ -37,6 +40,12 @@ export default function OrderAfterSalePage() {
             <ArrowLeft size={20} className="text-white" />
           </button>
           <h1 className="text-base font-bold text-white">订单售后</h1>
+          <button
+            onClick={() => setHasReturnAddr((v) => !v)}
+            className="ml-auto text-[10px] text-white/40 underline"
+          >
+            演示降级
+          </button>
         </header>
 
         {/* 订单号头部说明 */}
@@ -80,22 +89,43 @@ export default function OrderAfterSalePage() {
           </div>
 
           {/* 寄回地址卡 */}
-          <div className="bg-white rounded-2xl p-4">
-            <div className="flex items-center gap-1.5 mb-3">
-              <MapPin size={15} className="text-[#B8973A]" />
-              <h3 className="text-sm font-bold text-[#1A1208]">退货寄回地址</h3>
-            </div>
-            <div className="bg-[#FAF7F4] rounded-xl p-3">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-[#1A1208]">{returnAddr.name}　{returnAddr.phone}</p>
-                <button onClick={() => alert("已复制")} className="text-[#B8973A]"><Copy size={13} /></button>
+          {hasReturnAddr ? (
+            <div className="bg-white rounded-2xl p-4">
+              <div className="flex items-center gap-1.5 mb-3">
+                <MapPin size={15} className="text-[#B8973A]" />
+                <h3 className="text-sm font-bold text-[#1A1208]">退货寄回地址</h3>
               </div>
-              <p className="text-xs text-[#8C7B6B] mt-1 leading-relaxed">{returnAddr.address}</p>
+              <div className="bg-[#FAF7F4] rounded-xl p-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-[#1A1208]">{returnAddr.name}　{returnAddr.phone}</p>
+                  <button onClick={() => alert("已复制")} className="text-[#B8973A]"><Copy size={13} /></button>
+                </div>
+                <p className="text-xs text-[#8C7B6B] mt-1 leading-relaxed">{returnAddr.address}</p>
+              </div>
+              <p className="text-[11px] text-[#A89685] mt-2 leading-relaxed">
+                请在售后审核通过后再寄回商品，并填写真实物流单号，以便我们及时处理。
+              </p>
             </div>
-            <p className="text-[11px] text-[#A89685] mt-2 leading-relaxed">
-              请在售后审核通过后再寄回商品，并填写真实物流单号，以便我们及时处理。
-            </p>
-          </div>
+          ) : (
+            /* 未配置寄回地址降级卡 */
+            <div className="bg-[#FBF6EC] border border-[#EEDFBE] rounded-2xl p-4 flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#F3E4BE] flex items-center justify-center shrink-0">
+                <Info size={17} className="text-[#B8973A]" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-[#1A1208]">暂未配置寄回地址</p>
+                <p className="text-xs text-[#8C7B6B] mt-1 leading-relaxed">
+                  商家尚未设置退货寄回地址，请勿自行寄回商品。提交售后申请后，可联系客服获取准确寄回地址。
+                </p>
+                <Link
+                  href="/profile/service"
+                  className="inline-flex items-center gap-1 mt-2.5 text-xs font-medium text-[#B8973A]"
+                >
+                  <Headset size={13} /> 联系客服
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* 售后记录列表 */}
           <div className="bg-white rounded-2xl p-4">

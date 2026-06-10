@@ -30,10 +30,17 @@ export default function ProfileEditPage() {
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-24">
         <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
-          <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
-            <ArrowLeft size={20} className="text-white" />
-          </button>
-          <h1 className="text-base font-bold text-white">编辑资料</h1>
+          {isFirstLogin ? (
+            <span className="flex items-center gap-1.5 -ml-0.5 px-2.5 py-1 rounded-full bg-[#B8973A]/15 border border-[#B8973A]/30">
+              <Lock size={12} className="text-[#B8973A]" />
+              <span className="text-[11px] font-medium text-[#B8973A]">首次登录 · 不可跳过</span>
+            </span>
+          ) : (
+            <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
+              <ArrowLeft size={20} className="text-white" />
+            </button>
+          )}
+          <h1 className="text-base font-bold text-white">{isFirstLogin ? "完善资料" : "编辑资料"}</h1>
         </header>
 
         {/* 首次登录引导条 */}
@@ -112,16 +119,27 @@ export default function ProfileEditPage() {
 
         {/* 底部固定按钮 */}
         <div className="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-white border-t border-[#F0E8DC] px-4 py-3">
+          {isFirstLogin && !completed && (
+            <p className="flex items-center justify-center gap-1 text-[11px] text-[#B8973A] mb-2">
+              <Lock size={11} /> 请先完善带锁的必填项，完成后方可进入
+            </p>
+          )}
           <button
             disabled={!completed}
             onClick={() => alert("功能开发中")}
-            className={`w-full text-sm font-bold py-3.5 rounded-xl transition-colors ${
+            className={`w-full text-sm font-bold py-3.5 rounded-xl flex items-center justify-center gap-1.5 transition-colors ${
               completed
                 ? "bg-[#B8973A] text-[#1A1208] active:opacity-80"
-                : "bg-[#E5DDD0] text-[#A89685]"
+                : "bg-[#EDE4D6] text-[#B0A18C] border border-dashed border-[#D6C4A0]"
             }`}
           >
-            {completed ? "完成，开始使用" : "完善后继续"}
+            {completed ? (
+              "完成，开始使用"
+            ) : (
+              <>
+                <Lock size={15} /> 资料未完善，暂不可继续
+              </>
+            )}
           </button>
         </div>
 

@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowLeft, TrendingUp, ArrowUpRight, ArrowDownRight, Inbox } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import GoldHeroCard from "@/components/GoldHeroCard";
 
 export default function FundPoolPage() {
   const router = useRouter();
+  // 基金池是否已启用运行（演示可切换）
+  const [poolEnabled, setPoolEnabled] = useState(true);
 
   const myTotal = "12,860.00";
 
@@ -67,7 +70,17 @@ export default function FundPoolPage() {
           <div className="bg-white rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-[#1A1208]">平台池子总览</h3>
-              <span className="text-[11px] text-[#A89685]">全平台实时</span>
+              <button
+                onClick={() => setPoolEnabled((v) => !v)}
+                className={`flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${
+                  poolEnabled
+                    ? "text-[#5A8A5A] bg-[#EEF6EE]"
+                    : "text-[#A89685] bg-[#F0EAE0]"
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${poolEnabled ? "bg-[#5A8A5A]" : "bg-[#A89685]"}`} />
+                {poolEnabled ? "已启用 · 运行中" : "未启用"}
+              </button>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {platformPools.map((p) => (
@@ -95,26 +108,41 @@ export default function FundPoolPage() {
           {/* 贡献记录列表 */}
           <div className="bg-white rounded-2xl p-4">
             <h3 className="text-sm font-bold text-[#1A1208] mb-3">贡献记录</h3>
-            <div className="space-y-2">
-              {records.map((r, i) => (
-                <div key={i} className="flex items-center justify-between py-2.5 border-b border-[#F5EFE8] last:border-0">
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${r.type === "in" ? "bg-[#EEF6EE]" : "bg-[#FBEDEC]"}`}>
-                      {r.type === "in"
-                        ? <ArrowUpRight size={15} className="text-[#5A8A5A]" />
-                        : <ArrowDownRight size={15} className="text-[#B5564E]" />}
+            {poolEnabled && records.length > 0 ? (
+              <div className="space-y-2">
+                {records.map((r, i) => (
+                  <div key={i} className="flex items-center justify-between py-2.5 border-b border-[#F5EFE8] last:border-0">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${r.type === "in" ? "bg-[#EEF6EE]" : "bg-[#FBEDEC]"}`}>
+                        {r.type === "in"
+                          ? <ArrowUpRight size={15} className="text-[#5A8A5A]" />
+                          : <ArrowDownRight size={15} className="text-[#B5564E]" />}
+                      </div>
+                      <div>
+                        <p className="text-sm text-[#1A1208]">{r.title}</p>
+                        <p className="text-[11px] text-[#A89685] mt-0.5">{r.pool} · {r.date}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-[#1A1208]">{r.title}</p>
-                      <p className="text-[11px] text-[#A89685] mt-0.5">{r.pool} · {r.date}</p>
-                    </div>
+                    <span className={`text-sm font-bold tabular-nums ${r.type === "in" ? "text-[#5A8A5A]" : "text-[#B5564E]"}`}>
+                      {r.amount}
+                    </span>
                   </div>
-                  <span className={`text-sm font-bold tabular-nums ${r.type === "in" ? "text-[#5A8A5A]" : "text-[#B5564E]"}`}>
-                    {r.amount}
-                  </span>
+                ))}
+              </div>
+            ) : (
+              /* 贡献记录空态 */
+              <div className="flex flex-col items-center text-center py-10">
+                <div className="w-14 h-14 rounded-2xl bg-[#F5EFE8] flex items-center justify-center mb-3">
+                  <Inbox size={26} className="text-[#C8BAA8]" strokeWidth={1.5} />
                 </div>
-              ))}
-            </div>
+                <p className="text-sm font-medium text-[#1A1208]">暂无基金贡献记录</p>
+                <p className="text-xs text-[#A89685] mt-1.5 leading-relaxed max-w-[220px]">
+                  {poolEnabled
+                    ? "您还没有产生基金贡献，消费或团队业绩达成后将在此显示。"
+                    : "基金池尚未启用，启用并运行后产生的贡献记录将在此显示。"}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

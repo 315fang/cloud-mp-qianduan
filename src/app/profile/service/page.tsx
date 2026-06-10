@@ -1,15 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Headset, MessageCircle, Phone, Clock, UserCheck,
-  Copy, ChevronRight, Mail, MessageSquare,
+  ChevronRight, Mail, MessageSquare, HeadphoneOff, RefreshCw,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 
 export default function ServicePage() {
   const router = useRouter();
+  // 是否已配置任何客服渠道（演示可切换）
+  const [hasChannels, setHasChannels] = useState(true);
 
   const channels = [
     { icon: Phone, label: "客服热线", value: "400-888-0066" },
@@ -34,6 +37,12 @@ export default function ServicePage() {
             <ArrowLeft size={20} className="text-white" />
           </button>
           <h1 className="text-base font-bold text-white">专属客服</h1>
+          <button
+            onClick={() => setHasChannels((v) => !v)}
+            className="ml-auto text-[10px] text-white/40 underline"
+          >
+            演示空态
+          </button>
         </header>
 
         {/* 头图区 */}
@@ -50,6 +59,25 @@ export default function ServicePage() {
         </div>
 
         <div className="px-4 py-5 space-y-4">
+          {!hasChannels ? (
+            /* 无客服配置空状态卡 */
+            <div className="bg-white rounded-2xl p-8 flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-2xl bg-[#F5EFE8] flex items-center justify-center mb-4">
+                <HeadphoneOff size={30} className="text-[#C8BAA8]" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-base font-bold text-[#1A1208]">当前暂无可用联系方式</h3>
+              <p className="text-xs text-[#8C7B6B] mt-2 leading-relaxed max-w-[240px]">
+                客服热线、企业微信与在线客服均未配置或暂时不可用，请稍后再试，给您带来不便敬请谅解。
+              </p>
+              <button
+                onClick={() => alert("正在刷新")}
+                className="mt-5 flex items-center gap-1.5 bg-[#1A1208] text-white text-sm font-medium px-6 py-2.5 rounded-full active:opacity-80"
+              >
+                <RefreshCw size={14} /> 刷新重试
+              </button>
+            </div>
+          ) : (
+            <>
           {/* 推荐联系渠道大卡 */}
           <div className="bg-white rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-1">
@@ -99,6 +127,8 @@ export default function ServicePage() {
               ))}
             </div>
           </div>
+            </>
+          )}
 
           {/* 常见问题 */}
           <div className="bg-white rounded-2xl p-4">
