@@ -91,40 +91,92 @@ export default function WalletPage() {
   return (
     <PhoneFrame>
       {/* 顶部导航 */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[#1A1208]">
-        <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10" aria-label="返回">
-          <ArrowLeft size={17} className="text-white" />
+      <div className="flex items-center justify-between px-4 py-3 bg-[#FAF7F4]">
+        <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-[#F0E8DC]" aria-label="返回">
+          <ArrowLeft size={17} className="text-[#3D2B1A]" />
         </button>
-        <span className="text-sm font-bold text-white tracking-wide">我的钱包</span>
+        <span className="text-sm font-bold text-[#1A1208] tracking-wide">我的钱包</span>
         <button aria-label="切换余额可见" onClick={() => setShowBalance(!showBalance)}>
-          {showBalance ? <EyeOff size={18} className="text-white/50" /> : <Eye size={18} className="text-white/50" />}
+          {showBalance ? <EyeOff size={18} className="text-[#A8987F]" /> : <Eye size={18} className="text-[#A8987F]" />}
         </button>
       </div>
 
-      {/* 余额区 */}
-      <div className="bg-[#1A1208] px-5 pt-2 pb-8">
-        <p className="text-[11px] text-white/40 tracking-widest">可提现余额（元）</p>
-        <div className="flex items-end gap-2 mt-1">
-          <span className="text-4xl font-bold text-white">{showBalance ? balance.toFixed(2) : "••••••"}</span>
-        </div>
-        <div className="flex items-center gap-3 mt-2">
-          <p className="text-[10px] text-white/40">冻结中：{showBalance ? "¥144" : "•••"}</p>
-          <span className="text-white/20 text-xs">|</span>
-          <p className="text-[10px] text-white/40">累计提现：{showBalance ? "¥28,000" : "•••"}</p>
+      {/* 鎏金会员卡 */}
+      <div className="bg-[#FAF7F4] px-4 pt-1 pb-2">
+        <div
+          className="relative rounded-[26px] overflow-hidden px-6 pt-5 pb-6"
+          style={{
+            background: "linear-gradient(135deg,#3A2A18 0%,#1F1509 46%,#241A10 100%)",
+            boxShadow: "0 16px 34px -12px rgba(26,18,8,0.55)",
+          }}
+        >
+          {/* 雕版同心环纹 */}
+          <svg className="absolute -right-14 -top-14 w-52 h-52 opacity-[0.10]" viewBox="0 0 200 200" fill="none" stroke="#E7C977" aria-hidden="true">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <circle key={i} cx="100" cy="100" r={18 + i * 11} strokeWidth="0.6" />
+            ))}
+          </svg>
+          {/* 右上金色光晕 */}
+          <div className="absolute -top-8 -right-6 w-36 h-36 rounded-full" style={{ background: "radial-gradient(circle,#D4AF5A,transparent 68%)", opacity: 0.22 }} />
+          {/* 烫金水印印记 */}
+          <span className="absolute -bottom-3 right-4 text-[120px] leading-none font-serif text-[#E7C977]/[0.07] select-none pointer-events-none">兰</span>
+          {/* 金色内描边 */}
+          <div className="absolute inset-[7px] rounded-[20px] border border-[#E7C977]/15 pointer-events-none" />
+
+          {/* 品牌行 */}
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-full border border-[#E7C977]/50 flex items-center justify-center font-serif text-sm text-[#E7C977]" style={{ background: "rgba(231,201,119,0.08)" }}>
+                兰
+              </span>
+              <div className="leading-tight">
+                <p className="text-[12px] font-bold text-[#F1E4C4] tracking-wide">问兰分销钱包</p>
+                <p className="text-[9px] text-[#C9B68C]/70 tracking-[0.22em] mt-0.5">WENLAN WALLET</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-bold text-[#E7C977] border border-[#E7C977]/40 rounded-full px-2 py-0.5 tracking-widest">GOLD</span>
+          </div>
+
+          {/* 余额 */}
+          <div className="relative mt-5">
+            <p className="text-[10px] text-[#C9B68C]/70 tracking-[0.24em]">可提现余额（元）</p>
+            <div className="flex items-end gap-1.5 mt-1.5">
+              <span className="text-xl font-bold mb-1.5 text-[#E7C977]">¥</span>
+              <span className="text-[42px] leading-none font-bold bg-gradient-to-b from-[#F8EBC6] to-[#CDA047] bg-clip-text text-transparent">
+                {showBalance ? balance.toFixed(2) : "••••••"}
+              </span>
+            </div>
+          </div>
+
+          {/* 金色细分隔线 */}
+          <div className="relative mt-4 h-px" style={{ background: "linear-gradient(to right,transparent,rgba(231,201,119,0.45),transparent)" }} />
+
+          {/* 底部信息 */}
+          <div className="relative mt-3 flex items-center gap-8">
+            <div>
+              <p className="text-[9px] text-[#C9B68C]/60 tracking-wider">冻结中</p>
+              <p className="text-sm font-semibold text-[#F1E4C4] mt-0.5">{showBalance ? "¥144" : "•••"}</p>
+            </div>
+            <div className="w-px h-7 bg-[#E7C977]/15" />
+            <div>
+              <p className="text-[9px] text-[#C9B68C]/60 tracking-wider">累计提现</p>
+              <p className="text-sm font-semibold text-[#F1E4C4] mt-0.5">{showBalance ? "¥28,000" : "•••"}</p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* 操作按钮 */}
-      <div className="px-5 -mt-4 relative z-10 flex gap-3">
-        <button onClick={() => setStep("input")} className="flex-1 bg-[#B8973A] text-white text-sm font-bold py-3.5 rounded-2xl shadow-lg">
+      <div className="px-4 pt-1 relative z-10 flex gap-3 bg-[#FAF7F4]">
+        <button onClick={() => setStep("input")} className="flex-1 bg-[#B8973A] text-white text-sm font-bold py-3.5 rounded-2xl shadow-[0_8px_18px_-6px_rgba(184,151,58,0.6)]">
           申请提现
         </button>
-        <button onClick={() => router.push("/distributor/commission")} className="flex-1 bg-white text-[#1A1208] text-sm font-bold py-3.5 rounded-2xl shadow-lg border border-[#F0E8DC]">
+        <button onClick={() => router.push("/distributor/commission")} className="flex-1 bg-white text-[#1A1208] text-sm font-bold py-3.5 rounded-2xl shadow-sm border border-[#F0E8DC]">
           佣金明细
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 mt-4 pb-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 mt-4 pb-6 space-y-4 bg-[#FAF7F4]">
         {/* 佣金概览四格 */}
         <div className="bg-white rounded-2xl p-4">
           <p className="text-xs font-bold text-[#1A1208] mb-3 tracking-wide">佣金概览</p>
@@ -155,7 +207,7 @@ export default function WalletPage() {
                     <p className="text-[10px] text-[#8C7B6B] mt-0.5">{s.desc}</p>
                   </div>
                   <span className="text-sm font-bold" style={{ color: s.tone }}>
-                    {showBalance ? `¥${s.amount}` : "•••"}
+                    {showBalance ? `¥${s.amount}` : "•��•"}
                   </span>
                 </div>
               ))}

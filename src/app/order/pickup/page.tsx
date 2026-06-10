@@ -43,21 +43,47 @@ export default function PickupPage() {
             </span>
           </div>
 
-          {/* 凭证大卡 */}
-          <div className="bg-[#1A1208] rounded-2xl p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #D4AF5A, transparent 70%)" }} />
-            <p className="text-center text-xs text-white/60 mb-3">向门店店员出示核销码</p>
-            <div className="text-center my-2">
-              <span className="text-3xl font-bold tracking-[0.15em]" style={{ filter: verified ? "blur(6px)" : "none" }}>{credential.code}</span>
+          {/* 凭证票券 */}
+          <div className="relative">
+            {/* 顶部金边票头 */}
+            <div className="rounded-t-2xl px-6 pt-5 pb-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#3A2A18 0%,#1F1509 50%,#241A10 100%)" }}>
+              {/* 雕版同心纹 */}
+              <svg className="absolute -right-10 -top-10 w-40 h-40 opacity-[0.10]" viewBox="0 0 200 200" fill="none" stroke="#E7C977" aria-hidden="true">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <circle key={i} cx="100" cy="100" r={20 + i * 13} strokeWidth="0.6" />
+                ))}
+              </svg>
+              <span className="absolute -bottom-4 right-3 text-[88px] leading-none font-serif text-[#E7C977]/[0.07] select-none pointer-events-none">兰</span>
+
+              <div className="relative flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full border border-[#E7C977]/50 flex items-center justify-center font-serif text-[11px] text-[#E7C977]" style={{ background: "rgba(231,201,119,0.08)" }}>兰</span>
+                <p className="text-[11px] font-bold text-[#F1E4C4] tracking-wide">问兰提货凭证</p>
+              </div>
+              <p className="relative text-center text-[11px] text-[#C9B68C]/70 mt-4 tracking-wider">向门店店员出示核销码</p>
+              <div className="relative text-center mt-2">
+                <span className="text-[32px] font-bold tracking-[0.12em] bg-gradient-to-b from-[#F8EBC6] to-[#CDA047] bg-clip-text text-transparent" style={{ filter: verified ? "blur(6px)" : "none" }}>
+                  {credential.code}
+                </span>
+              </div>
+              {verified && <p className="relative text-center text-xs text-[#E7C977] mt-2">该凭证已核销</p>}
             </div>
-            {verified && <p className="text-center text-xs text-[#D4AF5A] mt-2">该凭证已核销</p>}
-            <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/10 text-xs text-white/60">
-              <span>订单号 {credential.orderId}</span>
-              <span className="flex items-center gap-1"><Clock size={12} /> {credential.pickupDeadline}</span>
+
+            {/* 撕裂线 + 两侧缺口 */}
+            <div className="relative h-0">
+              <span className="absolute -left-2 -top-2.5 w-5 h-5 rounded-full bg-[#FAF7F4]" />
+              <span className="absolute -right-2 -top-2.5 w-5 h-5 rounded-full bg-[#FAF7F4]" />
             </div>
-            <button onClick={handleCopy} className="w-full mt-4 py-2.5 bg-[#B8973A] rounded-xl text-sm font-bold flex items-center justify-center gap-2">
-              {copied ? <><Check size={15} /> 已复制</> : <><Copy size={15} /> 复制核销码</>}
-            </button>
+
+            {/* 票根信息 */}
+            <div className="bg-white rounded-b-2xl px-6 pt-5 pb-5 border-t-2 border-dashed border-[#EAD9B8]">
+              <div className="flex items-center justify-between text-xs text-[#8C7B6B]">
+                <span>订单号 {credential.orderId}</span>
+                <span className="flex items-center gap-1"><Clock size={12} /> {credential.pickupDeadline}</span>
+              </div>
+              <button onClick={handleCopy} className="w-full mt-4 py-2.5 bg-[#1A1208] rounded-xl text-sm font-bold text-[#F1E4C4] flex items-center justify-center gap-2">
+                {copied ? <><Check size={15} /> 已复制</> : <><Copy size={15} /> 复制核销码</>}
+              </button>
+            </div>
           </div>
 
           {/* 出示二维码 */}
