@@ -161,7 +161,7 @@ function CollectionContent() {
                         <span className="text-base font-bold text-[#1A1208]">¥{product.price}</span>
                         <button
                           className="w-8 h-8 bg-[#1A1208] rounded-full flex items-center justify-center"
-                          aria-label="加入购物车"
+                          aria-label="加入购物袋"
                         >
                           <ShoppingBag size={13} className="text-white" />
                         </button>

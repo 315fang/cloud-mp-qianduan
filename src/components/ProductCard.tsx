@@ -103,12 +103,12 @@ function AddToCartSheet({
           {added ? (
             <>
               <Check size={16} />
-              已加入购物车
+              已加入购物袋
             </>
           ) : (
             <>
               <ShoppingBag size={15} />
-              加入购物车
+              加入购物袋
             </>
           )}
         </button>
@@ -163,7 +163,7 @@ export default function ProductCard({ product, layout = "grid" }: Props) {
                 </div>
                 <button
                   className="w-7 h-7 rounded-full bg-[#1A1208] flex items-center justify-center text-white active:scale-95 transition-transform"
-                  aria-label="加入购物车"
+                  aria-label="加入购物袋"
                   onClick={(e) => { e.preventDefault(); setSheetOpen(true); }}
                 >
                   <ShoppingBag size={12} />
@@ -194,7 +194,7 @@ export default function ProductCard({ product, layout = "grid" }: Props) {
           )}
           <button
             className="absolute bottom-2 right-2 w-8 h-8 bg-[#1A1208] text-white rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
-            aria-label="加入购物车"
+            aria-label="加入购物袋"
             onClick={(e) => { e.preventDefault(); setSheetOpen(true); }}
           >
             <ShoppingBag size={14} />

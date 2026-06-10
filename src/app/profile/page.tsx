@@ -14,7 +14,8 @@ import {
   Truck,
   RotateCcw,
   Clock,
-  ShoppingCart,
+  ShoppingBag,
+  ScanLine,
   History,
   Sparkles,
   BadgePercent,
@@ -45,16 +46,16 @@ const orderTabs = [
   { label: "待付款", icon: Clock, href: "/orders?status=pending", badge: "1" },
   { label: "待发货", icon: Package, href: "/orders?status=paid", badge: "" },
   { label: "待收货", icon: Truck, href: "/orders?status=shipped", badge: "2" },
+  { label: "待评价", icon: Star, href: "/orders?status=review", badge: "1" },
   { label: "退换货", icon: RotateCcw, href: "/orders?status=refund", badge: "1" },
-  { label: "购物车", icon: ShoppingCart, href: "/cart", badge: "" },
 ];
 
-// 资产数据
+// 核心资产数据（我的积分 / 货款余额 / 可提佣金 / 奖励存款 同一层）
 const assetCards = [
-  { label: "待结算", value: "¥480.00", sub: "分销佣金", href: "/distributor/commission", color: "#B8973A" },
-  { label: "可提现", value: "¥3,420", sub: "钱包余额", href: "/distributor/wallet", color: "#2D8C5E" },
-  { label: "优惠券", value: "3张", sub: "可使用", href: "/profile/coupons", color: "#4A7CC7" },
   { label: "我的积分", value: "1,280", sub: "距铂金 720", href: "/profile/points", color: "#B85A2A" },
+  { label: "货款余额", value: "¥16,000", sub: "代理进货", href: "/distributor/goods-balance", color: "#B8973A" },
+  { label: "可提佣金", value: "¥480", sub: "分销佣金", href: "/distributor/commission", color: "#2D8C5E" },
+  { label: "奖励存款", value: "¥2,360", sub: "待解锁", href: "/profile/deposit", color: "#4A7CC7" },
 ];
 
 const menuItems = [
@@ -80,6 +81,15 @@ const menuItems = [
     ],
   },
   {
+    group: "门店与核销",
+    items: [
+      { icon: LayoutDashboard, label: "店长工作台", href: "/store/manager", badge: "" },
+      { icon: ScanLine, label: "自提核销", href: "/store/verify", badge: "" },
+      { icon: MapPin, label: "自提站点", href: "/pickup", badge: "" },
+      { icon: Sparkles, label: "品牌推荐", href: "/brand", badge: "" },
+    ],
+  },
+  {
     group: "帮助与反馈",
     items: [
       { icon: Headphones, label: "专属客服", href: "/profile/service", badge: "" },
@@ -100,6 +110,11 @@ const menuItems = [
 ];
 
 const footprints = products.slice(0, 4);
+
+// 购物袋摘要（取前几件商品作缩略展示）
+const bagItems = products.slice(0, 3);
+const bagCount = bagItems.length;
+const bagTotal = bagItems.reduce((sum, p) => sum + p.price, 0);
 
 export default function ProfilePage() {
   return (
@@ -224,6 +239,46 @@ export default function ProfilePage() {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* 购物袋摘要卡 */}
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#F0E8DC]">
+            <div className="flex items-center gap-2">
+              <ShoppingBag size={15} className="text-[#B8973A]" />
+              <span className="text-sm font-bold text-[#1A1208]">我的购物袋</span>
+              {bagCount > 0 && (
+                <span className="text-[10px] text-[#8C7B6B]">共 {bagCount} 件</span>
+              )}
+            </div>
+            <Link href="/cart" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+              {bagCount > 0 ? "去结算" : "去逛逛"} <ChevronRight size={13} />
+            </Link>
+          </div>
+          {bagCount > 0 ? (
+            <Link href="/cart" className="flex items-center gap-3 px-4 py-3.5">
+              <div className="flex -space-x-3">
+                {bagItems.map((p) => (
+                  <div key={p.id} className="w-12 h-12 rounded-xl overflow-hidden bg-[#F5EFE8] border-2 border-white">
+                    <Image src={p.image} alt={p.name} width={48} height={48} className="object-contain w-full h-full p-1" />
+                  </div>
+                ))}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-[#1A1208] font-medium line-clamp-1">{bagItems[0].name}</p>
+                <p className="text-[11px] text-[#8C7B6B] mt-0.5">等 {bagCount} 件商品</p>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <p className="text-[10px] text-[#8C7B6B]">合计</p>
+                <p className="text-base font-bold text-[#B8973A]">¥{bagTotal.toLocaleString()}</p>
+              </div>
+            </Link>
+          ) : (
+            <div className="flex flex-col items-center py-6">
+              <ShoppingBag size={32} strokeWidth={1} className="text-[#E8DDD0] mb-2" />
+              <p className="text-xs text-[#8C7B6B]">购物袋还是空的，去挑选心仪好物吧</p>
+            </div>
+          )}
         </div>
 
         {/* 分销工作台入口 */}

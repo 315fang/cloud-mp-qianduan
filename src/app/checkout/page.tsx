@@ -48,7 +48,7 @@ export default function CheckoutPage() {
         <div className="flex flex-col items-center justify-center min-h-screen px-8 text-center">
           <ShoppingBag size={48} strokeWidth={1} className="mb-4 text-[#E8DDD0]" />
           <p className="text-sm text-[#3D2B1A] font-medium">没有待结算的商品</p>
-          <Link href="/cart" className="mt-4 text-[#B8973A] text-sm">返回购物车</Link>
+          <Link href="/cart" className="mt-4 text-[#B8973A] text-sm">返回购物袋</Link>
         </div>
       </PhoneFrame>
     );

@@ -168,7 +168,7 @@ export default function ProductsPage() {
           <Link
             href="/cart"
             className="relative w-9 h-9 flex items-center justify-center rounded-full bg-[#F5EFE8] flex-shrink-0"
-            aria-label="购物车"
+            aria-label="购物袋"
           >
             <ShoppingCart size={18} className="text-[#1A1208]" />
             {cartTotal > 0 && (
@@ -290,7 +290,7 @@ export default function ProductsPage() {
                           className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                             inCart ? "bg-[#4A7C59]" : "bg-[#1A1208]"
                           }`}
-                          aria-label={`加入购物车 ${product.name}`}
+                          aria-label={`加入购物袋 ${product.name}`}
                         >
                           {inCart ? (
                             <Check size={13} className="text-white" />
@@ -313,7 +313,7 @@ export default function ProductsPage() {
         </main>
       </div>
 
-      {/* 快捷购物车底栏 */}
+      {/* 快捷购物袋底栏 */}
       {cartTotal > 0 && !selectedProduct && (
         <div className="absolute bottom-16 left-0 right-0 px-4 z-30">
           <Link
@@ -328,7 +328,7 @@ export default function ProductsPage() {
                 </span>
               </div>
               <div>
-                <p className="text-xs font-bold text-white">查看购物车</p>
+                <p className="text-xs font-bold text-white">查看购物袋</p>
                 <p className="text-[10px] text-white/50">{cartTotal} 件商品</p>
               </div>
             </div>
@@ -435,7 +435,7 @@ export default function ProductsPage() {
                   justAdded ? "bg-[#4A7C59]" : "bg-[#1A1208]"
                 }`}
               >
-                {justAdded ? "已加入购物车" : `加入购物车 ¥${(selectedProduct.price * quantity).toLocaleString()}`}
+                {justAdded ? "已加入购物袋" : `加入购物袋 ¥${(selectedProduct.price * quantity).toLocaleString()}`}
               </button>
             </div>
           </div>

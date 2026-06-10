@@ -1,40 +1,41 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Star, CheckCircle2, Zap, Crown, Gift } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Star, CheckCircle2, Zap, Crown, Gift, Snowflake, Flame, Ticket, ShoppingBag, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import PhoneFrame from "@/components/PhoneFrame";
+import { products } from "@/lib/data";
 
-const account = { level: 2, levelName: "精英会员", balance: 1240, total: 3580, nextLevel: { name: "尊享会员", threshold: 5000 } };
+const account = { level: 2, levelName: "精英会员", balance: 1240, frozen: 180, total: 3580, nextLevel: { name: "尊享会员", threshold: 5000 } };
 
-const tasks = [
-  { id: 1, title: "每日签到", desc: "连续签到第 5 天", points: 20, done: false },
-  { id: 2, title: "完成一笔订单", desc: "完成购买并确认收货", points: 50, done: true },
-  { id: 3, title: "评价商品", desc: "对已购商品发表评价", points: 30, done: false },
-  { id: 4, title: "邀请好友注册", desc: "好友完成首单后生效", points: 100, done: false },
-  { id: 5, title: "分享商品", desc: "分享至社交平台", points: 10, done: true },
-  { id: 6, title: "完善个人资料", desc: "填写生日等信息", points: 30, done: true },
-];
+// 签到：连续天数与本周打卡进度
+const signIn = {
+  streak: 5,
+  signedToday: false,
+  week: [
+    { day: "一", points: 5, done: true },
+    { day: "二", points: 5, done: true },
+    { day: "三", points: 10, done: true },
+    { day: "四", points: 10, done: true },
+    { day: "五", points: 15, done: true },
+    { day: "六", points: 20, done: false },
+    { day: "日", points: 30, done: false },
+  ],
+};
 
-const transactions = [
-  { id: 1, title: "确认收货奖励", points: +50, date: "2024-12-10" },
-  { id: 2, title: "每日签到", points: +20, date: "2024-12-09" },
-  { id: 3, title: "积分抽奖消耗", points: -100, date: "2024-12-08" },
-  { id: 4, title: "评价商品奖励", points: +30, date: "2024-12-07" },
-  { id: 5, title: "积分抽奖消耗", points: -100, date: "2024-12-05" },
-  { id: 6, title: "邀请好友奖励", points: +100, date: "2024-12-03" },
-  { id: 7, title: "购物消费奖励", points: +388, date: "2024-11-28" },
-];
+// 积分兑换：活动商品（取数据中的商品作演示）
+const redeemGoods = products.slice(0, 4).map((p, i) => ({
+  ...p,
+  cost: [800, 1200, 1500, 2000][i],
+}));
 
-const privileges = [
-  { level: 1, name: "普通会员", color: "#8C7B6B", bg: "#FAF7F4", perks: ["每单消费 1 积分/元", "生日双倍积分", "积分商城兑换"] },
-  { level: 2, name: "精英会员", color: "#B8973A", bg: "#FFF7E6", perks: ["每单消费 1.5 积分/元", "生日三倍积分", "专属客服通道", "优先发货"] },
-  { level: 3, name: "尊享会员", color: "#D4AF5A", bg: "#1A1208", perks: ["每单消费 2 积分/元", "生日五倍积分", "专属礼品包装", "VIP 专属活动", "免费顺丰包邮"] },
-];
+
 
 export default function PointsPage() {
   const router = useRouter();
-  const [tab, setTab] = useState<"tasks" | "logs" | "privileges">("tasks");
+  const [tab, setTab] = useState<"tasks" | "logs" | "redeem">("tasks");
+  const [signedToday, setSignedToday] = useState(signIn.signedToday);
   const progress = Math.min((account.balance / account.nextLevel.threshold) * 100, 100);
 
   return (
@@ -62,6 +63,17 @@ export default function PointsPage() {
               <span className="text-4xl font-bold leading-none">{account.balance.toLocaleString()}</span>
               <span className="text-white/60 mb-0.5 text-sm">可用积分</span>
             </div>
+            {/* 双口径：可用 / 冻结待入账 */}
+            <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1">
+                <Snowflake size={12} className="text-[#7CA9D4]" />
+                <span className="text-[11px] text-white/70">冻结待入账 {account.frozen}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1">
+                <Flame size={12} className="text-[#D4845A]" />
+                <span className="text-[11px] text-white/70">已连签 {signIn.streak} 天</span>
+              </div>
+            </div>
             <div className="mt-4">
               <div className="flex justify-between text-xs text-white/50 mb-1.5">
                 <span>距离 {account.nextLevel.name} 还差 {account.nextLevel.threshold - account.balance} 积分</span>
@@ -74,9 +86,9 @@ export default function PointsPage() {
             {/* 快捷操作 */}
             <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-white/10">
               {[
-                { label: "积分兑换", icon: Gift, href: "/profile/coupons" },
+                { label: "积分兑换", icon: Gift, onClick: () => setTab("redeem") },
                 { label: "抽奖中心", icon: Star, href: "/lottery" },
-                { label: "等级特权", icon: Crown, onClick: () => setTab("privileges") },
+                { label: "积分流水", icon: Crown, onClick: () => setTab("logs") },
               ].map(({ label, icon: Icon, href, onClick }) =>
                 href ? (
                   <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
@@ -93,9 +105,48 @@ export default function PointsPage() {
             </div>
           </div>
 
+          {/* 每日签到卡 */}
+          <div className="mx-4 mt-4 bg-white rounded-2xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Flame size={16} className="text-[#D4845A]" />
+                <span className="text-sm font-bold text-[#1A1208]">每日签到</span>
+                <span className="text-[11px] text-[#8C7B6B]">连续签到 {signIn.streak} 天</span>
+              </div>
+              <button
+                onClick={() => setSignedToday(true)}
+                disabled={signedToday}
+                className={`text-xs font-medium px-4 py-1.5 rounded-full ${
+                  signedToday ? "bg-[#F5EFE8] text-[#B8A898]" : "bg-[#B8973A] text-white"
+                }`}
+              >
+                {signedToday ? "今日已签" : "立即签到"}
+              </button>
+            </div>
+            <div className="flex justify-between">
+              {signIn.week.map((d, i) => {
+                const done = d.done || (signedToday && i === signIn.streak);
+                return (
+                  <div key={d.day} className="flex flex-col items-center gap-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      done ? "bg-[#B8973A]" : "bg-[#F5EFE8]"
+                    }`}>
+                      {done ? (
+                        <CheckCircle2 size={15} className="text-white" />
+                      ) : (
+                        <span className="text-[10px] font-bold text-[#B8973A]">+{d.points}</span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-[#8C7B6B]">{d.day}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Tab */}
           <div className="flex mx-4 mt-4 bg-[#F5EFE8] rounded-xl p-1">
-            {[{ key: "tasks", label: "赚积分" }, { key: "logs", label: "积分流水" }, { key: "privileges", label: "等级特权" }].map(t => (
+            {[{ key: "tasks", label: "积分任务" }, { key: "logs", label: "积分流水" }, { key: "redeem", label: "积分兑换" }].map(t => (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key as typeof tab)}
@@ -150,34 +201,60 @@ export default function PointsPage() {
               </div>
             ))}
 
-            {/* 等级特权 */}
-            {tab === "privileges" && privileges.map(lv => (
-              <div
-                key={lv.level}
-                className={`rounded-2xl overflow-hidden border-2 ${account.level === lv.level ? "border-[#B8973A]" : "border-transparent"}`}
-              >
-                <div className="px-4 py-3 flex items-center gap-2" style={{ backgroundColor: lv.bg }}>
-                  <Crown size={16} style={{ color: lv.color }} />
-                  <span className="font-bold text-sm" style={{ color: lv.level === 3 ? "#D4AF5A" : lv.color }}>
-                    Lv.{lv.level} {lv.name}
-                  </span>
-                  {account.level === lv.level && (
-                    <span className="ml-auto text-[10px] bg-[#B8973A] text-white px-2 py-0.5 rounded-full">当前等级</span>
-                  )}
-                  {account.level < lv.level && (
-                    <span className="ml-auto text-[10px] text-[#8C7B6B]">待解锁</span>
-                  )}
+            {/* 积分兑换 */}
+            {tab === "redeem" && (
+              <div className="space-y-3">
+                {/* 抽奖与活动入口卡 */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Link href="/lottery" className="bg-[#1A1208] rounded-2xl p-4 flex flex-col gap-2">
+                    <div className="w-9 h-9 rounded-full bg-[#B8973A]/20 flex items-center justify-center">
+                      <Ticket size={18} className="text-[#D4AF5A]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">积分抽奖</p>
+                      <p className="text-[11px] text-white/50 mt-0.5">100 积分/次 · 赢好礼</p>
+                    </div>
+                    <span className="text-[11px] text-[#D4AF5A] flex items-center gap-0.5">立即抽奖 <ChevronRight size={12} /></span>
+                  </Link>
+                  <Link href="/products?from=points" className="bg-[#FFF7E6] rounded-2xl p-4 flex flex-col gap-2 border border-[#F0E0B8]">
+                    <div className="w-9 h-9 rounded-full bg-[#B8973A]/15 flex items-center justify-center">
+                      <ShoppingBag size={18} className="text-[#B8973A]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-[#1A1208]">活动商品</p>
+                      <p className="text-[11px] text-[#8C7B6B] mt-0.5">积分加价购 · 限时</p>
+                    </div>
+                    <span className="text-[11px] text-[#B8973A] flex items-center gap-0.5">去逛逛 <ChevronRight size={12} /></span>
+                  </Link>
                 </div>
-                <div className="bg-white px-4 py-3 space-y-2">
-                  {lv.perks.map(perk => (
-                    <div key={perk} className="flex items-center gap-2">
-                      <CheckCircle2 size={13} className={account.level >= lv.level ? "text-[#B8973A]" : "text-[#D4C0A8]"} />
-                      <span className={`text-xs ${account.level >= lv.level ? "text-[#3D2B1A]" : "text-[#B8A898]"}`}>{perk}</span>
+
+                {/* 可兑换商品列表 */}
+                <p className="text-xs font-semibold text-[#8C7B6B] pt-1">积分好物</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {redeemGoods.map((g) => (
+                    <div key={g.id} className="bg-white rounded-2xl overflow-hidden">
+                      <div className="relative w-full aspect-square bg-[#F5EFE8]">
+                        <Image src={g.image} alt={g.name} fill className="object-contain p-4" />
+                      </div>
+                      <div className="p-3">
+                        <h3 className="text-xs font-semibold text-[#1A1208] leading-tight line-clamp-1">{g.name}</h3>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-sm font-bold text-[#B8973A]">{g.cost} 积分</span>
+                          <button
+                            disabled={account.balance < g.cost}
+                            className={`text-[11px] font-medium px-3 py-1 rounded-full ${
+                              account.balance >= g.cost ? "bg-[#1A1208] text-white" : "bg-[#F5EFE8] text-[#B8A898]"
+                            }`}
+                          >
+                            {account.balance >= g.cost ? "兑换" : "积分不足"}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

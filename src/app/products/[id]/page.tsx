@@ -557,7 +557,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
             className="flex-1 flex items-center justify-center gap-2 border border-[#1A1208] text-[#1A1208] text-sm font-semibold py-3 rounded-full"
           >
             <ShoppingBag size={15} />
-            加入购物车
+            加入购物袋
           </button>
           <button
             onClick={() => openSheet("buy")}
@@ -568,7 +568,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
         </div>
       </div>
 
-      {/* 底部弹窗（加入购物车 / 立即购买） */}
+      {/* 底部弹窗（加入购物袋 / 立即购买） */}
       {bottomSheet && (
         <div
           className="fixed inset-0 z-[60] flex items-end"
@@ -659,11 +659,11 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
               >
                 {addedToCart ? (
                   <>
-                    <Check size={16} /> 已加入购物车
+                    <Check size={16} /> 已加入购物袋
                   </>
                 ) : (
                   <>
-                    <ShoppingBag size={15} /> 加入购物车
+                    <ShoppingBag size={15} /> 加入购物袋
                   </>
                 )}
               </button>

@@ -76,7 +76,7 @@ export default function CartPage() {
         >
           <ArrowLeft size={18} className="text-[#1A1208]" />
         </button>
-        <h1 className="text-base font-bold text-[#1A1208]">购物车</h1>
+        <h1 className="text-base font-bold text-[#1A1208]">购物袋</h1>
         <button
           className="text-[12px] text-[#B8973A] font-medium"
           onClick={() => {
@@ -93,7 +93,7 @@ export default function CartPage() {
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-[#8C7B6B]">
             <ShoppingBag size={48} strokeWidth={1} className="mb-4 text-[#E8DDD0]" />
-            <p className="text-sm font-medium text-[#3D2B1A]">购物车空空如也</p>
+            <p className="text-sm font-medium text-[#3D2B1A]">购物袋空空如也</p>
             <p className="text-xs text-[#8C7B6B] mt-1">快去挑选心仪的护肤品吧</p>
             <Link
               href="/products"

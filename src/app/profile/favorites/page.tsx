@@ -65,7 +65,7 @@ export default function FavoritesPage() {
                 </button>
                 <button
                   className="absolute bottom-12 right-2 w-7 h-7 bg-[#1A1208] rounded-full flex items-center justify-center shadow-md"
-                  aria-label="加入购物车"
+                  aria-label="加入购物袋"
                 >
                   <ShoppingBag size={12} className="text-white" />
                 </button>
