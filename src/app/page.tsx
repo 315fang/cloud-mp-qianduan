@@ -84,7 +84,7 @@ export default function HomePage() {
               { icon: Gift, label: "幸运抽奖", href: "/lottery" },
               { icon: Users, label: "拼团", href: "/group" },
               { icon: Scissors, label: "砍价", href: "/slash" },
-              { icon: Palette, label: "随心配", href: "/activity/diy" },
+              { icon: Palette, label: "随心配", href: "/activity/diy/list" },
               { icon: Newspaper, label: "品牌资讯", href: "/brand/news" },
               { icon: Sparkles, label: "新品上市", href: "/products" },
               { icon: Gift, label: "兑换码", href: "/coupons/redeem" },

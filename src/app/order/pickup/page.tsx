@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, MapPin, Phone, Navigation, Copy, Check, Clock } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Navigation, Copy, Check, Clock, QrCode, ShieldAlert } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 
 const credential = {
@@ -60,6 +60,17 @@ export default function PickupPage() {
             </button>
           </div>
 
+          {/* 出示二维码 */}
+          <div className="bg-white rounded-2xl p-6 flex flex-col items-center">
+            <p className="text-sm font-bold text-[#1A1208] mb-1">出示二维码</p>
+            <p className="text-[11px] text-[#8C7B6B] mb-4">店员扫码即可完成核销</p>
+            <div className={`w-44 h-44 rounded-2xl bg-[#FAF7F4] border border-[#F0E8DC] flex items-center justify-center ${verified ? "opacity-40" : ""}`}>
+              <QrCode size={140} className="text-[#1A1208]" strokeWidth={1} style={{ filter: verified ? "blur(4px)" : "none" }} />
+            </div>
+            <p className="text-xs text-[#8C7B6B] mt-4 tracking-[0.1em]">{credential.code}</p>
+            {verified && <p className="text-xs text-[#B85A2A] mt-1">该二维码已核销</p>}
+          </div>
+
           {/* 门店信息 */}
           <div className="bg-white rounded-2xl p-4">
             <h3 className="text-sm font-bold text-[#1A1208] mb-3">提货门店</h3>
@@ -79,6 +90,21 @@ export default function PickupPage() {
               <button className="flex-1 py-2.5 bg-[#F5EFE8] text-[#1A1208] text-xs font-bold rounded-xl flex items-center justify-center gap-1.5">
                 <Phone size={14} /> 联系门店
               </button>
+            </div>
+          </div>
+
+          {/* 仅限该门店核销说明 */}
+          <div className="bg-[#FBF5E6] rounded-2xl p-4 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#F3E4BE] flex items-center justify-center shrink-0">
+              <ShieldAlert size={18} className="text-[#B8973A]" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-[#1A1208]">仅限该门店核销</p>
+              <p className="text-xs text-[#8C7B6B] leading-relaxed mt-1">
+                本凭证只能在下单时选定的
+                <span className="text-[#1A1208] font-medium">「{credential.store.name}」</span>
+                核销使用，其他门店无法代为核销。如需更换提货门店，请联系在线客服处理。
+              </p>
             </div>
           </div>
 

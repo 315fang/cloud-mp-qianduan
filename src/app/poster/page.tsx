@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Download, RefreshCw, QrCode } from "lucide-react";
+import { ArrowLeft, Download, RefreshCw, QrCode, Share2, Loader2, ImageOff } from "lucide-react";
 import Image from "next/image";
 import PhoneFrame from "@/components/PhoneFrame";
 
@@ -20,10 +20,20 @@ const styles = [
   { key: "campaign", label: "活动版", bg: "#B83232", text: "#FFFFFF" },
 ];
 
+type PosterState = "generating" | "ready" | "error";
+
 export default function PosterPage() {
   const router = useRouter();
   const [style, setStyle] = useState("luxury");
+  const [state, setState] = useState<PosterState>("ready");
   const cur = styles.find((s) => s.key === style)!;
+
+  // 切换风格 / 重新生成 → 模拟海报生成中
+  const regenerate = (nextStyle?: string) => {
+    if (nextStyle) setStyle(nextStyle);
+    setState("generating");
+    setTimeout(() => setState("ready"), 1200);
+  };
 
   return (
     <PhoneFrame hideNav>
@@ -38,7 +48,24 @@ export default function PosterPage() {
 
         {/* 海报预览 */}
         <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col items-center">
-          <div className="w-full max-w-[280px] rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundColor: cur.bg }}>
+          <div className="w-full max-w-[280px] rounded-2xl overflow-hidden shadow-2xl relative" style={{ backgroundColor: cur.bg }}>
+            {/* 生成中 / 失败 遮罩 */}
+            {state === "generating" && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#1A1208]/85">
+                <Loader2 size={32} className="text-[#D4AF5A] animate-spin" />
+                <p className="text-xs text-white/70">海报生成中…</p>
+              </div>
+            )}
+            {state === "error" && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#1A1208]/90 px-6 text-center">
+                <ImageOff size={30} className="text-white/50" />
+                <p className="text-xs text-white/70">海报加载失败，请重试</p>
+                <button onClick={() => regenerate()} className="px-5 py-2 rounded-full bg-[#B8973A] text-[#1A1208] text-xs font-bold">
+                  重新生成
+                </button>
+              </div>
+            )}
+
             <div className="relative w-full aspect-square bg-[#F5EFE8]">
               <Image src={product.image} alt={product.name} fill className="object-cover" />
               {style === "campaign" && (
@@ -65,12 +92,15 @@ export default function PosterPage() {
             </div>
           </div>
 
+          {/* 长按提示 */}
+          <p className="text-[11px] text-white/40 mt-3">长按海报可直接转发或保存</p>
+
           {/* 风格切换 */}
-          <div className="flex gap-2 mt-6 w-full max-w-[280px]">
+          <div className="flex gap-2 mt-5 w-full max-w-[280px]">
             {styles.map((s) => (
               <button
                 key={s.key}
-                onClick={() => setStyle(s.key)}
+                onClick={() => regenerate(s.key)}
                 className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${style === s.key ? "bg-[#B8973A] text-white" : "bg-white/10 text-white/70"}`}
               >
                 {s.label}
@@ -79,15 +109,33 @@ export default function PosterPage() {
           </div>
         </div>
 
-        {/* 底部操作 */}
-        <div className="px-6 py-4 space-y-2.5">
-          <button className="w-full py-3 bg-[#B8973A] text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2">
-            <Download size={16} /> 保存图片到相册
-          </button>
-          <button className="w-full py-3 bg-white/10 text-white text-sm font-medium rounded-xl flex items-center justify-center gap-2">
-            <RefreshCw size={15} /> 重新生成
-          </button>
-          <p className="text-center text-[11px] text-white/40 pt-1">保存后可分享至微信好友或朋友圈</p>
+        {/* 底部操作：分享好友 / 重新生成 / 保存海报 三同级 */}
+        <div className="px-6 py-4">
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              disabled={state !== "ready"}
+              className="flex flex-col items-center gap-1.5 py-3 bg-[#B8973A] disabled:opacity-50 text-white rounded-xl"
+            >
+              <Share2 size={18} />
+              <span className="text-xs font-bold">分享好友</span>
+            </button>
+            <button
+              onClick={() => regenerate()}
+              disabled={state === "generating"}
+              className="flex flex-col items-center gap-1.5 py-3 bg-white/10 disabled:opacity-50 text-white rounded-xl"
+            >
+              <RefreshCw size={18} className={state === "generating" ? "animate-spin" : ""} />
+              <span className="text-xs font-medium">重新生成</span>
+            </button>
+            <button
+              disabled={state !== "ready"}
+              className="flex flex-col items-center gap-1.5 py-3 bg-white/10 disabled:opacity-50 text-white rounded-xl"
+            >
+              <Download size={18} />
+              <span className="text-xs font-medium">保存海报</span>
+            </button>
+          </div>
+          <p className="text-center text-[11px] text-white/40 pt-3">保存后可分享至微信好友或朋友圈</p>
         </div>
       </div>
     </PhoneFrame>
