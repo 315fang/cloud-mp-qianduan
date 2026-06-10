@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
+import GoldHeroCard from "@/components/GoldHeroCard";
 
 export default function FundPoolPage() {
   const router = useRouter();
@@ -33,24 +34,33 @@ export default function FundPoolPage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-8">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#FAF7F4] px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
-            <ArrowLeft size={20} className="text-white" />
+            <ArrowLeft size={20} className="text-[#3D2B1A]" />
           </button>
-          <h1 className="text-base font-bold text-white">基金贡献</h1>
+          <h1 className="text-base font-bold text-[#1A1208]">基金贡献</h1>
         </header>
 
         {/* 个人累计贡献头卡 */}
-        <div className="bg-[#1A1208] px-5 pb-7 pt-2">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp size={16} className="text-[#B8973A]" />
-            <span className="text-xs text-white/60">我的累计贡献（元）</span>
+        <GoldHeroCard
+          brand="问兰基金"
+          sub="FUND POOL"
+          badge={<span className="text-[9px] font-bold text-[#E7C977] border border-[#E7C977]/40 rounded-full px-2 py-0.5 tracking-widest">贡献</span>}
+        >
+          <div className="flex items-center gap-2">
+            <TrendingUp size={15} className="text-[#E7C977]" />
+            <span className="text-[10px] text-[#C9B68C]/80 tracking-[0.18em]">我的累计贡献（元）</span>
           </div>
-          <p className="text-4xl font-light text-white tabular-nums">¥{myTotal}</p>
-          <p className="text-[11px] text-white/40 mt-2 leading-relaxed">
+          <div className="flex items-end gap-1.5 mt-1.5">
+            <span className="text-xl font-bold mb-1.5 text-[#E7C977]">¥</span>
+            <span className="text-[40px] leading-none font-bold bg-gradient-to-b from-[#F8EBC6] to-[#CDA047] bg-clip-text text-transparent tabular-nums">
+              {myTotal}
+            </span>
+          </div>
+          <p className="text-[11px] text-[#C9B68C]/70 mt-2 leading-relaxed">
             您的消费与团队业绩按规则贡献至平台基金池，用于全员激励与扶持。
           </p>
-        </div>
+        </GoldHeroCard>
 
         <div className="px-4 py-5 space-y-4">
           {/* 第一层：平台池子总览 */}

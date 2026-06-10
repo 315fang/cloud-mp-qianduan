@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, TrendingUp, Clock, CheckCircle2, XCircle, ChevronRight, AlertCircle } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
+import GoldHeroCard, { GoldDivider } from "@/components/GoldHeroCard";
 
 type TabKey = "all" | "frozen" | "pending" | "settled" | "rejected";
 
@@ -48,32 +49,45 @@ export default function CommissionPage() {
   return (
     <PhoneFrame>
       {/* 顶部导航 */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[#1A1208]">
-        <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10" aria-label="返回">
-          <ArrowLeft size={17} className="text-white" />
+      <div className="flex items-center justify-between px-4 py-3 bg-[#FAF7F4]">
+        <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center rounded-full bg-[#F0E8DC]" aria-label="返回">
+          <ArrowLeft size={17} className="text-[#3D2B1A]" />
         </button>
-        <span className="text-sm font-bold text-white tracking-wide">佣金明细</span>
+        <span className="text-sm font-bold text-[#1A1208] tracking-wide">佣金明细</span>
         <div className="w-8" />
       </div>
 
       {/* 统计区 */}
-      <div className="bg-[#1A1208] px-5 pt-1 pb-6">
-        <div className="grid grid-cols-3 gap-3">
+      <GoldHeroCard
+        brand="问兰佣金"
+        sub="COMMISSION"
+        badge={<span className="text-[9px] font-bold text-[#E7C977] border border-[#E7C977]/40 rounded-full px-2 py-0.5 tracking-widest">明细</span>}
+      >
+        <div className="flex items-center gap-2">
+          <TrendingUp size={15} className="text-[#E7C977]" />
+          <span className="text-[10px] text-[#C9B68C]/80 tracking-[0.18em]">累计佣金概览（元）</span>
+        </div>
+        <div className="flex items-end gap-1.5 mt-1.5">
+          <span className="text-lg font-bold mb-1 text-[#E7C977]">¥</span>
+          <span className="text-[34px] leading-none font-bold bg-gradient-to-b from-[#F8EBC6] to-[#CDA047] bg-clip-text text-transparent tabular-nums">
+            {(totalSettled + totalFrozen + totalPending).toFixed(2)}
+          </span>
+        </div>
+        <GoldDivider className="mt-4" />
+        <div className="grid grid-cols-3 gap-3 mt-3">
           {[
-            { label: "已结算", value: `¥${totalSettled.toFixed(2)}`, color: "#2D8C5E" },
-            { label: "冻结中", value: `¥${totalFrozen.toFixed(2)}`, color: "#B8973A" },
-            { label: "待审批", value: `¥${totalPending.toFixed(2)}`, color: "#8C7B6B" },
-          ].map(({ label, value, color }) => (
+            { label: "已结算", value: `¥${totalSettled.toFixed(2)}` },
+            { label: "冻结中", value: `¥${totalFrozen.toFixed(2)}` },
+            { label: "待审批", value: `¥${totalPending.toFixed(2)}` },
+          ].map(({ label, value }) => (
             <div key={label} className="text-center">
-              <p className="text-base font-bold text-white">{value}</p>
-              <p className="text-[10px] mt-0.5" style={{ color }}>{label}</p>
+              <p className="text-sm font-bold text-[#F1E4C4] tabular-nums">{value}</p>
+              <p className="text-[10px] mt-0.5 text-[#C9B68C]/70">{label}</p>
             </div>
           ))}
         </div>
-        <div className="mt-3 text-center">
-          <p className="text-[10px] text-white/30">冻结佣金在买家确认收货后 15 天自动解冻，进入待审批状态</p>
-        </div>
-      </div>
+        <p className="mt-3 text-center text-[10px] text-[#C9B68C]/50 leading-relaxed">冻结佣金在买家确认收货后 15 天自动解冻，进入待审批状态</p>
+      </GoldHeroCard>
 
       {/* Tabs */}
       <div className="bg-white flex border-b border-[#F0E8DC] sticky top-0 z-10 overflow-x-auto scrollbar-hide">

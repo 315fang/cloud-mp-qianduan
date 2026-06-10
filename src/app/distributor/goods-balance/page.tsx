@@ -7,6 +7,7 @@ import {
   ArrowLeft, ArrowUpRight, ArrowDownRight, X, ChevronRight,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
+import GoldHeroCard, { GoldDivider } from "@/components/GoldHeroCard";
 
 type Flow = "all" | "in" | "out";
 
@@ -50,40 +51,50 @@ export default function GoodsBalancePage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-8">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#FAF7F4] px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
-            <ArrowLeft size={20} className="text-white" />
+            <ArrowLeft size={20} className="text-[#3D2B1A]" />
           </button>
-          <h1 className="text-base font-bold text-white">货款余额</h1>
+          <h1 className="text-base font-bold text-[#1A1208]">货款余额</h1>
         </header>
 
         {/* Hero */}
-        <div className="bg-[#1A1208] px-5 pb-6 pt-2">
-          <span className="text-xs text-white/60">可用货款余额（元）</span>
-          <p className="text-4xl font-light text-white tabular-nums mt-1">¥16,000.00</p>
-          <div className="grid grid-cols-3 gap-2 mt-5">
+        <GoldHeroCard
+          brand="问兰货款"
+          sub="GOODS BALANCE"
+          badge={<span className="text-[9px] font-bold text-[#E7C977] border border-[#E7C977]/40 rounded-full px-2 py-0.5 tracking-widest">余额</span>}
+        >
+          <span className="text-[10px] text-[#C9B68C]/80 tracking-[0.18em]">可用货款余额（元）</span>
+          <div className="flex items-end gap-1.5 mt-1.5">
+            <span className="text-xl font-bold mb-1.5 text-[#E7C977]">¥</span>
+            <span className="text-[40px] leading-none font-bold bg-gradient-to-b from-[#F8EBC6] to-[#CDA047] bg-clip-text text-transparent tabular-nums">
+              16,000.00
+            </span>
+          </div>
+          <GoldDivider className="mt-4" />
+          <div className="grid grid-cols-3 gap-2 mt-3">
             {summary.map((s) => (
               <div key={s.label}>
-                <p className="text-[11px] text-white/40">{s.label}</p>
-                <p className="text-sm font-medium text-white/90 tabular-nums mt-0.5">¥{s.value}</p>
+                <p className="text-[10px] text-[#C9B68C]/60">{s.label}</p>
+                <p className="text-sm font-medium text-[#F1E4C4] tabular-nums mt-0.5">¥{s.value}</p>
               </div>
             ))}
           </div>
-          <div className="flex gap-2 mt-5">
+          <div className="flex gap-2 mt-4">
             <button
               onClick={() => setShowRecharge(true)}
-              className="flex-1 bg-[#B8973A] text-[#1A1208] text-sm font-bold py-3 rounded-xl active:opacity-80"
+              className="flex-1 bg-[#B8973A] text-white text-sm font-bold py-2.5 rounded-xl active:opacity-80"
             >
               充值货款
             </button>
             <Link
               href="/distributor/recharge-order"
-              className="flex items-center gap-1 border border-white/20 text-white text-sm font-medium px-4 py-3 rounded-xl active:opacity-70"
+              className="flex items-center gap-1 border border-[#E7C977]/30 bg-[#E7C977]/10 text-[#F1E4C4] text-sm font-medium px-4 py-2.5 rounded-xl active:opacity-70"
             >
               充值订单 <ChevronRight size={14} />
             </Link>
           </div>
-        </div>
+        </GoldHeroCard>
 
         <div className="px-4 py-5">
           {/* 筛选 */}
