@@ -18,6 +18,8 @@ type Tab = "overview" | "inventory" | "purchase" | "store";
 export default function StoreManagerPage() {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("overview");
+  // 是否已被平台指派为店长（演示可切换）
+  const [isManager, setIsManager] = useState(true);
 
   const store = { name: "问兰美妆旗舰店", level: "金牌门店", manager: "李静茵" };
 
@@ -46,12 +48,59 @@ export default function StoreManagerPage() {
 
   return (
     <PhoneFrame>
+      {!isManager ? (
+        <div className="min-h-full bg-[#FAF7F4] flex flex-col">
+          <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#FAF7F4] px-4 py-3">
+            <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
+              <ArrowLeft size={20} className="text-[#3D2B1A]" />
+            </button>
+            <h1 className="text-base font-bold text-[#1A1208]">店长工作台</h1>
+          </header>
+
+          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center -mt-10">
+            <div className="w-20 h-20 rounded-3xl bg-[#F0E8DC] flex items-center justify-center mb-6">
+              <Store size={38} className="text-[#B8973A]" strokeWidth={1.4} />
+            </div>
+            <h2 className="text-lg font-bold text-[#1A1208]">当前账号未被指派为店长</h2>
+            <p className="text-sm text-[#8C7B6B] leading-relaxed mt-3 max-w-[260px]">
+              店长与门店的绑定由平台统一完成，绑定后这里才会显示门店工作台与经营数据。
+            </p>
+            <div className="mt-6 w-full max-w-[280px] bg-white rounded-2xl p-4 text-left">
+              <p className="text-xs font-bold text-[#1A1208] mb-2">如何成为店长？</p>
+              <ul className="space-y-1.5 text-[11px] text-[#8C7B6B] leading-relaxed">
+                <li>· 联系您所属的区域负责人提交申请</li>
+                <li>· 由平台审核并完成门店绑定</li>
+                <li>· 绑定成功后重新进入本页即可使用</li>
+              </ul>
+            </div>
+            <button
+              onClick={() => router.push("/profile")}
+              className="mt-6 bg-[#1A1208] text-white text-sm font-medium px-8 py-3 rounded-full"
+            >
+              返回我的
+            </button>
+            {/* 演示用：切换为已指派状态 */}
+            <button
+              onClick={() => setIsManager(true)}
+              className="mt-3 text-[11px] text-[#B8973A] underline"
+            >
+              （演示）切换为已指派店长
+            </button>
+          </div>
+        </div>
+      ) : (
       <div className="min-h-full bg-[#FAF7F4]">
         <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
           <h1 className="text-base font-bold text-white">店长工作台</h1>
+          <button
+            onClick={() => setIsManager(false)}
+            className="ml-auto text-[10px] text-white/40 underline"
+          >
+            演示空态
+          </button>
         </header>
 
         {/* 门店信息 */}
@@ -150,6 +199,7 @@ export default function StoreManagerPage() {
           {tab === "store" && <StoreProfile />}
         </div>
       </div>
+      )}
     </PhoneFrame>
   );
 }

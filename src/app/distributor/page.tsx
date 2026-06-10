@@ -108,6 +108,14 @@ export default function DistributorPage() {
             </div>
             <p className="text-[10px] text-white/30 mt-1">距离 L3 白金还差 ¥5,200</p>
           </div>
+          {/* 立即邀新主操作 */}
+          <Link
+            href="/distributor/invite"
+            className="mt-4 flex items-center justify-center gap-2 w-full bg-gradient-to-r from-[#B8973A] to-[#D4AF5A] text-[#1A1208] text-sm font-bold py-3 rounded-xl shadow-[0_8px_18px_-6px_rgba(184,151,58,0.6)] active:scale-[0.99] transition-transform"
+          >
+            <UserPlus size={17} strokeWidth={2.2} />
+            立即邀新
+          </Link>
         </div>
 
         {/* KPI 卡片网格 */}
@@ -213,7 +221,43 @@ export default function DistributorPage() {
           </div>
         </div>
 
-        {/* 团队排�� */}
+        {/* 团队结构双大卡 */}
+        <div className="px-4 mt-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-bold text-[#1A1208]">团队结构</span>
+            <Link href="/distributor/team" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+              团队详情 <ChevronRight size={13} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/distributor/team?level=1"
+              className="relative bg-white rounded-2xl p-4 overflow-hidden active:scale-[0.98] transition-transform"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-[#B8973A]/10" style={{ transform: "translate(35%,-35%)" }} />
+              <div className="w-10 h-10 rounded-xl bg-[#FBF5E6] flex items-center justify-center mb-3">
+                <Users size={20} className="text-[#B8973A]" strokeWidth={1.6} />
+              </div>
+              <p className="text-xs text-[#8C7B6B]">一级团队</p>
+              <p className="text-2xl font-bold text-[#1A1208] mt-0.5 tabular-nums">12<span className="text-sm font-medium text-[#8C7B6B] ml-0.5">人</span></p>
+              <p className="text-[10px] text-[#8C7B6B] mt-1 leading-snug">您直接邀约的下级，享一级佣金</p>
+            </Link>
+            <Link
+              href="/distributor/team?level=2"
+              className="relative bg-white rounded-2xl p-4 overflow-hidden active:scale-[0.98] transition-transform"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-[#4A7CC7]/10" style={{ transform: "translate(35%,-35%)" }} />
+              <div className="w-10 h-10 rounded-xl bg-[#EBF1FB] flex items-center justify-center mb-3">
+                <Users size={20} className="text-[#4A7CC7]" strokeWidth={1.6} />
+              </div>
+              <p className="text-xs text-[#8C7B6B]">二级团队</p>
+              <p className="text-2xl font-bold text-[#1A1208] mt-0.5 tabular-nums">4<span className="text-sm font-medium text-[#8C7B6B] ml-0.5">人</span></p>
+              <p className="text-[10px] text-[#8C7B6B] mt-1 leading-snug">下级再邀约的成员，享二级佣金</p>
+            </Link>
+          </div>
+        </div>
+
+        {/* 团队排行 */}
         <div className="px-4 mt-4">
           <div className="bg-white rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#F0E8DC]">

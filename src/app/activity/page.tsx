@@ -13,6 +13,8 @@ import {
   Flame,
   Star,
   Clock,
+  UserPlus,
+  Palette,
 } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomNav from "@/components/BottomNav";
@@ -32,26 +34,46 @@ function useCountdown(targetMs: number) {
   return { d, h, m, s };
 }
 
-// 节日活动数据
-const festivals = [
+// Banner 轮播数据
+const banners = [
   {
     id: "summer",
+    image: "/images/banner-1.png",
     title: "盛夏焕肤节",
     subtitle: "夏日限定特惠 · 防晒精华同享",
-    daysLeft: 3 * 86400000 + 4 * 3600000 + 23 * 60000,
-    bg: "from-[#1A1208] to-[#3D2B1A]",
-    accent: "#B8973A",
     badge: "限时",
+    accent: "#B8973A",
+    countdown: 3 * 86400000 + 4 * 3600000 + 23 * 60000,
+    href: "/activity/summer",
   },
   {
     id: "member",
+    image: "/images/banner-2.png",
     title: "会员日专属福利",
     subtitle: "每月 8 日 · 会员专享额外 9 折",
-    daysLeft: 1 * 86400000 + 12 * 3600000,
-    bg: "from-[#2A3D2B] to-[#1A2A1C]",
-    accent: "#5FAD6C",
     badge: "会员专属",
+    accent: "#5FAD6C",
+    countdown: 1 * 86400000 + 12 * 3600000,
+    href: "/activity/member",
   },
+  {
+    id: "newuser",
+    image: "/images/banner-3.png",
+    title: "新人礼遇季",
+    subtitle: "首单立减 · 专属新人价",
+    badge: "新人专享",
+    accent: "#4A7CC7",
+    countdown: 6 * 86400000,
+    href: "/activity/newuser",
+  },
+];
+
+// 常驻活动子卡
+const residentActivities = [
+  { icon: UserPlus, label: "N 邀约", desc: "邀好友得双重奖励", href: "/invite/activity?mode=share", color: "#B8973A", bg: "#FBF5E6" },
+  { icon: Palette, label: "特惠随心选", desc: "自由搭配组合优惠", href: "/activity/diy/list", color: "#7C4AC7", bg: "#F3EBFB" },
+  { icon: Gift, label: "积分商城", desc: "积分兑好礼", href: "/profile/points", color: "#2D8C5E", bg: "#E8F5EE" },
+  { icon: Star, label: "每日签到", desc: "连签领惊喜", href: "/questionnaire", color: "#C7A42A", bg: "#FBF8E6" },
 ];
 
 // 快捷入口
@@ -112,21 +134,81 @@ const flashProducts = [products[3], products[5], products[0]];
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <span className="min-w-[28px] text-center text-sm font-bold text-white bg-[#1A1208] rounded-lg px-1.5 py-1 tabular-nums">
+      <span className="min-w-[26px] text-center text-sm font-bold text-white bg-black/30 rounded-md px-1.5 py-1 tabular-nums">
         {String(value).padStart(2, "0")}
       </span>
-      <span className="text-[9px] text-[#8C7B6B] mt-0.5">{label}</span>
+      <span className="text-[8px] text-white/70 mt-0.5">{label}</span>
     </div>
   );
 }
 
 function CountdownSep() {
-  return <span className="text-[#8C7B6B] font-bold text-sm self-start mt-1.5 mx-0.5">:</span>;
+  return <span className="text-white/60 font-bold text-sm self-start mt-1 mx-0.5">:</span>;
+}
+
+// Banner 轮播
+function BannerCarousel() {
+  const [active, setActive] = useState(0);
+  const countdowns = banners.map((b) => useCountdown(b.countdown));
+
+  useEffect(() => {
+    const t = setInterval(() => setActive((v) => (v + 1) % banners.length), 4500);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <section aria-label="活动 Banner" className="pt-4">
+      <div className="relative w-full h-44 rounded-2xl overflow-hidden">
+        {banners.map((b, i) => {
+          const cd = countdowns[i];
+          return (
+            <Link
+              key={b.id}
+              href={b.href}
+              className={`absolute inset-0 transition-opacity duration-500 ${i === active ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
+            >
+              <Image src={b.image} alt={b.title} fill className="object-cover" priority={i === 0} />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#1A1208]/80 via-[#1A1208]/30 to-transparent" />
+              <div className="absolute inset-0 p-5 flex flex-col justify-center">
+                <span
+                  className="inline-block w-fit text-[10px] font-bold px-2.5 py-1 rounded-full mb-2"
+                  style={{ background: b.accent, color: "#fff" }}
+                >
+                  {b.badge}
+                </span>
+                <p className="text-lg font-bold text-white">{b.title}</p>
+                <p className="text-xs text-white/70 mt-0.5 mb-3">{b.subtitle}</p>
+                <div className="flex items-end gap-1">
+                  <span className="text-[10px] text-white/70 mr-1 mb-1">距结束</span>
+                  <CountdownUnit value={cd.d} label="天" />
+                  <CountdownSep />
+                  <CountdownUnit value={cd.h} label="时" />
+                  <CountdownSep />
+                  <CountdownUnit value={cd.m} label="分" />
+                  <CountdownSep />
+                  <CountdownUnit value={cd.s} label="秒" />
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+        {/* 指示点 */}
+        <div className="absolute bottom-3 right-4 z-20 flex gap-1.5">
+          {banners.map((b, i) => (
+            <button
+              key={b.id}
+              aria-label={`切换到第 ${i + 1} 张`}
+              onClick={() => setActive(i)}
+              className={`h-1.5 rounded-full transition-all ${i === active ? "w-5 bg-white" : "w-1.5 bg-white/50"}`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default function ActivityPage() {
-  const festivalCountdowns = festivals.map((f) => useCountdown(f.daysLeft));
-
   return (
     <PhoneFrame>
       {/* 顶部标题 */}
@@ -143,52 +225,31 @@ export default function ActivityPage() {
       </header>
 
       <div className="px-4 space-y-5 pb-4">
-        {/* 节日倒计时横滑 */}
-        <section aria-labelledby="festival-heading">
-          <h2 id="festival-heading" className="sr-only">节日活动</h2>
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide pt-4">
-            {festivals.map((festival, i) => {
-              const cd = festivalCountdowns[i];
-              return (
-                <Link
-                  key={festival.id}
-                  href={`/activity/${festival.id}`}
-                  className={`flex-shrink-0 w-72 rounded-2xl bg-gradient-to-br ${festival.bg} p-5 relative overflow-hidden`}
-                >
-                  {/* 背景装饰 */}
-                  <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
-                    style={{ background: festival.accent, transform: "translate(30%, -30%)" }}
-                  />
-                  <span
-                    className="inline-block text-[10px] font-bold px-2.5 py-1 rounded-full mb-2"
-                    style={{ background: festival.accent + "33", color: festival.accent }}
-                  >
-                    {festival.badge}
-                  </span>
-                  <p className="text-base font-bold text-white">{festival.title}</p>
-                  <p className="text-xs text-white/50 mt-0.5 mb-4">{festival.subtitle}</p>
-                  {/* 倒计时 */}
-                  <div className="flex items-end gap-1">
-                    <span className="text-[11px] text-white/50 mr-1 mb-1">距结束</span>
-                    <CountdownUnit value={cd.d} label="天" />
-                    <CountdownSep />
-                    <CountdownUnit value={cd.h} label="时" />
-                    <CountdownSep />
-                    <CountdownUnit value={cd.m} label="分" />
-                    <CountdownSep />
-                    <CountdownUnit value={cd.s} label="秒" />
-                  </div>
-                  <div className="mt-4 flex justify-end">
-                    <span
-                      className="text-xs font-medium px-4 py-1.5 rounded-full text-white flex items-center gap-1"
-                      style={{ background: festival.accent }}
-                    >
-                      立即参与 <ChevronRight size={12} />
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
+        {/* Banner 轮播 */}
+        <BannerCarousel />
+
+        {/* 常驻活动 */}
+        <section aria-labelledby="resident-heading">
+          <div className="flex items-center justify-between mb-3">
+            <h2 id="resident-heading" className="text-base font-bold text-[#1A1208]">常驻活动</h2>
+            <span className="text-[11px] text-[#8C7B6B]">长期开放 · 随时参与</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {residentActivities.map(({ icon: Icon, label, desc, href, color, bg }) => (
+              <Link
+                key={label}
+                href={href}
+                className="bg-white rounded-2xl p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
+              >
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: bg }}>
+                  <Icon size={22} style={{ color }} strokeWidth={1.5} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-[#1A1208] truncate">{label}</p>
+                  <p className="text-[10px] text-[#8C7B6B] mt-0.5 truncate">{desc}</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
 
@@ -199,7 +260,7 @@ export default function ActivityPage() {
             {quickEntries.map(({ icon: Icon, label, href, color, bg }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-2">
                 <div
-                  className="w-13 h-13 rounded-2xl flex items-center justify-center"
+                  className="rounded-2xl flex items-center justify-center"
                   style={{ background: bg, width: 52, height: 52 }}
                 >
                   <Icon size={22} style={{ color }} strokeWidth={1.5} />
@@ -356,7 +417,7 @@ export default function ActivityPage() {
                       style={{ width: `${act.percent}%` }}
                     />
                   </div>
-                  <p className="text-[9px] text-[#8C7B6B] mt-0.5">已有 {act.percent}% 砍价��功</p>
+                  <p className="text-[9px] text-[#8C7B6B] mt-0.5">已有 {act.percent}% 砍价成功</p>
                 </div>
                 <Link
                   href={`/activity/slash/${act.id}`}

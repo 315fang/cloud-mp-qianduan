@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, TrendingUp, Clock, CheckCircle2, XCircle, ChevronRight, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, TrendingUp, Clock, CheckCircle2, XCircle, ChevronRight, AlertCircle, Coins } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import GoldHeroCard, { GoldDivider } from "@/components/GoldHeroCard";
 
@@ -88,6 +89,28 @@ export default function CommissionPage() {
         </div>
         <p className="mt-3 text-center text-[10px] text-[#C9B68C]/50 leading-relaxed">冻结佣金在买家确认收货后 15 天自动解冻，进入待审批状态</p>
       </GoldHeroCard>
+
+      {/* 货款余额代理商专属入口 */}
+      <div className="px-4 pt-3 bg-[#FAF7F4]">
+        <Link
+          href="/distributor/goods-balance"
+          className="flex items-center gap-3 bg-white rounded-2xl p-4 shadow-sm active:scale-[0.99] transition-transform"
+        >
+          <div className="w-11 h-11 rounded-xl bg-[#FBF5E6] flex items-center justify-center shrink-0">
+            <Coins size={22} className="text-[#B8973A]" strokeWidth={1.6} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-[#1A1208]">货款余额</p>
+            <p className="text-[11px] text-[#8C7B6B] mt-0.5">代理商进货资金，与佣金独立核算</p>
+          </div>
+          <div className="text-right shrink-0">
+            <p className="text-base font-bold text-[#B8973A] tabular-nums">¥16,000.00</p>
+            <span className="flex items-center justify-end gap-0.5 text-[10px] text-[#8C7B6B] mt-0.5">
+              查看 <ChevronRight size={12} />
+            </span>
+          </div>
+        </Link>
+      </div>
 
       {/* Tabs */}
       <div className="bg-white flex border-b border-[#F0E8DC] sticky top-0 z-10 overflow-x-auto scrollbar-hide">

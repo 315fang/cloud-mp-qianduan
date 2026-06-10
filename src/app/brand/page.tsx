@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ShieldCheck, ChevronRight, Award } from "lucide-react";
+import { ArrowLeft, ShieldCheck, ChevronRight, Award, Newspaper, Sparkles, Leaf, FlaskConical } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import PhoneFrame from "@/components/PhoneFrame";
@@ -11,6 +11,14 @@ const columns = [
   { title: "匠心工艺", subtitle: "每一滴皆臻于至善", color: "#6B4EC7" },
   { title: "可持续美学", subtitle: "环保包装与责任承诺", color: "#3D8B5F" },
   { title: "品牌大使", subtitle: "与你共享美学理念", color: "#4A7CC7" },
+];
+
+// 中部固定内容入口（内容导航层）
+const contentEntries = [
+  { icon: Newspaper, title: "新闻中心", subtitle: "品牌动态与媒体报道", action: "查看资讯", href: "/brand/news", color: "#B8973A", bg: "#FBF5E6" },
+  { icon: FlaskConical, title: "成分实验室", subtitle: "核心活性成分解析", action: "了解科技", href: "/brand/news", color: "#4A7CC7", bg: "#EBF1FB" },
+  { icon: Sparkles, title: "产品图鉴", subtitle: "全系产品与适用肤质", action: "进入图鉴", href: "/products", color: "#7C4AC7", bg: "#F3EBFB" },
+  { icon: Leaf, title: "可持续承诺", subtitle: "环保包装与社会责任", action: "查看详情", href: "/brand/news", color: "#3D8B5F", bg: "#E8F5EE" },
 ];
 
 const certifications = [
@@ -47,6 +55,34 @@ export default function BrandZonePage() {
             <p className="text-sm text-[#3D2B1A] leading-relaxed text-pretty">
               问兰，源于东方草本智慧与现代护肤科学的融合。我们相信，真正的美来自肌肤的健康与内在的从容。每一款产品，都是对品质的极致追求。
             </p>
+          </div>
+
+          {/* 固定内容入口导航层 */}
+          <div className="px-4 mt-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold text-[#1A1208]">内容专栏</h2>
+              <span className="text-[11px] text-[#8C7B6B]">精选内容板块</span>
+            </div>
+            <div className="space-y-3">
+              {contentEntries.map(({ icon: Icon, title, subtitle, action, href, color, bg }) => (
+                <Link
+                  key={title}
+                  href={href}
+                  className="flex items-center gap-3.5 bg-white rounded-2xl p-4 shadow-sm active:scale-[0.99] transition-transform"
+                >
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: bg }}>
+                    <Icon size={22} style={{ color }} strokeWidth={1.5} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-[#1A1208]">{title}</p>
+                    <p className="text-[11px] text-[#8C7B6B] mt-0.5 truncate">{subtitle}</p>
+                  </div>
+                  <span className="flex items-center gap-0.5 text-[11px] font-medium shrink-0" style={{ color }}>
+                    {action} <ChevronRight size={13} />
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* 品牌栏目卡组 */}
