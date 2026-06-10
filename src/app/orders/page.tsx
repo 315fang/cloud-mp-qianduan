@@ -8,23 +8,35 @@ import { ArrowLeft, ChevronRight, Package, MapPin, CheckCircle2, Truck, CircleDo
 import PhoneFrame from "@/components/PhoneFrame";
 import { products } from "@/lib/data";
 
-type OrderStatus = "all" | "pending" | "paid" | "shipped" | "completed" | "refund";
+type OrderStatus = "all" | "pending" | "grouping" | "paid" | "shipped" | "review" | "verify" | "completed" | "refund";
 
 const statusTabs: { key: OrderStatus; label: string }[] = [
   { key: "all", label: "全部" },
   { key: "pending", label: "待付款" },
+  { key: "grouping", label: "待成团" },
   { key: "paid", label: "待发货" },
   { key: "shipped", label: "待收货" },
+  { key: "verify", label: "待核销" },
+  { key: "review", label: "待评价" },
   { key: "completed", label: "已完成" },
   { key: "refund", label: "退换货" },
 ];
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   pending: { label: "待付款", color: "text-orange-500", bg: "bg-orange-50" },
+  grouping: { label: "待成团", color: "text-[#C2410C]", bg: "bg-[#FFEDD5]" },
   paid: { label: "待发货", color: "text-blue-500", bg: "bg-blue-50" },
   shipped: { label: "待收货", color: "text-[#B8973A]", bg: "bg-[#F0E6C8]" },
+  verify: { label: "待核销", color: "text-[#2D8C5E]", bg: "bg-[#E6F4EC]" },
+  review: { label: "待评价", color: "text-[#1B7A8C]", bg: "bg-[#E4F1F4]" },
   completed: { label: "已完成", color: "text-[#8C7B6B]", bg: "bg-[#F5EFE8]" },
   refund: { label: "退款中", color: "text-red-400", bg: "bg-red-50" },
+};
+
+// 活动订单类型
+const activityConfig: Record<string, { label: string; color: string; bg: string }> = {
+  group: { label: "拼团订单", color: "#C2410C", bg: "#FFF1E6" },
+  lottery: { label: "抽奖订单", color: "#B8973A", bg: "#FBF3E2" },
 };
 
 const logistics = [
@@ -42,6 +54,35 @@ const mockOrders = [
     items: [{ product: products[0], qty: 1 }, { product: products[1], qty: 1 }],
     total: 1026,
     expressNo: "SF1234567890",
+    activity: null as null | "group" | "lottery",
+  },
+  {
+    id: "2024112900008",
+    status: "grouping" as const,
+    date: "2024-11-29",
+    items: [{ product: products[1], qty: 1 }],
+    total: 658,
+    expressNo: "",
+    activity: "group" as const,
+  },
+  {
+    id: "2024112700006",
+    status: "verify" as const,
+    date: "2024-11-27",
+    items: [{ product: products[2], qty: 1 }],
+    total: 368,
+    expressNo: "",
+    activity: null,
+    verifyCode: "8842 6035 1179 4420",
+  },
+  {
+    id: "2024112200007",
+    status: "review" as const,
+    date: "2024-11-22",
+    items: [{ product: products[0], qty: 1 }],
+    total: 528,
+    expressNo: "",
+    activity: "lottery" as const,
   },
   {
     id: "2024112000002",
@@ -50,6 +91,7 @@ const mockOrders = [
     items: [{ product: products[3], qty: 2 }],
     total: 396,
     expressNo: "",
+    activity: null,
   },
   {
     id: "2024111500003",
@@ -58,6 +100,7 @@ const mockOrders = [
     items: [{ product: products[4], qty: 1 }],
     total: 468,
     expressNo: "",
+    activity: null,
   },
   {
     id: "2024112500005",
@@ -66,6 +109,7 @@ const mockOrders = [
     items: [{ product: products[5], qty: 1 }],
     total: 288,
     expressNo: "",
+    activity: null,
   },
   {
     id: "2024110800004",
@@ -74,6 +118,7 @@ const mockOrders = [
     items: [{ product: products[2], qty: 1 }],
     total: 368,
     expressNo: "",
+    activity: null,
   },
 ];
 
@@ -137,6 +182,23 @@ export default function OrdersPage() {
             const isLogisticsOpen = expandedLogistics === order.id;
             return (
               <div key={order.id} className="bg-white rounded-2xl overflow-hidden">
+                {/* 活动订单识别条 */}
+                {order.activity && (
+                  <div
+                    className="flex items-center gap-1.5 px-4 py-2"
+                    style={{ backgroundColor: activityConfig[order.activity].bg }}
+                  >
+                    <span
+                      className="text-[11px] font-bold px-1.5 py-0.5 rounded"
+                      style={{ color: "#fff", backgroundColor: activityConfig[order.activity].color }}
+                    >
+                      {activityConfig[order.activity].label}
+                    </span>
+                    <span className="text-[11px]" style={{ color: activityConfig[order.activity].color }}>
+                      {order.activity === "group" ? "拼团成功后自动发货" : "中奖商品 · 限本人领取"}
+                    </span>
+                  </div>
+                )}
                 {/* 订单头部 */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-[#F9F5F0]">
                   <span className="text-[11px] text-[#8C7B6B]">订单号：{order.id}</span>
@@ -237,6 +299,27 @@ export default function OrdersPage() {
                   </div>
                 )}
 
+                {/* 待成团进度 */}
+                {order.status === "grouping" && (
+                  <div className="mx-4 mb-3 flex items-center justify-between bg-[#FFF1E6] rounded-xl px-3 py-2.5">
+                    <div>
+                      <p className="text-xs font-bold text-[#C2410C]">还差 1 人成团</p>
+                      <p className="text-[10px] text-[#C2410C]/70 mt-0.5">剩余 11:58:30 · 邀请好友更快成团</p>
+                    </div>
+                    <button className="text-[11px] bg-[#C2410C] text-white px-3 py-1.5 rounded-full font-semibold">
+                      邀请好友
+                    </button>
+                  </div>
+                )}
+
+                {/* 待核销 16 位核销码 */}
+                {order.status === "verify" && "verifyCode" in order && order.verifyCode && (
+                  <div className="mx-4 mb-3 bg-[#E6F4EC] rounded-xl px-3 py-3">
+                    <p className="text-[11px] text-[#2D8C5E] mb-1.5">到店出示核销码（16 位）</p>
+                    <p className="text-lg font-bold tracking-widest text-[#1A1208] font-mono">{order.verifyCode}</p>
+                  </div>
+                )}
+
                 {/* 退款进度 */}
                 {order.status === "refund" && (
                   <div className="mx-4 mb-3 bg-red-50 rounded-xl px-3 py-3">
@@ -312,6 +395,36 @@ export default function OrdersPage() {
                       <button className="text-xs border border-[#E8DDD0] text-[#3D2B1A] px-4 py-2 rounded-full">
                         催发货
                       </button>
+                    )}
+                    {order.status === "grouping" && (
+                      <>
+                        <button className="text-xs border border-[#E8DDD0] text-[#3D2B1A] px-4 py-2 rounded-full">
+                          查看详情
+                        </button>
+                        <button className="text-xs bg-[#C2410C] text-white px-5 py-2 rounded-full font-semibold">
+                          邀请好友拼团
+                        </button>
+                      </>
+                    )}
+                    {order.status === "verify" && (
+                      <>
+                        <button className="text-xs border border-[#E8DDD0] text-[#3D2B1A] px-4 py-2 rounded-full">
+                          自提门店
+                        </button>
+                        <button className="text-xs bg-[#2D8C5E] text-white px-5 py-2 rounded-full font-semibold">
+                          查看核销码
+                        </button>
+                      </>
+                    )}
+                    {order.status === "review" && (
+                      <>
+                        <button className="text-xs border border-[#E8DDD0] text-[#3D2B1A] px-4 py-2 rounded-full">
+                          再次购买
+                        </button>
+                        <button className="text-xs bg-[#1B7A8C] text-white px-5 py-2 rounded-full font-semibold">
+                          去评价
+                        </button>
+                      </>
                     )}
                     {order.status === "refund" && (
                       <button className="text-xs border border-[#E8DDD0] text-[#3D2B1A] px-4 py-2 rounded-full">

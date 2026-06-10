@@ -118,15 +118,14 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {/* 配送方式 */}
+        {/* 配送费用 */}
         <div className="bg-white rounded-2xl px-4 py-3.5 flex items-center justify-between">
-          <span className="text-sm font-semibold text-[#1A1208]">配送方式</span>
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm text-[#8C7B6B]">
-              顺丰快递 · {shipping === 0 ? "免运费" : `¥${shipping}`}
-            </span>
-            <ChevronRight size={14} className="text-[#C0B0A0]" />
-          </div>
+          <span className="text-sm font-semibold text-[#1A1208]">{delivery === "pickup" ? "自提服务" : "配送方式"}</span>
+          <span className="text-sm text-[#8C7B6B]">
+            {delivery === "pickup"
+              ? "到店自提 · 免运费"
+              : `顺丰快递 · ${shipping === 0 ? "免运费" : `¥${shipping}`}`}
+          </span>
         </div>
 
         {/* 优惠券 */}
@@ -208,11 +207,24 @@ export default function CheckoutPage() {
         </div>
         <button
           onClick={handlePlaceOrder}
-          className="w-full bg-[#1A1208] text-white text-sm font-bold py-4 rounded-full"
+          disabled={delivery === "pickup" && !selectedStore}
+          className={`w-full text-sm font-bold py-4 rounded-full ${
+            delivery === "pickup" && !selectedStore
+              ? "bg-[#EDE4D6] text-[#B0A18C]"
+              : "bg-[#1A1208] text-white"
+          }`}
         >
-          提交订单
+          {delivery === "pickup" && !selectedStore ? "请先选择自提门店" : "提交订单"}
         </button>
       </div>
     </PhoneFrame>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutInner />
+    </Suspense>
   );
 }
