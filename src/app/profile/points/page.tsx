@@ -35,7 +35,7 @@ const tasks = [
   { id: "t1", title: "每日签到", desc: "连续签到得更多", points: 5, done: false },
   { id: "t2", title: "完成一笔订单", desc: "消费 1 元得 1 积分", points: 100, done: false },
   { id: "t3", title: "分享好物", desc: "分享商品给好友", points: 20, done: true },
-  { id: "t4", title: "完善个人资料", desc: "补全资料信息", points: 50, done: true },
+  { id: "t4", title: "完善个人资料", desc: "补全资料信息", points: 25, done: true },
   { id: "t5", title: "邀请新用户", desc: "好友注册成功", points: 200, done: false },
 ];
 

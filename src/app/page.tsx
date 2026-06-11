@@ -46,7 +46,7 @@ export default function HomePage() {
 
         <div className="flex items-center justify-between px-5 pt-3 pb-2">
           <div>
-            <p className="font-display-en text-[10px] font-medium text-[#B8973A]">Wenlan Beauty</p>
+            <p className="font-display-en text-[10px] font-medium gold-sheen">Wenlan Beauty</p>
             <h1 className="font-luxury text-xl text-[#1A1208] leading-tight">问兰</h1>
           </div>
           <div className="flex items-center gap-3">
@@ -77,7 +77,7 @@ export default function HomePage() {
         <BannerCarousel />
 
         {/* 金刚区 - 精选 5 入口，留白克制 */}
-        <section aria-label="功能入口">
+        <section aria-label="功能入口" className="animate-rise animate-rise-1">
           <div className="grid grid-cols-5 gap-x-1 bg-white rounded-2xl py-4 px-2">
             {[
               { icon: Crown, label: "品牌世界", href: "/brand" },
@@ -97,8 +97,8 @@ export default function HomePage() {
         </section>
 
         {/* 品牌叙事区 —— 1974 溯源 · 真实品牌故事 */}
-        <section aria-labelledby="brand-narrative-heading">
-          <Link href="/brand" className="block surface-noir rounded-2xl px-6 py-8 relative overflow-hidden">
+        <section aria-labelledby="brand-narrative-heading" className="animate-rise animate-rise-2">
+          <Link href="/brand" className="block surface-noir rounded-2xl px-6 py-8 relative overflow-hidden press-scale">
             {/* 金色装饰角线 */}
             <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#B8973A]/50" aria-hidden="true" />
             <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-[#B8973A]/50" aria-hidden="true" />
@@ -121,8 +121,78 @@ export default function HomePage() {
           </Link>
         </section>
 
+        {/* 精品系列：肌肤哲学三部曲的套组化呈现（拼图式 Bento） */}
+        <section aria-labelledby="collections-heading" className="animate-rise animate-rise-2">
+          <div className="flex items-end justify-between mb-3">
+            <div>
+              <p className="eyebrow">Collections</p>
+              <h2 id="collections-heading" className="font-luxury text-lg text-[#1A1208] mt-1">精品系列</h2>
+            </div>
+            <span className="text-[11px] text-[#8C7B6B] pb-0.5">三步哲学 · 系列套组</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* 左：修护系列高卡（第一步，视觉权重最高） */}
+            <Link
+              href="/products?series=repair"
+              className="relative row-span-2 rounded-2xl overflow-hidden press-scale surface-noir"
+            >
+              <img
+                src="/images/series-repair.png"
+                alt="修护系列产品"
+                className="absolute inset-0 w-full h-full object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1208]/85 via-[#1A1208]/20 to-transparent" />
+              <div className="relative flex flex-col justify-end h-full p-4 min-h-[280px]">
+                <p className="text-[9px] tracking-[0.25em] text-[#D4AF5A] uppercase">Step 1 · Repair</p>
+                <p className="font-luxury text-lg text-white mt-1">修护系列</p>
+                <p className="text-[10px] text-white/65 mt-0.5">先修墙 · 稳固肌肤屏障</p>
+                <span className="flex items-center gap-1 mt-2 text-[10px] text-[#D4AF5A]">
+                  探索套组 <ArrowRight size={11} />
+                </span>
+              </div>
+            </Link>
+
+            {/* 右上：保湿系列 */}
+            <Link
+              href="/products?series=hydra"
+              className="relative rounded-2xl overflow-hidden press-scale surface-champagne"
+            >
+              <img
+                src="/images/series-hydra.png"
+                alt="保湿系列产品"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2A1E10]/75 via-transparent to-transparent" />
+              <div className="relative flex flex-col justify-end h-full p-4 min-h-[134px]">
+                <p className="text-[9px] tracking-[0.25em] text-[#E8CC7A] uppercase">Step 2 · Hydrate</p>
+                <p className="font-luxury text-base text-white mt-0.5">保湿系列</p>
+                <p className="text-[10px] text-white/65">再蓄水 · 充盈水润储备</p>
+              </div>
+            </Link>
+
+            {/* 右下：抗老系列 */}
+            <Link
+              href="/products?series=antiage"
+              className="relative rounded-2xl overflow-hidden press-scale bg-white"
+            >
+              <img
+                src="/images/series-antiage.png"
+                alt="抗老系列产品"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2A1E10]/75 via-transparent to-transparent" />
+              <div className="relative flex flex-col justify-end h-full p-4 min-h-[134px]">
+                <p className="text-[9px] tracking-[0.25em] text-[#E8CC7A] uppercase">Step 3 · Renew</p>
+                <p className="font-luxury text-base text-white mt-0.5">抗老系列</p>
+                <p className="text-[10px] text-white/65">后抗老 · 唤醒紧致弹性</p>
+              </div>
+            </Link>
+          </div>
+        </section>
+
         {/* 限时专场：保留活力但视觉克制 */}
-        <section aria-labelledby="flash-sale-heading">
+        <section aria-labelledby="flash-sale-heading" className="animate-rise animate-rise-3">
           <div className="flex items-end justify-between mb-3">
             <div>
               <p className="eyebrow">Limited Offer</p>
@@ -184,7 +254,7 @@ export default function HomePage() {
         </section>
 
         {/* 臻选推荐 */}
-        <section aria-labelledby="hot-heading">
+        <section aria-labelledby="hot-heading" className="animate-rise animate-rise-4">
           <div className="flex items-end justify-between mb-3">
             <div>
               <p className="eyebrow">Selection</p>
@@ -202,14 +272,14 @@ export default function HomePage() {
         </section>
 
         {/* 品牌专区：药业主视觉 + 资讯三卡 */}
-        <section aria-labelledby="brand-zone-heading">
+        <section aria-labelledby="brand-zone-heading" className="animate-rise animate-rise-5">
           <div className="text-center mb-4">
             <p className="eyebrow">Brand Zone</p>
             <h2 id="brand-zone-heading" className="font-luxury text-lg text-[#1A1208] mt-1">品牌专区</h2>
           </div>
 
           {/* 主视觉：问兰药业总部 */}
-          <Link href="/brand" className="block bg-white rounded-2xl overflow-hidden shadow-sm">
+          <Link href="/brand" className="block bg-white rounded-2xl overflow-hidden shadow-sm press-scale">
             <div className="relative aspect-[16/10] bg-[#F5EFE8]">
               <img
                 src="/images/brand-hq.png"

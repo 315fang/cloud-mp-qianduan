@@ -124,3 +124,71 @@ body {
 .surface-champagne {
   background: linear-gradient(150deg, #FDFBF7 0%, #F7EFDF 60%, #F0E4CC 100%);
 }
+
+/* ============================================
+   动效系统（克制原则）
+   只用两种动作：入场浮现 + 按压反馈。
+   时长 0.5s 内，缓动统一，禁止弹跳与闪烁。
+   ============================================ */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 入场浮现：板块依次轻浮上来 */
+.animate-rise {
+  animation: rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-rise-1 { animation-delay: 0.05s; }
+.animate-rise-2 { animation-delay: 0.12s; }
+.animate-rise-3 { animation-delay: 0.19s; }
+.animate-rise-4 { animation-delay: 0.26s; }
+.animate-rise-5 { animation-delay: 0.33s; }
+
+/* 按压反馈：所有可点卡片的统一手感 */
+.press-scale {
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.press-scale:active {
+  transform: scale(0.97);
+}
+
+/* 金辉扫光：仅用于品牌字标与会员卡的一次性高光 */
+@keyframes gold-sheen {
+  from { background-position: -200% center; }
+  to { background-position: 200% center; }
+}
+.gold-sheen {
+  background: linear-gradient(
+    100deg,
+    var(--color-gold) 40%,
+    #E8CC7A 50%,
+    var(--color-gold) 60%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-sheen 2.8s ease-in-out 0.6s 1 both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .gold-sheen {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .press-scale,
+  .press-scale:active {
+    transition: none;
+    transform: none;
+  }
+}
