@@ -137,15 +137,21 @@ export default function LotteryPage() {
             </div>
           </div>
 
-          {/* 获奖弹窗 */}
+          {/* 获奖弹窗：弹跳入场 + 奖杯金辉脉冲（空奖时文案区分） */}
           {showResult && wonPrize && (
-            <div className="mx-4 mt-4 bg-[#FFF7E6] rounded-2xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#B8973A] flex items-center justify-center shrink-0">
+            <div className="mx-4 mt-4 bg-[#FFF7E6] rounded-2xl p-4 flex items-center gap-3 animate-pop">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                wonPrize.type === "empty" ? "bg-[#D5C9BC]" : "bg-[#B8973A] animate-glow-pulse"
+              }`}>
                 <Trophy size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#1A1208]">恭喜获得：{wonPrize.name}</p>
-                <p className="text-xs text-[#8C7B6B] mt-0.5">奖励已发放至您的账户</p>
+                <p className="text-sm font-bold text-[#1A1208]">
+                  {wonPrize.type === "empty" ? "很遗憾，未中奖" : `恭喜获得：${wonPrize.name}`}
+                </p>
+                <p className="text-xs text-[#8C7B6B] mt-0.5">
+                  {wonPrize.type === "empty" ? "再试一次，好运就在下一抽" : "奖励已发放至您的账户"}
+                </p>
               </div>
             </div>
           )}

@@ -4,7 +4,8 @@ import { useState, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, MapPin, ChevronRight, Tag, Check, ShoppingBag, Truck, Store, Phone, Clock } from "lucide-react";
+import { ArrowLeft, MapPin, ChevronRight, Tag, Check, ShoppingBag, Truck, Store, Phone, Clock, Sparkles } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import PhoneFrame from "@/components/PhoneFrame";
 import { useCart } from "@/context/CartContext";
 import { pickupStores, stockMeta } from "@/lib/pickup-stores";
@@ -36,20 +37,56 @@ function CheckoutInner() {
   const handlePlaceOrder = () => {
     setOrderPlaced(true);
     clearSelected();
-    setTimeout(() => {
-      router.push("/orders");
-    }, 1800);
   };
 
   if (orderPlaced) {
     return (
       <PhoneFrame hideNav>
-        <div className="flex flex-col items-center justify-center min-h-screen px-8 text-center">
-          <div className="w-20 h-20 rounded-full bg-[#4A7C59] flex items-center justify-center mb-5 shadow-lg">
+        <div className="flex flex-col items-center justify-center min-h-screen px-6 py-10 text-center">
+          {/* 成功打勾：弹跳入场 + 金辉脉冲 */}
+          <div className="w-20 h-20 rounded-full bg-[#4A7C59] flex items-center justify-center mb-5 shadow-lg animate-pop animate-glow-pulse">
             <Check size={36} className="text-white" strokeWidth={2.5} />
           </div>
-          <h1 className="text-xl font-bold text-[#1A1208]">下单成功！</h1>
-          <p className="text-sm text-[#8C7B6B] mt-2">正在跳转到我的订单...</p>
+          <h1 className="text-xl font-bold text-[#1A1208] animate-pop">下单成功</h1>
+          <p className="text-sm text-[#8C7B6B] mt-2 animate-pop">感谢您的信任，问兰已开始为您备货</p>
+
+          {/* 专属顾问服务二维码：稍后浮现 */}
+          <div className="mt-7 w-full max-w-[280px] bg-white rounded-2xl p-5 shadow-sm animate-pop animate-pop-delay">
+            <div className="flex items-center justify-center gap-1.5 mb-1">
+              <Sparkles size={13} className="text-[#B8973A]" />
+              <p className="text-sm font-bold text-[#1A1208]">专属肌肤顾问</p>
+            </div>
+            <p className="text-[11px] text-[#8C7B6B] leading-relaxed">
+              扫码添加您的专属顾问<br />享一对一护肤指导与售后服务
+            </p>
+            <div className="flex justify-center mt-4">
+              <div className="p-3 bg-white rounded-xl border border-[#F0E8DC]">
+                <QRCodeSVG
+                  value="https://wenlan.beauty/advisor?from=order"
+                  size={132}
+                  fgColor="#1A1208"
+                  bgColor="#FFFFFF"
+                  level="M"
+                />
+              </div>
+            </div>
+            <p className="text-[10px] text-[#B0A18C] mt-3 tracking-wide">问兰 · 先修墙 再蓄水 后抗老</p>
+          </div>
+
+          <div className="flex gap-3 mt-7 w-full max-w-[280px] animate-pop animate-pop-delay">
+            <Link
+              href="/orders"
+              className="flex-1 text-sm font-bold py-3 rounded-full bg-[#1A1208] text-white press-scale"
+            >
+              查看订单
+            </Link>
+            <Link
+              href="/"
+              className="flex-1 text-sm font-medium py-3 rounded-full bg-[#F5EFE8] text-[#1A1208] press-scale"
+            >
+              返回首页
+            </Link>
+          </div>
         </div>
       </PhoneFrame>
     );

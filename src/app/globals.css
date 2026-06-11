@@ -179,9 +179,48 @@ body {
   animation: gold-sheen 2.8s ease-in-out 0.6s 1 both;
 }
 
+/* ============================================
+   奖励时刻动效（签到 / 中奖 / 积分到账 / 支付成功）
+   例外条款：奖励瞬间允许一次轻微弹跳，
+   但仍保持短时长、一次性、不循环干扰。
+   ============================================ */
+
+/* 弹跳浮现：成功打勾、中奖卡、二维码卡的入场 */
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.55); }
+  65% { transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-pop {
+  animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.animate-pop-delay { animation-delay: 0.25s; }
+
+/* 积分上浮：+N 积分轻轻飘起并淡出 */
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(4px) scale(0.85); }
+  18% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-26px) scale(1); }
+}
+.animate-float-up {
+  animation: float-up 1.4s ease-out both;
+}
+
+/* 金辉脉冲：奖励图标周围一圈柔和金光扩散（仅 2 次） */
+@keyframes glow-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(184, 151, 58, 0.45); }
+  100% { box-shadow: 0 0 0 14px rgba(184, 151, 58, 0); }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 1.1s ease-out 2;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-rise,
-  .gold-sheen {
+  .gold-sheen,
+  .animate-pop,
+  .animate-float-up,
+  .animate-glow-pulse {
     animation: none;
     opacity: 1;
     transform: none;

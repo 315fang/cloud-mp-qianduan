@@ -52,7 +52,16 @@ export default function PointsPage() {
   const router = useRouter();
   const [tab, setTab] = useState<"tasks" | "logs" | "redeem">("tasks");
   const [signedToday, setSignedToday] = useState(signIn.signedToday);
+  const [showReward, setShowReward] = useState(false);
+  const todayPoints = signIn.week[signIn.streak]?.points ?? 5;
   const progress = Math.min((account.balance / account.nextLevel.threshold) * 100, 100);
+
+  const handleSignIn = () => {
+    if (signedToday) return;
+    setSignedToday(true);
+    setShowReward(true);
+    setTimeout(() => setShowReward(false), 1500);
+  };
 
   return (
     <PhoneFrame>
@@ -129,24 +138,35 @@ export default function PointsPage() {
                 <span className="text-sm font-bold text-[#1A1208]">每日签到</span>
                 <span className="text-[11px] text-[#8C7B6B]">连续签到 {signIn.streak} 天</span>
               </div>
-              <button
-                onClick={() => setSignedToday(true)}
-                disabled={signedToday}
-                className={`text-xs font-medium px-4 py-1.5 rounded-full ${
-                  signedToday ? "bg-[#F5EFE8] text-[#B8A898]" : "bg-[#B8973A] text-white"
-                }`}
-              >
-                {signedToday ? "今日已签" : "立即签到"}
-              </button>
+              <div className="relative">
+                {showReward && (
+                  <span
+                    className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-bold text-[#B8973A] whitespace-nowrap animate-float-up pointer-events-none"
+                    aria-hidden="true"
+                  >
+                    +{todayPoints} 积分
+                  </span>
+                )}
+                <button
+                  onClick={handleSignIn}
+                  disabled={signedToday}
+                  className={`text-xs font-medium px-4 py-1.5 rounded-full ${
+                    signedToday ? "bg-[#F5EFE8] text-[#B8A898]" : "bg-[#B8973A] text-white"
+                  }`}
+                >
+                  {signedToday ? "今日已签" : "立即签到"}
+                </button>
+              </div>
             </div>
             <div className="flex justify-between">
               {signIn.week.map((d, i) => {
                 const done = d.done || (signedToday && i === signIn.streak);
+                const justDone = signedToday && !signIn.signedToday && i === signIn.streak;
                 return (
                   <div key={d.day} className="flex flex-col items-center gap-1">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       done ? "bg-[#B8973A]" : "bg-[#F5EFE8]"
-                    }`}>
+                    } ${justDone ? "animate-pop animate-glow-pulse" : ""}`}>
                       {done ? (
                         <CheckCircle2 size={15} className="text-white" />
                       ) : (
