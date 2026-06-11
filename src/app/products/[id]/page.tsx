@@ -18,8 +18,6 @@ import {
   Minus,
   Plus,
   MessageSquare,
-  Leaf,
-  Beaker,
   ThumbsUp,
   Check,
   X,
@@ -136,8 +134,8 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
 
   return (
     <PhoneFrame hideNav>
-      {/* 悬浮顶栏 */}
-      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-4 pt-4 pb-2">
+      {/* 悬浮顶栏（避让 PhoneFrame 状态栏） */}
+      <div className="absolute top-11 left-0 right-0 z-50 flex items-center justify-between px-4 pb-2">
         <button
           onClick={() => router.back()}
           className="w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm"
@@ -180,8 +178,8 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
           priority
         />
         {discount && (
-          <div className="absolute bottom-4 right-4 bg-[#B8973A] text-white text-xs font-bold px-2.5 py-1 rounded-full">
-            -{discount}%
+          <div className="absolute bottom-4 right-4 bg-[#1A1208] text-[#D4AF5A] text-[10px] font-semibold px-2.5 py-1 rounded-full tracking-[0.15em] uppercase">
+            Member Offer
           </div>
         )}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
@@ -224,7 +222,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
           )}
         </div>
 
-        <h1 className="text-xl font-bold text-[#1A1208] leading-snug text-balance">
+        <h1 className="font-luxury text-xl text-[#1A1208] leading-snug text-balance">
           {product.name}
         </h1>
         <p className="text-sm text-[#8C7B6B] mt-0.5">{product.subtitle}</p>
@@ -239,8 +237,8 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
               </span>
             )}
             {discount && (
-              <span className="text-xs text-white bg-[#B8973A] px-1.5 py-0.5 rounded font-medium">
-                {discount}折
+              <span className="text-xs text-[#D4AF5A] bg-[#1A1208] px-2 py-0.5 rounded font-medium tracking-wide">
+                {(10 - discount / 10).toFixed(0)}折私享
               </span>
             )}
           </div>
@@ -348,9 +346,9 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
                 {product.description}
               </p>
               <div className="bg-[#FAF7F4] rounded-2xl p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Beaker size={14} className="text-[#B8973A]" />
-                  <p className="text-sm font-semibold text-[#1A1208]">使用步骤</p>
+                <div className="mb-4">
+                  <p className="eyebrow">The Ritual</p>
+                  <p className="font-luxury text-base text-[#1A1208] mt-1">焕活仪式</p>
                 </div>
                 {[
                   "洁面后取适量精华",
@@ -367,15 +365,16 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
                 ))}
               </div>
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Leaf size={14} className="text-[#B8973A]" />
-                  <p className="text-sm font-semibold text-[#1A1208]">核心成分</p>
+                <div className="mb-4">
+                  <p className="eyebrow">Active Ingredients</p>
+                  <p className="font-luxury text-base text-[#1A1208] mt-1">成分溯源</p>
+                  <div className="gold-rule mt-2" aria-hidden="true" />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {ingredients.map(({ name, desc }) => (
-                    <div key={name} className="bg-[#FAF7F4] rounded-xl p-3">
-                      <p className="text-xs font-semibold text-[#B8973A]">{name}</p>
-                      <p className="text-[10px] text-[#8C7B6B] mt-0.5 leading-snug">
+                    <div key={name} className="bg-[#FAF7F4] rounded-xl p-3 border-l-2 border-[#B8973A]">
+                      <p className="text-xs font-semibold text-[#1A1208]">{name}</p>
+                      <p className="text-[10px] text-[#8C7B6B] mt-1 leading-relaxed">
                         {desc}
                       </p>
                     </div>

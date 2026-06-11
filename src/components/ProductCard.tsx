@@ -123,8 +123,8 @@ export default function ProductCard({ product, layout = "grid" }: Props) {
   if (layout === "list") {
     return (
       <>
-        <Link href={`/products/${product.id}`} className="flex gap-3 bg-white rounded-[12px] p-3 shadow-sm">
-          <div className="relative w-28 h-28 rounded-[8px] overflow-hidden bg-[#F5EFE8] flex-shrink-0">
+        <Link href={`/products/${product.id}`} className="flex gap-3 bg-white rounded-2xl p-3 shadow-sm">
+          <div className="relative w-28 h-28 rounded-xl overflow-hidden bg-[#F5EFE8] flex-shrink-0">
             <Image src={product.image} alt={product.name} fill className="object-contain p-2" />
             {product.isNew && (
               <span className="absolute top-1.5 left-1.5 bg-[#1A1208] text-white text-[9px] font-medium px-1.5 py-0.5 rounded-full tracking-wider">
@@ -139,7 +139,7 @@ export default function ProductCard({ product, layout = "grid" }: Props) {
           </div>
           <div className="flex flex-col justify-between flex-1 py-0.5">
             <div>
-              <h3 className="text-sm font-semibold text-[#1A1208] leading-tight">{product.name}</h3>
+              <h3 className="font-luxury text-sm text-[#1A1208] leading-tight">{product.name}</h3>
               <p className="text-xs text-[#8C7B6B] mt-0.5 leading-relaxed">{product.subtitle}</p>
               <div className="flex gap-1 mt-1.5 flex-wrap">
                 {product.tags.map((tag) => (
@@ -179,7 +179,7 @@ export default function ProductCard({ product, layout = "grid" }: Props) {
 
   return (
     <>
-      <Link href={`/products/${product.id}`} className="flex flex-col bg-white rounded-[14px] overflow-hidden shadow-sm">
+      <Link href={`/products/${product.id}`} className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm">
         <div className="relative w-full aspect-square bg-[#F5EFE8]">
           <Image src={product.image} alt={product.name} fill className="object-contain p-4" />
           {product.isNew && (
@@ -201,7 +201,7 @@ export default function ProductCard({ product, layout = "grid" }: Props) {
           </button>
         </div>
         <div className="p-3">
-          <h3 className="text-sm font-semibold text-[#1A1208] leading-tight">{product.name}</h3>
+          <h3 className="font-luxury text-sm text-[#1A1208] leading-tight">{product.name}</h3>
           <p className="text-[11px] text-[#8C7B6B] mt-0.5">{product.subtitle}</p>
           <div className="flex items-center justify-between mt-2">
             <div>

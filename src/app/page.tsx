@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Bell, ChevronRight, Flame, Sparkles, Crown, Ticket, Zap, Gift, Users, Scissors, Newspaper, Palette } from "lucide-react";
+import { Search, Bell, ChevronRight, ArrowRight, Crown, Ticket, Zap, Gift, Users, Sparkles } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BannerCarousel from "@/components/BannerCarousel";
 import ProductCard from "@/components/ProductCard";
 import { products } from "@/lib/data";
 
 const hotProducts = products.filter((p) => p.isHot || p.isNew).slice(0, 4);
-const allProducts = products.slice(0, 6);
 
 // 倒计时 hook
 function useCountdown(initialSeconds: number) {
@@ -31,21 +30,24 @@ export default function HomePage() {
     <PhoneFrame>
       {/* 顶部导航栏 */}
       <header className="sticky top-0 z-40 bg-[#FAF7F4]/95 backdrop-blur-sm">
-        {/* 公告栏 */}
-        <div className="bg-[#1A1208] px-4 py-1.5 flex items-center justify-center gap-2 overflow-hidden">
-          <span className="text-[10px] tracking-[0.15em] text-[#D4AF5A] font-medium animate-pulse">
-            NEW
+        {/* 公告栏：私享礼遇语言，去促销腔 */}
+        <Link
+          href="/coupons/center"
+          className="bg-[#1A1208] px-4 py-1.5 flex items-center justify-center gap-2 overflow-hidden"
+        >
+          <span className="text-[9px] tracking-[0.28em] text-[#D4AF5A] font-semibold uppercase">
+            Privilege
           </span>
-          <p className="text-[10px] text-white/80 truncate">
-            轻奢护肤新品上线 · 首单立减 ¥50 · 满299包顺丰
+          <p className="text-[10px] text-white/75 truncate">
+            会员私享礼遇已上线 · 新客首单尊享入会礼
           </p>
           <ChevronRight size={10} className="text-[#D4AF5A] flex-shrink-0" />
-        </div>
+        </Link>
 
         <div className="flex items-center justify-between px-5 pt-3 pb-2">
           <div>
-            <p className="text-[10px] font-medium tracking-[0.2em] text-[#B8973A] uppercase">Wenlan Beauty</p>
-            <h1 className="text-lg font-bold text-[#1A1208] leading-tight">问兰护肤</h1>
+            <p className="font-display-en text-[10px] font-medium text-[#B8973A]">Wenlan Beauty</p>
+            <h1 className="font-luxury text-xl text-[#1A1208] leading-tight">问兰</h1>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/profile/notifications" className="relative w-8 h-8 flex items-center justify-center" aria-label="消息通知">
@@ -70,24 +72,19 @@ export default function HomePage() {
         </div>
       </header>
 
-      <div className="px-4 space-y-5 pb-4">
+      <div className="px-4 space-y-7 pb-4">
         {/* Banner 轮播 */}
         <BannerCarousel />
 
-        {/* 金刚区 - 运营功能入口 */}
+        {/* 金刚区 - 精选 5 入口，留白克制 */}
         <section aria-label="功能入口">
-          <div className="grid grid-cols-5 gap-y-4 gap-x-1 bg-white rounded-2xl py-4 px-2">
+          <div className="grid grid-cols-5 gap-x-1 bg-white rounded-2xl py-4 px-2">
             {[
-              { icon: Crown, label: "品牌专区", href: "/brand" },
+              { icon: Crown, label: "品牌世界", href: "/brand" },
+              { icon: Sparkles, label: "新品上市", href: "/products" },
               { icon: Zap, label: "限时专场", href: "/activity/flash" },
               { icon: Ticket, label: "领券中心", href: "/coupons/center" },
-              { icon: Gift, label: "幸运抽奖", href: "/lottery" },
-              { icon: Users, label: "拼团", href: "/group" },
-              { icon: Scissors, label: "砍价", href: "/slash" },
-              { icon: Palette, label: "随心配", href: "/activity/diy/list" },
-              { icon: Newspaper, label: "品牌资讯", href: "/brand/news" },
-              { icon: Sparkles, label: "新品上市", href: "/products" },
-              { icon: Gift, label: "兑换码", href: "/coupons/redeem" },
+              { icon: Gift, label: "会员礼遇", href: "/lottery" },
             ].map(({ icon: Icon, label, href }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
                 <div className="w-11 h-11 rounded-full bg-[#F5EFE8] flex items-center justify-center">
@@ -99,17 +96,41 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* 品牌叙事区 —— 故事素材到位后替换占位文案 */}
+        <section aria-labelledby="brand-narrative-heading">
+          <Link href="/brand" className="block bg-[#1A1208] rounded-2xl px-6 py-8 relative overflow-hidden">
+            {/* 金色装饰角线 */}
+            <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#B8973A]/50" aria-hidden="true" />
+            <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-[#B8973A]/50" aria-hidden="true" />
+            <p className="eyebrow text-center">Maison Wenlan</p>
+            <h2
+              id="brand-narrative-heading"
+              className="font-luxury text-[22px] leading-snug text-white text-center mt-3 text-balance"
+            >
+              一朵兰，一种肌肤哲学
+            </h2>
+            <div className="gold-rule mx-auto mt-4" aria-hidden="true" />
+            {/* 占位文案：待品牌故事素材替换 */}
+            <p className="text-xs leading-relaxed text-white/65 text-center mt-4 text-pretty">
+              从一株兰花的生命力中，问兰找到了肌肤焕活的答案。
+              我们追溯成分的源头，以严苛工艺萃取自然菁华，
+              只为每一次触肤，都是一场仪式。
+            </p>
+            <span className="flex items-center justify-center gap-1.5 mt-5 text-[11px] tracking-[0.2em] text-[#D4AF5A] uppercase">
+              探索品牌世界 <ArrowRight size={12} />
+            </span>
+          </Link>
+        </section>
 
-
-        {/* 限时秒杀 */}
+        {/* 限时专场：保留活力但视觉克制 */}
         <section aria-labelledby="flash-sale-heading">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Flame size={16} className="text-[#B8973A]" />
-              <h2 id="flash-sale-heading" className="text-base font-bold text-[#1A1208]">限时特惠</h2>
+          <div className="flex items-end justify-between mb-3">
+            <div>
+              <p className="eyebrow">Limited Offer</p>
+              <h2 id="flash-sale-heading" className="font-luxury text-lg text-[#1A1208] mt-1">限时专场</h2>
             </div>
             {/* 倒计时 */}
-            <div className="flex items-center gap-1.5" aria-label={`剩余时间 ${countdown.h}小时${countdown.m}分${countdown.s}秒`}>
+            <div className="flex items-center gap-1.5 pb-0.5" aria-label={`剩余时间 ${countdown.h}小时${countdown.m}分${countdown.s}秒`}>
               <span className="text-[10px] text-[#8C7B6B]">距结束</span>
               {[countdown.h, countdown.m, countdown.s].map((unit, i) => (
                 <span key={i} className="flex items-center">
@@ -135,8 +156,8 @@ export default function HomePage() {
                     className="w-full h-full object-contain p-4"
                   />
                   {product.originalPrice && (
-                    <div className="absolute top-2 left-2 bg-[#B8973A] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                      -{Math.round((1 - product.price / product.originalPrice) * 10) * 10}%
+                    <div className="absolute top-2 left-2 bg-[#1A1208] text-[#D4AF5A] text-[9px] font-semibold px-2 py-0.5 rounded-full tracking-wider">
+                      会员价
                     </div>
                   )}
                 </div>
@@ -163,14 +184,31 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* 更多玩法：拼团/砍价/随心配 收进次级横排入口 */}
+        <section aria-label="互动玩法">
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { icon: Users, label: "好友拼团", sub: "成团享专属价", href: "/group" },
+              { icon: Gift, label: "幸运抽奖", sub: "积分赢好礼", href: "/lottery" },
+              { icon: Sparkles, label: "随心配", sub: "自由组合套组", href: "/activity/diy/list" },
+            ].map(({ icon: Icon, label, sub, href }) => (
+              <Link key={label} href={href} className="bg-white rounded-2xl px-3 py-3.5 flex flex-col items-center gap-1.5">
+                <Icon size={18} className="text-[#B8973A]" strokeWidth={1.5} />
+                <span className="text-[11px] font-semibold text-[#1A1208]">{label}</span>
+                <span className="text-[9px] text-[#8C7B6B]">{sub}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
 
+        {/* 臻选推荐 */}
         <section aria-labelledby="hot-heading">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles size={16} className="text-[#B8973A]" />
-              <h2 id="hot-heading" className="text-base font-bold text-[#1A1208]">热门推荐</h2>
+          <div className="flex items-end justify-between mb-3">
+            <div>
+              <p className="eyebrow">Selection</p>
+              <h2 id="hot-heading" className="font-luxury text-lg text-[#1A1208] mt-1">臻选推荐</h2>
             </div>
-            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A]">
+            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A] pb-0.5">
               查看全部 <ChevronRight size={13} />
             </Link>
           </div>
@@ -181,11 +219,11 @@ export default function HomePage() {
           </div>
         </section>
 
-{/* 底部品牌信息 */}
-        <div className="text-center py-6">
-          <div className="gold-divider mb-4" aria-hidden="true" />
-          <p className="text-[10px] tracking-[0.25em] text-[#8C7B6B] font-medium">WENLAN BEAUTY · 问兰</p>
-          <p className="text-[10px] text-[#8C7B6B]/60 mt-1">源自自然 · 精于科技 · 美于生活</p>
+        {/* 底部品牌信息 */}
+        <div className="text-center py-8">
+          <div className="gold-divider mb-5" aria-hidden="true" />
+          <p className="font-display-en text-[11px] text-[#3D2B1A]">Wenlan Beauty</p>
+          <p className="text-[10px] text-[#8C7B6B]/70 mt-1.5 tracking-[0.1em]">源自自然 · 精于科技 · 美于生活</p>
         </div>
       </div>
     </PhoneFrame>

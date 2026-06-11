@@ -1,6 +1,19 @@
 import type { Metadata, Viewport } from "next";
+import { Noto_Serif_SC, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+
+const _notoSerifSC = Noto_Serif_SC({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-noto-serif-sc",
+});
+
+const _cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-cormorant",
+});
 
 export const metadata: Metadata = {
   title: "问兰 · 轻奢护肤",
@@ -21,7 +34,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN" className="bg-[#FAF7F4]">
+    <html
+      lang="zh-CN"
+      className={`bg-[#FAF7F4] ${_notoSerifSC.variable} ${_cormorant.variable}`}
+    >
       <body>
         <CartProvider>{children}</CartProvider>
       </body>

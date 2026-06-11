@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  /* 色彩系统：米白 + 金色 + 深棕 + 暖灰 */
+  /* ============================================
+     问兰 WENLAN BEAUTY · 轻奢护肤设计系统 v2
+     色彩纪律：米白底 + 深棕黑 + 鎏金 + 暖灰（4色）
+     ============================================ */
   --color-background: #FAF7F4;
   --color-surface: #FFFFFF;
   --color-surface-warm: #F5EFE8;
@@ -17,9 +20,9 @@
   --color-border: #E8DDD0;
   --color-border-light: #F0E8DC;
 
-  /* 字体 */
-  --font-sans: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
-  --font-serif: "Georgia", "Times New Roman", serif;
+  /* 双字体体系：衬线承担品牌声音，无衬线承担信息 */
+  --font-sans: "PingFang SC", "Helvetica Neue", "Microsoft YaHei", Arial, sans-serif;
+  --font-serif: var(--font-cormorant), var(--font-noto-serif-sc), "Songti SC", "Noto Serif SC", Georgia, serif;
 
   /* 圆角 */
   --radius: 0.75rem;
@@ -61,10 +64,44 @@ body {
   overflow-x: hidden;
 }
 
+/* ============================================
+   轻奢工具类
+   ============================================ */
+
+/* 衬线标题：品牌声音 */
+.font-luxury {
+  font-family: var(--font-noto-serif-sc), "Songti SC", "Noto Serif SC", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* 英文衬线展示体（大写品牌字标）*/
+.font-display-en {
+  font-family: var(--font-cormorant), Georgia, serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* 眉题：uppercase 小字距标签，章节开场仪式 */
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
 /* 金色装饰线 */
 .gold-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+/* 金色短划线：标题下方的仪式感落款 */
+.gold-rule {
+  width: 2rem;
+  height: 2px;
+  background-color: var(--color-gold);
 }
 
 /* 过渡动画 */
