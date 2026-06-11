@@ -8,7 +8,7 @@ const notifications = [
   { id: 1, title: "您的订单已发货", desc: "焕颜臻萃精华 · 顺丰快递 SF1234567890", time: "刚刚", unread: true },
   { id: 2, title: "限时特惠开始啦！", desc: "本周精华、面霜最高直降 ¥180，速来抢购", time: "1小时前", unread: true },
   { id: 3, title: "您有 3 张优惠券即将到期", desc: "有效期至 2024-12-15，请尽快使用", time: "昨天", unread: true },
-  { id: 4, title: "评价有礼，获得 50 积分", desc: "感谢您对「轻盈保湿面霜」的评价", time: "3天前", unread: false },
+  { id: 4, title: "评价有礼，获得 25 积分", desc: "感谢您对「轻盈保湿面霜」的评价", time: "3天前", unread: false },
   { id: 5, title: "新品上市通知", desc: "玫瑰焕亮精华系列正式发布，立享首发折扣", time: "1周前", unread: false },
 ];
 

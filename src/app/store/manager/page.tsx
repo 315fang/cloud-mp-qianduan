@@ -90,33 +90,33 @@ export default function StoreManagerPage() {
         </div>
       ) : (
       <div className="min-h-full bg-[#FAF7F4]">
-        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
+        <header className="sticky top-0 z-10 surface-champagne flex items-center gap-3 px-4 py-3 border-b border-[#EADFC8]">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
-            <ArrowLeft size={20} className="text-white" />
+            <ArrowLeft size={20} className="text-[#1A1208]" />
           </button>
-          <h1 className="text-base font-bold text-white">店长工作台</h1>
+          <h1 className="text-base font-bold text-[#1A1208]">店长工作台</h1>
           <button
             onClick={() => setIsManager(false)}
-            className="ml-auto text-[10px] text-white/40 underline"
+            className="ml-auto text-[10px] text-[#B0A18C] underline"
           >
             演示空态
           </button>
         </header>
 
-        {/* 门店信息 */}
-        <div className="surface-noir px-5 pb-6 pt-2">
+        {/* 门店信息：香槟暖底，不再堆叠深色 */}
+        <div className="surface-champagne px-5 pb-5 pt-3 border-b border-[#EADFC8]">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-[#B8973A] flex items-center justify-center shrink-0">
-              <Store size={24} className="text-[#1A1208]" />
+            <div className="w-12 h-12 rounded-xl bg-white border border-[#E2D3B4] flex items-center justify-center shrink-0 shadow-sm">
+              <Store size={22} className="text-[#B8973A]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-white">{store.name}</h2>
-                <span className="text-[10px] text-[#B8973A] border border-[#B8973A]/50 px-2 py-0.5 rounded-full">
+                <h2 className="text-base font-bold text-[#1A1208]">{store.name}</h2>
+                <span className="text-[10px] text-[#8C6B1F] bg-[#F0E6C8] px-2 py-0.5 rounded-full">
                   {store.level}
                 </span>
               </div>
-              <p className="text-xs text-white/60 mt-1">店长：{store.manager}</p>
+              <p className="text-xs text-[#8C7B6B] mt-1">店长：{store.manager}</p>
             </div>
           </div>
         </div>

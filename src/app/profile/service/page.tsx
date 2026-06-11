@@ -32,28 +32,28 @@ export default function ServicePage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-8">
-        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
+        <header className="sticky top-0 z-10 surface-champagne flex items-center gap-3 px-4 py-3 border-b border-[#EADFC8]">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
-            <ArrowLeft size={20} className="text-white" />
+            <ArrowLeft size={20} className="text-[#1A1208]" />
           </button>
-          <h1 className="text-base font-bold text-white">专属客服</h1>
+          <h1 className="text-base font-bold text-[#1A1208]">专属客服</h1>
           <button
             onClick={() => setHasChannels((v) => !v)}
-            className="ml-auto text-[10px] text-white/40 underline"
+            className="ml-auto text-[10px] text-[#B0A18C] underline"
           >
             演示空态
           </button>
         </header>
 
-        {/* 头图区 */}
-        <div className="surface-noir px-5 pb-7 pt-2">
+        {/* 头图区：香槟暖底 */}
+        <div className="surface-champagne px-5 pb-6 pt-3 border-b border-[#EADFC8]">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-[#B8973A] flex items-center justify-center shrink-0">
-              <Headset size={28} className="text-[#1A1208]" />
+            <div className="w-14 h-14 rounded-2xl bg-white border border-[#E2D3B4] flex items-center justify-center shrink-0 shadow-sm">
+              <Headset size={26} className="text-[#B8973A]" />
             </div>
             <div>
               <p className="text-[10px] tracking-[0.3em] text-[#B8973A] uppercase mb-1">Concierge Service</p>
-              <h2 className="text-xl font-light text-white">您的专属顾问随时待命</h2>
+              <h2 className="text-lg font-semibold text-[#1A1208]">您的专属顾问随时待命</h2>
             </div>
           </div>
         </div>

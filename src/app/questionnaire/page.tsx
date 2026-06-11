@@ -39,7 +39,7 @@ export default function QuestionnairePage() {
           </div>
           <h2 className="text-lg font-bold text-[#1A1208]">感谢您的反馈！</h2>
           <p className="text-sm text-[#8C7B6B] text-center leading-relaxed">
-            我们已收到您的肤质报告，将为您推荐最适合的护肤方案。<br />积分 +50 已发放至您的账户。
+            我们已收到您的肤质报告，将为您推荐最适合的护肤方案。<br />          积分 +25 已发放至您的账户。
           </p>
           <button onClick={() => router.replace("/")} className="w-full py-3.5 bg-[#1A1208] text-white rounded-xl text-sm font-bold">
             去首页看看推荐
@@ -57,7 +57,7 @@ export default function QuestionnairePage() {
             <ArrowLeft size={18} className="text-[#1A1208]" />
           </button>
           <span className="flex-1 text-center text-base font-bold text-[#1A1208]">肌肤测评问卷</span>
-          <span className="text-xs text-[#B8973A]">+50积分</span>
+          <span className="text-xs text-[#B8973A]">+25积分</span>
         </div>
 
         {/* 进度条 */}
@@ -109,7 +109,7 @@ export default function QuestionnairePage() {
               allAnswered ? "bg-[#1A1208] text-white" : "bg-[#F0E8DC] text-[#B8A898] cursor-not-allowed"
             }`}
           >
-            提交问卷（领取 50 积分）
+            提交问卷（领取 25 积分）
           </button>
         </div>
       </div>
