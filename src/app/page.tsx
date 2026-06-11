@@ -271,6 +271,64 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* 问兰礼盒：有故事的套装（花西子式仪式感载体） */}
+        <section aria-labelledby="giftset-heading" className="animate-rise animate-rise-4">
+          <div className="text-center mb-4">
+            <p className="eyebrow">Gift Sets</p>
+            <h2 id="giftset-heading" className="font-luxury text-lg text-[#1A1208] mt-1">问兰礼盒</h2>
+            <p className="text-[11px] text-[#8C7B6B] mt-1">每一份礼盒，都是一段肌肤修护的旅程</p>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                img: "/images/set-repair.png",
+                step: "壹 · 先修墙",
+                name: "初愈礼盒",
+                story: "致敬 1974 年的第一支修护配方，写给脆弱肌的安抚信",
+                price: 469,
+                original: 568,
+              },
+              {
+                img: "/images/set-hydra.png",
+                step: "贰 · 再蓄水",
+                name: "润泽礼盒",
+                story: "屏障稳固之后，为肌肤注入一池静水深流",
+                price: 399,
+                original: 496,
+              },
+              {
+                img: "/images/set-renew.png",
+                step: "叁 · 后抗老",
+                name: "时光礼盒",
+                story: "以近半世纪的修护沉淀，从容回应岁月",
+                price: 659,
+                original: 788,
+              },
+            ].map(({ img, step, name, story, price, original }, i) => (
+              <Link
+                key={name}
+                href="/products?tag=套装"
+                className={`flex bg-white rounded-2xl overflow-hidden shadow-sm press-scale ${i % 2 === 1 ? "flex-row-reverse" : ""}`}
+              >
+                <div className="relative w-[42%] flex-shrink-0 bg-[#F5EFE8]">
+                  <img src={img} alt={name} className="absolute inset-0 w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 px-4 py-5 flex flex-col justify-center min-h-[130px]">
+                  <p className="text-[9px] tracking-[0.25em] text-[#B8973A] uppercase">{step}</p>
+                  <p className="font-luxury text-base text-[#1A1208] mt-1">{name}</p>
+                  <p className="text-[10px] text-[#8C7B6B] mt-1 leading-relaxed text-pretty">{story}</p>
+                  <div className="flex items-baseline gap-1.5 mt-2.5">
+                    <span className="text-sm font-bold text-[#1A1208]">¥{price}</span>
+                    <span className="text-[10px] text-[#B0A18C] line-through">¥{original}</span>
+                    <span className="text-[9px] text-[#8C6B1F] bg-[#F0E6C8] px-1.5 py-0.5 rounded-full ml-auto">会员礼遇价</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* 品牌专区：药业主视觉 + 资讯三卡 */}
         <section aria-labelledby="brand-zone-heading" className="animate-rise animate-rise-5">
           <div className="text-center mb-4">

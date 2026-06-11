@@ -165,7 +165,7 @@ export default function ActivityPage() {
         <BannerCarousel />
 
         {/* 活动拼图（Bento 几何拼接） */}
-        <section aria-labelledby="bento-heading">
+        <section aria-labelledby="bento-heading" className="animate-rise animate-rise-2">
           <div className="text-center mb-4">
             <p className="eyebrow">Curated Events</p>
             <h2 id="bento-heading" className="font-luxury text-lg text-[#1A1208] mt-1">甄选活动</h2>
@@ -273,7 +273,7 @@ export default function ActivityPage() {
         </section>
 
         {/* 定向邀约：等级门槛卡 */}
-        <section aria-labelledby="invite-heading">
+        <section aria-labelledby="invite-heading" className="animate-rise animate-rise-3">
           {inviteUnlocked ? (
             <Link
               href="/invite/activity?mode=share"

@@ -21,7 +21,9 @@ export default function ProfileEditPage() {
   const [tempNick, setTempNick] = useState("");
   const [tempReal, setTempReal] = useState("");
 
-  const completed = nickname.trim() !== "" && realname.trim() !== "";
+  // 首次登录只需完成"半套"：昵称必填即可；真实姓名提货前再补
+  const completed = nickname.trim() !== "";
+  const fullCompleted = nickname.trim() !== "" && realname.trim() !== "";
 
   const openNick = () => { setTempNick(nickname); setSheet("nickname"); };
   const openReal = () => { setTempReal(realname); setSheet("realname"); };
@@ -51,7 +53,7 @@ export default function ProfileEditPage() {
               <div>
                 <p className="text-xs font-bold text-[#B8973A]">欢迎加入问兰</p>
                 <p className="text-[11px] text-white/60 mt-0.5 leading-relaxed">
-                  首次登录，请完善以下资料后开始使用。带锁项为必填。
+                  首次登录只需设置昵称即可开始使用，补全全部资料可领 25 积分。
                 </p>
               </div>
             </div>
@@ -102,11 +104,11 @@ export default function ProfileEditPage() {
           >
             <div className="flex items-center gap-1.5">
               <span className="text-sm text-[#1A1208]">真实姓名</span>
-              {isFirstLogin && <Lock size={12} className="text-[#B8973A]" />}
+              <span className="text-[10px] text-[#B0A18C] bg-[#F5EFE8] px-1.5 py-0.5 rounded-full">选填</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className={`text-sm ${realname ? "text-[#1A1208]" : "text-[#C8BAA8]"}`}>
-                {realname || "请填写真实姓名"}
+                {realname || "提货前补填即可"}
               </span>
               <ChevronRight size={16} className="text-[#C8BAA8]" />
             </div>
@@ -121,7 +123,12 @@ export default function ProfileEditPage() {
         <div className="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-white border-t border-[#F0E8DC] px-4 py-3">
           {isFirstLogin && !completed && (
             <p className="flex items-center justify-center gap-1 text-[11px] text-[#B8973A] mb-2">
-              <Lock size={11} /> 请先完善带锁的必填项，完成后方可进入
+              <Lock size={11} /> 请先设置昵称，完成后即可进入
+            </p>
+          )}
+          {isFirstLogin && completed && !fullCompleted && (
+            <p className="flex items-center justify-center gap-1 text-[11px] text-[#8C7B6B] mb-2">
+              <Sparkles size={11} className="text-[#B8973A]" /> 补全真实姓名可领 25 积分，也可稍后再填
             </p>
           )}
           <button
@@ -134,10 +141,10 @@ export default function ProfileEditPage() {
             }`}
           >
             {completed ? (
-              "完成，开始使用"
+              fullCompleted ? "完成，开始使用（+25 积分）" : "开始使用"
             ) : (
               <>
-                <Lock size={15} /> 资料未完善，暂不可继续
+                <Lock size={15} /> 请先设置昵称
               </>
             )}
           </button>

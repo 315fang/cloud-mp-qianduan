@@ -63,7 +63,7 @@ export default function BrandZonePage() {
           </div>
 
           {/* 品牌宣言 */}
-          <div className="mx-5 mt-8 text-center">
+          <div className="mx-5 mt-8 text-center animate-rise animate-rise-1">
             <p className="eyebrow">Manifesto</p>
             <p className="font-luxury text-base text-[#1A1208] leading-relaxed mt-3 text-balance">
               「真正有效的护肤，
@@ -77,7 +77,7 @@ export default function BrandZonePage() {
           </div>
 
           {/* 起源 · 时间线（真实溯源） */}
-          <div className="px-5 mt-10">
+          <div className="px-5 mt-10 animate-rise animate-rise-2">
             <p className="eyebrow">Origins · 1974</p>
             <h2 className="font-luxury text-lg text-[#1A1208] mt-1 mb-5">品牌溯源</h2>
             <div className="space-y-0">

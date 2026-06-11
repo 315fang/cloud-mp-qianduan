@@ -73,7 +73,7 @@ export default function MemberCenterPage() {
 
         <div className="flex-1 overflow-y-auto pb-6">
           {/* 会员卡：香槟面板 + 衬线字标，物理会员卡质感 */}
-          <div className="mx-4 mt-4 surface-champagne rounded-2xl p-5 relative overflow-hidden border border-[#EADFC8]">
+          <div className="mx-4 mt-4 surface-champagne rounded-2xl p-5 relative overflow-hidden border border-[#EADFC8] animate-rise animate-rise-1">
             <div className="absolute top-0 right-0 w-36 h-36 rounded-full bg-[#B8973A]/8 -translate-y-1/3 translate-x-1/4 pointer-events-none" aria-hidden="true" />
             <div className="flex items-center justify-between relative">
               <div>
