@@ -1,37 +1,39 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ShieldCheck, ChevronRight, ArrowRight, Award, Newspaper } from "lucide-react";
+import { ArrowLeft, ShieldCheck, ChevronRight, ArrowRight, Award, Newspaper, FlaskConical, Microscope, BadgeCheck } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import PhoneFrame from "@/components/PhoneFrame";
 import { products } from "@/lib/data";
 
 /* ============================================
-   品牌叙事框架 · 占位内容（待品牌故事素材替换）
-   结构：宣言 → 起源 → 成分溯源 → 系列体系 → 认证
+   问兰品牌叙事 · 真实素材版
+   轴线：1974 溯源 → 修护基因 → 肌肤哲学
+        （先修墙、再蓄水、后抗老）→ 核心科技 → 资质
    ============================================ */
 
-// 起源里程碑（占位：待真实品牌历程替换）
+// 品牌历程（真实溯源）
 const milestones = [
-  { year: "2018", title: "问兰创立", desc: "于苏州，以一株兰花为序章" },
-  { year: "2020", title: "成分实验室成立", desc: "建立自有活性成分研究体系" },
-  { year: "2022", title: "核心专利成分问世", desc: "兰花活性萃取工艺获得专利" },
-  { year: "2024", title: "走向更广阔的肌肤", desc: "服务数十万用户的美学旅程" },
+  { year: "1974", title: "修护经验的起点", desc: "溯源苏州消防支队卫生队，面对烧烫伤与皮肤损伤的临床修护场景，积累脆弱肌养护的专业经验" },
+  { year: "——", title: "从修复到护肤", desc: "将受损肌、敏感肌的专业修护逻辑，沉淀为可长期坚持的屏障修护体系" },
+  { year: "落地苏州", title: "问兰药业（苏州）有限公司", desc: "建立研发、生产与产品体系，主打高端修护抗老护肤" },
+  { year: "2024", title: "首批苏州知名品牌", desc: "13 项国家发明专利、高新技术企业，获中科院陈洪渊院士产线调研认可" },
 ];
 
-// 系列体系（占位命名：待正式系列名替换；图片取自现有产品库）
-const collections = [
-  { name: "兰御系列", en: "Imperial Orchid", focus: "紧致抗老", desc: "以高浓度兰花精萃，唤醒肌肤年轻态", product: products[0] },
-  { name: "兰润系列", en: "Hydra Orchid", focus: "深层保湿", desc: "三重玻尿酸协同，沁润每一层肌肤", product: products[1] },
-  { name: "兰皙系列", en: "Lumi Orchid", focus: "焕亮透白", desc: "烟酰胺与兰花菁华，点亮自然光泽", product: products[2] },
+// 肌肤哲学：先修墙 → 再蓄水 → 后抗老
+const philosophy = [
+  { step: "壹", title: "先修墙", en: "Repair", desc: "以人造皮脂膜™稳固肌肤屏障，让脆弱肌、敏感肌先回到稳定状态", product: products[2] },
+  { step: "贰", title: "再蓄水", en: "Hydrate", desc: "屏障稳固后，水分得以留存，肌肤重新拥有蓄水与自我调节的能力", product: products[1] },
+  { step: "叁", title: "后抗老", en: "Renew", desc: "在稳定与润泽的基底上，紧致抗老成分才能真正发挥长期功效", product: products[0] },
 ];
 
+// 真实资质
 const certifications = [
-  { title: "GMPC 国际认证", subtitle: "化妆品生产质量管理规范" },
-  { title: "FDA 备案", subtitle: "美国食品药品监督管理局" },
-  { title: "无动物实验认证", subtitle: "Cruelty Free 国际认证" },
-  { title: "ISO 22716", subtitle: "化妆品良好生产规范" },
+  { title: "13 项国家发明专利", subtitle: "围绕人造皮脂膜™与屏障修护核心技术" },
+  { title: "高新技术企业", subtitle: "问兰药业（苏州）有限公司" },
+  { title: "2024 首批苏州知名品牌", subtitle: "苏州市知名品牌认定" },
+  { title: "院士产线调研认可", subtitle: "中科院陈洪渊院士莅临产线调研" },
 ];
 
 export default function BrandZonePage() {
@@ -51,35 +53,36 @@ export default function BrandZonePage() {
             <Image src="/images/brand-hero.png" alt="问兰品牌主视觉" fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1A1208]/80 via-[#1A1208]/20 to-transparent" />
             <div className="absolute bottom-6 left-5 right-5 text-white">
-              <p className="font-display-en text-[10px] text-[#D4AF5A] mb-2">Maison Wenlan</p>
+              <p className="font-display-en text-[10px] text-[#D4AF5A] mb-2">Since 1974 · Suzhou</p>
               <h1 className="font-luxury text-[26px] leading-tight text-balance">
-                一朵兰，
-                <br />一种肌肤哲学
+                先修墙，再蓄水，
+                <br />后抗老
               </h1>
               <div className="gold-rule mt-3" aria-hidden="true" />
             </div>
           </div>
 
-          {/* 品牌宣言（占位文案：待替换） */}
+          {/* 品牌宣言 */}
           <div className="mx-5 mt-8 text-center">
             <p className="eyebrow">Manifesto</p>
             <p className="font-luxury text-base text-[#1A1208] leading-relaxed mt-3 text-balance">
-              「真正的美，
-              <br />来自肌肤的健康与内在的从容。」
+              「真正有效的护肤，
+              <br />从修好肌肤屏障开始。」
             </p>
             <p className="text-xs text-[#8C7B6B] leading-relaxed mt-4 text-pretty">
-              问兰，源于东方草本智慧与现代护肤科学的融合。
-              每一款产品，都是对品质的极致追求。
+              问兰护肤，源自苏州近半世纪皮肤修护经验。
+              我们把原本用于脆弱肌、受损肌养护的专业修护逻辑，
+              转化为在家也能长期坚持的高端功效护肤方案。
             </p>
           </div>
 
-          {/* 起源 · 时间线（占位：待真实品牌历程替换） */}
+          {/* 起源 · 时间线（真实溯源） */}
           <div className="px-5 mt-10">
-            <p className="eyebrow">Origins</p>
-            <h2 className="font-luxury text-lg text-[#1A1208] mt-1 mb-5">品牌起源</h2>
+            <p className="eyebrow">Origins · 1974</p>
+            <h2 className="font-luxury text-lg text-[#1A1208] mt-1 mb-5">品牌溯源</h2>
             <div className="space-y-0">
               {milestones.map((m, i) => (
-                <div key={m.year} className="flex gap-4">
+                <div key={m.title} className="flex gap-4">
                   {/* 时间轴 */}
                   <div className="flex flex-col items-center">
                     <span className="w-2 h-2 rounded-full bg-[#B8973A] mt-1.5 shrink-0" />
@@ -97,24 +100,24 @@ export default function BrandZonePage() {
             </div>
           </div>
 
-          {/* 成分溯源 · 暗色仪式区（占位文案：待真实成分故事替换） */}
+          {/* 核心科技 · 暗色仪式区（人造皮脂膜™） */}
           <div className="mx-4 mt-10 bg-[#1A1208] rounded-2xl px-6 py-8 relative overflow-hidden">
             <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#B8973A]/50" aria-hidden="true" />
             <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-[#B8973A]/50" aria-hidden="true" />
-            <p className="eyebrow text-center">Ingredient Provenance</p>
-            <h2 className="font-luxury text-xl text-white text-center mt-3">成分溯源</h2>
+            <p className="eyebrow text-center">Core Technology</p>
+            <h2 className="font-luxury text-xl text-white text-center mt-3">人造皮脂膜™</h2>
             <div className="gold-rule mx-auto mt-4" aria-hidden="true" />
             <p className="text-xs leading-relaxed text-white/65 text-center mt-5 text-pretty">
-              我们走访全球原料产地，甄选珍稀植萃。
-              从兰花根茎中萃取的活性菁华，
-              经皮肤科学实验室反复验证，
-              只为呈现最纯净、最有效的配方。
+              以聚季铵盐-51 为核心的仿生屏障技术，
+              在肌肤表层构筑类皮脂膜保护层——
+              修护受损屏障、维稳敏感肌，
+              让肌肤重新拥有稳定、蓄水与自我焕新的能力。
             </p>
             <div className="flex justify-center gap-6 mt-6">
               {[
-                { num: "12", label: "原料产地" },
-                { num: "300+", label: "次配方验证" },
-                { num: "0", label: "动物实验" },
+                { num: "1974", label: "修护经验溯源", icon: Microscope },
+                { num: "13", label: "国家发明专利", icon: FlaskConical },
+                { num: "50年", label: "近半世纪沉淀", icon: BadgeCheck },
               ].map(({ num, label }) => (
                 <div key={label} className="text-center">
                   <p className="font-display-en text-lg text-[#D4AF5A]">{num}</p>
@@ -124,29 +127,27 @@ export default function BrandZonePage() {
             </div>
           </div>
 
-          {/* 系列体系（占位命名：待正式系列名替换） */}
+          {/* 肌肤哲学三部曲（替代虚构系列） */}
           <div className="px-5 mt-10">
-            <p className="eyebrow">Collections</p>
-            <h2 className="font-luxury text-lg text-[#1A1208] mt-1 mb-4">系列体系</h2>
+            <p className="eyebrow">Skin Philosophy</p>
+            <h2 className="font-luxury text-lg text-[#1A1208] mt-1 mb-4">肌肤哲学三部曲</h2>
             <div className="space-y-3">
-              {collections.map((c) => (
+              {philosophy.map((c) => (
                 <Link
-                  key={c.name}
+                  key={c.title}
                   href={`/products/${c.product.id}`}
                   className="flex items-center gap-4 bg-white rounded-2xl p-4"
                 >
                   <div className="relative w-20 h-20 rounded-xl bg-[#F5EFE8] shrink-0 overflow-hidden">
-                    <Image src={c.product.image} alt={c.name} fill className="object-contain p-2" />
+                    <Image src={c.product.image} alt={c.title} fill className="object-contain p-2" />
+                    <span className="absolute top-1 left-1.5 font-luxury text-[13px] text-[#B8973A]">{c.step}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-display-en text-[9px] text-[#B8973A]">{c.en}</p>
-                    <p className="font-luxury text-[15px] text-[#1A1208] mt-0.5">{c.name}</p>
-                    <p className="text-[11px] text-[#8C7B6B] mt-1 leading-snug line-clamp-1">{c.desc}</p>
+                    <p className="font-luxury text-[15px] text-[#1A1208] mt-0.5">{c.title}</p>
+                    <p className="text-[11px] text-[#8C7B6B] mt-1 leading-snug line-clamp-2">{c.desc}</p>
                   </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] text-[#B8973A] bg-[#F0E6C8] px-2 py-0.5 rounded-full font-medium">{c.focus}</span>
-                    <ArrowRight size={14} className="text-[#C0B0A0] mt-3 ml-auto" />
-                  </div>
+                  <ArrowRight size={14} className="text-[#C0B0A0] shrink-0" />
                 </Link>
               ))}
             </div>
@@ -164,10 +165,10 @@ export default function BrandZonePage() {
             <ChevronRight size={16} className="text-[#C0B0A0]" />
           </Link>
 
-          {/* 认证资质 */}
+          {/* 认证资质（真实） */}
           <div className="px-5 mt-10">
-            <p className="eyebrow">Certifications</p>
-            <h2 className="font-luxury text-lg text-[#1A1208] mt-1 mb-4">认证资质</h2>
+            <p className="eyebrow">Credentials</p>
+            <h2 className="font-luxury text-lg text-[#1A1208] mt-1 mb-4">企业资质</h2>
             <div className="bg-white rounded-2xl divide-y divide-[#F0E8DC]">
               {certifications.map((cert) => (
                 <div key={cert.title} className="flex items-center gap-3 p-4">
@@ -187,7 +188,8 @@ export default function BrandZonePage() {
           {/* 收尾 CTA */}
           <div className="text-center mt-10 mb-8 px-5">
             <div className="gold-divider mb-6" aria-hidden="true" />
-            <p className="font-display-en text-[11px] text-[#3D2B1A]">Wenlan Beauty</p>
+            <p className="font-display-en text-[11px] text-[#3D2B1A]">Wenlan Beauty · Since 1974</p>
+            <p className="text-[10px] text-[#8C7B6B] mt-2 tracking-[0.08em]">1974 溯源 · 屏障修护 · 国货高端功效护肤</p>
             <Link
               href="/products"
               className="inline-flex items-center gap-2 mt-4 bg-[#1A1208] text-white text-sm font-medium px-8 py-3.5 rounded-full"

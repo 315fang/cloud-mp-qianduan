@@ -96,25 +96,24 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 品牌叙事区 —— 故事素材到位后替换占位文案 */}
+        {/* 品牌叙事区 —— 1974 溯源 · 真实品牌故事 */}
         <section aria-labelledby="brand-narrative-heading">
           <Link href="/brand" className="block bg-[#1A1208] rounded-2xl px-6 py-8 relative overflow-hidden">
             {/* 金色装饰角线 */}
             <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#B8973A]/50" aria-hidden="true" />
             <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-[#B8973A]/50" aria-hidden="true" />
-            <p className="eyebrow text-center">Maison Wenlan</p>
+            <p className="eyebrow text-center">Since 1974 · Suzhou</p>
             <h2
               id="brand-narrative-heading"
               className="font-luxury text-[22px] leading-snug text-white text-center mt-3 text-balance"
             >
-              一朵兰，一种肌肤哲学
+              先修墙，再蓄水，后抗老
             </h2>
             <div className="gold-rule mx-auto mt-4" aria-hidden="true" />
-            {/* 占位文案：待品牌故事素材替换 */}
             <p className="text-xs leading-relaxed text-white/65 text-center mt-4 text-pretty">
-              从一株兰花的生命力中，问兰找到了肌肤焕活的答案。
-              我们追溯成分的源头，以严苛工艺萃取自然菁华，
-              只为每一次触肤，都是一场仪式。
+              源自苏州近半世纪皮肤修护经验，
+              以人造皮脂膜™仿生科技稳固肌肤屏障，
+              让皮肤重新拥有稳定、蓄水与自我焕新的能力。
             </p>
             <span className="flex items-center justify-center gap-1.5 mt-5 text-[11px] tracking-[0.2em] text-[#D4AF5A] uppercase">
               探索品牌世界 <ArrowRight size={12} />
@@ -222,8 +221,8 @@ export default function HomePage() {
         {/* 底部品牌信息 */}
         <div className="text-center py-8">
           <div className="gold-divider mb-5" aria-hidden="true" />
-          <p className="font-display-en text-[11px] text-[#3D2B1A]">Wenlan Beauty</p>
-          <p className="text-[10px] text-[#8C7B6B]/70 mt-1.5 tracking-[0.1em]">源自自然 · 精于科技 · 美于生活</p>
+          <p className="font-display-en text-[11px] text-[#3D2B1A]">Wenlan Beauty · Since 1974</p>
+          <p className="text-[10px] text-[#8C7B6B]/70 mt-1.5 tracking-[0.1em]">1974 溯源 · 屏障修护 · 国货高端功效护肤</p>
         </div>
       </div>
     </PhoneFrame>
