@@ -32,7 +32,7 @@ export default function SlashPage() {
         </div>
 
         {/* 说明卡 */}
-        <div className="mx-4 mt-3 bg-[#1A1208] rounded-2xl px-4 py-3 flex items-center justify-between">
+        <div className="mx-4 mt-3 surface-noir rounded-2xl px-4 py-3 flex items-center justify-between">
           <div>
             <span className="text-[10px] bg-[#B8973A] text-white px-2 py-0.5 rounded-full">全员可参与</span>
             <p className="text-white font-bold mt-1">发起砍价，好友帮砍</p>

@@ -38,7 +38,7 @@ export default function TeamMemberDetailPage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4]">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
@@ -46,7 +46,7 @@ export default function TeamMemberDetailPage() {
         </header>
 
         {/* 成员信息 */}
-        <div className="bg-[#1A1208] px-5 pb-6 pt-2">
+        <div className="surface-noir px-5 pb-6 pt-2">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-[#F0E6C8] flex items-center justify-center text-2xl font-bold text-[#B8973A] shrink-0">
               {member.avatar}

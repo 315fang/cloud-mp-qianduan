@@ -51,7 +51,7 @@ export default function CommissionLogsPage() {
         </div>
 
         {/* 统计卡 */}
-        <div className="mx-4 mt-4 bg-[#1A1208] rounded-2xl px-5 py-4 flex items-center justify-between">
+        <div className="mx-4 mt-4 surface-noir rounded-2xl px-5 py-4 flex items-center justify-between">
           <div>
             <p className="text-[#C4A882] text-xs">筛选范围内已结算</p>
             <p className="text-2xl font-bold text-white mt-1">¥{total.toFixed(2)}</p>

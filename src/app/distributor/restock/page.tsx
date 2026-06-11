@@ -84,7 +84,7 @@ export default function RestockPage() {
   return (
     <PhoneFrame hideNav>
       {/* 顶部 */}
-      <div className="bg-[#1A1208] px-4 pt-4 pb-4">
+      <div className="surface-noir px-4 pt-4 pb-4">
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => router.back()}
@@ -154,7 +154,7 @@ export default function RestockPage() {
                   {qty === 0 ? (
                     <button
                       onClick={() => setQty(product.id, minQty)}
-                      className="flex items-center gap-1.5 bg-[#1A1208] text-white text-xs font-medium px-4 py-1.5 rounded-full"
+                      className="flex items-center gap-1.5 surface-noir text-white text-xs font-medium px-4 py-1.5 rounded-full"
                     >
                       <Plus size={12} />
                       加入采购

@@ -36,7 +36,7 @@ export default function PartnerInvitePage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4]">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
@@ -44,7 +44,7 @@ export default function PartnerInvitePage() {
         </header>
 
         {/* Hero */}
-        <div className="bg-[#1A1208] px-5 pb-6 pt-2">
+        <div className="surface-noir px-5 pb-6 pt-2">
           <p className="text-[10px] tracking-[0.3em] text-[#B8973A] uppercase mb-2">Partner Program</p>
           <h2 className="text-2xl font-light text-white leading-snug">
             邀请好友成为合伙人<br />共享品牌增长红利

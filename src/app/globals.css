@@ -108,3 +108,19 @@ body {
 .transition-base {
   transition: all 0.2s ease;
 }
+
+/* ============================================
+   面板规范（苹果式克制）
+   大面板禁用纯黑：深色面板一律用暖咖渐变，
+   纯深色只允许出现在按钮、徽章等小元素上。
+   ============================================ */
+
+/* 暖咖渐变深面板：替代大面积纯黑块 */
+.surface-noir {
+  background: linear-gradient(150deg, #3A2C1A 0%, #2A1E10 55%, #211708 100%);
+}
+
+/* 香槟暖面板：会员/礼遇场景的浅色贵气面板 */
+.surface-champagne {
+  background: linear-gradient(150deg, #FDFBF7 0%, #F7EFDF 60%, #F0E4CC 100%);
+}

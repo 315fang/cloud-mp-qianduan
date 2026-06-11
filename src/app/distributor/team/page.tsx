@@ -67,7 +67,7 @@ export default function TeamPage() {
   return (
     <PhoneFrame hideNav>
       {/* 顶部 */}
-      <div className="bg-[#1A1208] px-4 pt-4 pb-6">
+      <div className="surface-noir px-4 pt-4 pb-6">
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => router.back()}

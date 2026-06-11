@@ -85,7 +85,7 @@ export default function DistributorPage() {
 
       <div className="flex-1 overflow-y-auto bg-[#FAF7F4]">
         {/* 等级横幅 */}
-        <div className="bg-[#1A1208] px-5 pt-1 pb-6">
+        <div className="surface-noir px-5 pt-1 pb-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
@@ -192,7 +192,7 @@ export default function DistributorPage() {
 
         {/* 邀请码 */}
         <div className="px-4 mt-4">
-          <div className="bg-[#1A1208] rounded-2xl px-5 py-4 flex items-center justify-between">
+          <div className="surface-noir rounded-2xl px-5 py-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] tracking-widest text-[#B8973A] font-semibold">我的专属邀请码</p>
               <p className="text-xl font-bold text-white mt-1 tracking-widest">{inviteCode}</p>

@@ -31,7 +31,7 @@ export default function RechargeOrderPage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4]">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
@@ -39,7 +39,7 @@ export default function RechargeOrderPage() {
         </header>
 
         {/* Hero */}
-        <div className="bg-[#1A1208] px-5 pb-6 pt-2">
+        <div className="surface-noir px-5 pb-6 pt-2">
           <div className="flex items-center gap-2 mb-3">
             <Wallet size={18} className="text-[#B8973A]" />
             <span className="text-xs text-white/60">当前货款余额（元）</span>

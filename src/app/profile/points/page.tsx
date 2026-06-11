@@ -68,7 +68,7 @@ export default function PointsPage() {
 
         <div className="flex-1 overflow-y-auto">
           {/* 主卡片 */}
-          <div className="mx-4 mt-4 bg-[#1A1208] rounded-2xl p-5 text-white">
+          <div className="mx-4 mt-4 surface-noir rounded-2xl p-5 text-white">
             <div className="flex items-center justify-between mb-3">
               <div className="px-2.5 py-0.5 bg-[#B8973A] rounded-full">
                 <span className="text-[11px] font-bold text-white">Lv.{account.level} {account.levelName}</span>
@@ -222,7 +222,7 @@ export default function PointsPage() {
               <div className="space-y-3">
                 {/* 抽奖与活动入口卡 */}
                 <div className="grid grid-cols-2 gap-3">
-                  <Link href="/lottery" className="bg-[#1A1208] rounded-2xl p-4 flex flex-col gap-2">
+                  <Link href="/lottery" className="surface-noir rounded-2xl p-4 flex flex-col gap-2">
                     <div className="w-9 h-9 rounded-full bg-[#B8973A]/20 flex items-center justify-center">
                       <Ticket size={18} className="text-[#D4AF5A]" />
                     </div>

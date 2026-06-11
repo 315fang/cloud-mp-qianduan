@@ -1,7 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Star, Ticket, TrendingUp, ChevronRight, Crown, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Star,
+  Ticket,
+  TrendingUp,
+  ChevronRight,
+  Crown,
+  Users,
+  Gift,
+  Truck,
+  Headphones,
+  Cake,
+  Sparkles,
+  BadgePercent,
+} from "lucide-react";
 import Link from "next/link";
 import PhoneFrame from "@/components/PhoneFrame";
 
@@ -14,15 +28,31 @@ const member = {
   points: 1240,
   coupons: 6,
   hasTeam: true,
-  consumeLevel: "精英会员 · 9.5 折专享",
-  distributorLevel: "高级推广员 · 团队 12 人",
   upgradeRoute: "再消费 ¥1,420 升级尊享会员",
 };
 
 const assets = [
   { label: "可用积分", value: member.points.toLocaleString(), icon: Star, href: "/profile/points" },
-  { label: "可用优惠券", value: member.coupons, icon: Ticket, href: "/profile/coupons" },
-  { label: "当前成长值", value: member.growthValue.toLocaleString(), icon: TrendingUp },
+  { label: "优惠券", value: member.coupons, icon: Ticket, href: "/profile/coupons" },
+  { label: "成长值", value: member.growthValue.toLocaleString(), icon: TrendingUp },
+];
+
+// 当前等级专属权益（图标化，会员语言而非功能语言）
+const privileges = [
+  { icon: BadgePercent, label: "全场 9.5 折", desc: "会员专享价" },
+  { icon: Gift, label: "每月礼遇", desc: "中样随单赠" },
+  { icon: Cake, label: "生日三倍", desc: "积分加速月" },
+  { icon: Truck, label: "优先发货", desc: "顺丰急速达" },
+  { icon: Headphones, label: "专属顾问", desc: "1v1 肌肤咨询" },
+  { icon: Sparkles, label: "新品先享", desc: "提前 7 天购" },
+];
+
+// 等级阶梯
+const ladder = [
+  { name: "普通会员", short: "普通", reached: true },
+  { name: "精英会员", short: "精英", reached: true, current: true },
+  { name: "尊享会员", short: "尊享", reached: false },
+  { name: "黑金会员", short: "黑金", reached: false },
 ];
 
 export default function MemberCenterPage() {
@@ -42,94 +72,114 @@ export default function MemberCenterPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto pb-6">
-          {/* Hero */}
-          <div className="mx-4 mt-4 bg-[#1A1208] rounded-2xl p-5 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #D4AF5A, transparent 70%)" }} />
-            <div className="flex items-center gap-2 mb-4 relative">
-              <Crown size={18} className="text-[#D4AF5A]" />
-              <span className="text-lg font-bold">{member.identityName}</span>
-              <span className="ml-auto text-[11px] bg-[#B8973A] px-2.5 py-0.5 rounded-full">Lv.{member.level} {member.levelName}</span>
+          {/* 会员卡：香槟面板 + 衬线字标，物理会员卡质感 */}
+          <div className="mx-4 mt-4 surface-champagne rounded-2xl p-5 relative overflow-hidden border border-[#EADFC8]">
+            <div className="absolute top-0 right-0 w-36 h-36 rounded-full bg-[#B8973A]/8 -translate-y-1/3 translate-x-1/4 pointer-events-none" aria-hidden="true" />
+            <div className="flex items-center justify-between relative">
+              <div>
+                <p className="eyebrow">Wenlan Membre</p>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <h2 className="font-luxury text-xl text-[#1A1208]">{member.levelName}</h2>
+                  <span className="text-[10px] font-medium text-[#8C6B1F] bg-white/70 px-2 py-0.5 rounded-full border border-[#E2D3B4]">
+                    Lv.{member.level}
+                  </span>
+                </div>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-white/80 border border-[#E2D3B4] flex items-center justify-center">
+                <Crown size={20} className="text-[#B8973A]" strokeWidth={1.5} />
+              </div>
             </div>
-            <div className="relative">
-              <div className="flex justify-between text-xs text-white/60 mb-1.5">
-                <span>成长值 {member.growthValue.toLocaleString()}</span>
-                <span>距 {member.nextStage.name} 还差 {remain}</span>
+
+            <div className="mt-5 relative">
+              <div className="flex justify-between text-[11px] mb-1.5">
+                <span className="text-[#8C6B1F] font-medium">成长值 {member.growthValue.toLocaleString()}</span>
+                <span className="text-[#B0A18C]">距{member.nextStage.name}还差 {remain.toLocaleString()}</span>
               </div>
-              <div className="h-2 bg-white/15 rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #B8973A, #D4AF5A)" }} />
+              <div className="h-1.5 bg-[#E8DCC4] rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-gradient-to-r from-[#B8973A] to-[#D4AF5A]" style={{ width: `${progress}%` }} />
               </div>
+              <p className="text-[10px] text-[#B0A18C] mt-2">{member.upgradeRoute}</p>
             </div>
           </div>
 
-          {/* 三资产卡 */}
-          <div className="grid grid-cols-3 gap-3 mx-4 mt-4">
+          {/* 三资产（细线分隔，一卡收纳） */}
+          <div className="mx-4 mt-3 bg-white rounded-2xl grid grid-cols-3 divide-x divide-[#F0E8DC] py-3.5">
             {assets.map(({ label, value, icon: Icon, href }) => {
               const inner = (
-                <div className="bg-white rounded-2xl p-3 flex flex-col items-center gap-1">
-                  <Icon size={18} className="text-[#B8973A]" />
-                  <span className="text-lg font-bold text-[#1A1208] leading-none mt-1">{value}</span>
-                  <span className="text-[11px] text-[#8C7B6B]">{label}</span>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="text-base font-bold text-[#1A1208] leading-none">{value}</span>
+                  <span className="flex items-center gap-1 text-[10px] text-[#8C7B6B] mt-1">
+                    <Icon size={11} className="text-[#B8973A]" /> {label}
+                  </span>
                 </div>
               );
               return href ? <Link key={label} href={href}>{inner}</Link> : <div key={label}>{inner}</div>;
             })}
           </div>
 
-          {/* 身份权益 */}
-          <div className="mx-4 mt-4 bg-white rounded-2xl p-4 space-y-3">
-            <h3 className="text-sm font-bold text-[#1A1208]">我的身份权益</h3>
-            <div className="flex items-center gap-3 p-3 bg-[#FFF7E6] rounded-xl">
-              <div className="w-9 h-9 rounded-full bg-[#B8973A]/15 flex items-center justify-center shrink-0">
-                <Star size={16} className="text-[#B8973A]" />
-              </div>
-              <div>
-                <p className="text-xs text-[#8C7B6B]">消费等级</p>
-                <p className="text-sm font-medium text-[#1A1208]">{member.consumeLevel}</p>
-              </div>
+          {/* 专属权益宫格：当前等级可享 */}
+          <div className="mx-4 mt-4">
+            <div className="flex items-baseline justify-between mb-3 px-1">
+              <h3 className="font-luxury text-base text-[#1A1208]">专属礼遇</h3>
+              <span className="text-[10px] text-[#8C7B6B]">{member.levelName}可享 {privileges.length} 项</span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-[#F5EFE8] rounded-xl">
-              <div className="w-9 h-9 rounded-full bg-[#6B4EC7]/15 flex items-center justify-center shrink-0">
-                <Users size={16} className="text-[#6B4EC7]" />
-              </div>
-              <div>
-                <p className="text-xs text-[#8C7B6B]">分销/团队身份</p>
-                <p className="text-sm font-medium text-[#1A1208]">{member.distributorLevel}</p>
-              </div>
+            <div className="grid grid-cols-3 gap-2.5">
+              {privileges.map(({ icon: Icon, label, desc }) => (
+                <div key={label} className="bg-white rounded-2xl p-3.5 flex flex-col items-center text-center gap-1.5">
+                  <div className="w-10 h-10 rounded-full bg-[#F5EFE8] flex items-center justify-center">
+                    <Icon size={17} className="text-[#B8973A]" strokeWidth={1.5} />
+                  </div>
+                  <p className="text-xs font-semibold text-[#1A1208] leading-tight">{label}</p>
+                  <p className="text-[10px] text-[#8C7B6B] leading-tight">{desc}</p>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* 升级路径 */}
+          {/* 等级阶梯：水平旅程 */}
           <div className="mx-4 mt-4 bg-white rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-[#1A1208]">升级路径</h3>
-              <Link href="/profile/rights" className="flex items-center text-xs text-[#B8973A]">完整门槛 <ChevronRight size={13} /></Link>
+            <h3 className="text-sm font-bold text-[#1A1208] mb-4">会员旅程</h3>
+            <div className="flex items-center">
+              {ladder.map((l, i) => (
+                <div key={l.name} className={`flex items-center ${i < ladder.length - 1 ? "flex-1" : ""}`}>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border ${
+                        l.current
+                          ? "bg-[#B8973A] border-[#B8973A]"
+                          : l.reached
+                            ? "bg-[#F0E6C8] border-[#E2D3B4]"
+                            : "bg-[#FAF7F4] border-[#F0E8DC]"
+                      }`}
+                    >
+                      <Crown size={13} className={l.current ? "text-white" : l.reached ? "text-[#B8973A]" : "text-[#D8CCBA]"} strokeWidth={1.5} />
+                    </div>
+                    <span className={`text-[10px] leading-none ${l.current ? "text-[#8C6B1F] font-bold" : "text-[#8C7B6B]"}`}>{l.short}</span>
+                  </div>
+                  {i < ladder.length - 1 && (
+                    <div className={`flex-1 h-px mx-1.5 mb-4 ${l.reached ? "bg-[#D4AF5A]" : "bg-[#F0E8DC]"}`} />
+                  )}
+                </div>
+              ))}
             </div>
-            <p className="text-sm text-[#3D2B1A] mb-2">{member.upgradeRoute}</p>
-            <div className="h-2 bg-[#F5EFE8] rounded-full overflow-hidden">
-              <div className="h-full rounded-full" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #B8973A, #D4AF5A)" }} />
-            </div>
-            <p className="text-right text-[11px] text-[#8C7B6B] mt-1.5">{Math.round(progress)}%</p>
+            <Link href="/profile/rights" className="flex items-center justify-center gap-1 text-[11px] text-[#B8973A] mt-4 pt-3 border-t border-[#F9F5F0]">
+              查看各等级完整权益 <ChevronRight size={12} />
+            </Link>
           </div>
 
-          {/* 团队中心入口（仅有团队身份） */}
+          {/* 团队中心入口（白卡 + 金圈，不再用黑块） */}
           {member.hasTeam && (
-            <Link href="/distributor/team" className="mx-4 mt-4 bg-[#1A1208] rounded-2xl p-4 flex items-center gap-3 text-white">
-              <div className="w-10 h-10 rounded-full bg-[#B8973A]/20 flex items-center justify-center shrink-0">
-                <Users size={18} className="text-[#D4AF5A]" />
+            <Link href="/distributor/team" className="mx-4 mt-4 bg-white rounded-2xl p-4 flex items-center gap-3 border border-[#F0E8DC]">
+              <div className="w-10 h-10 rounded-full bg-[#F0E6C8] flex items-center justify-center shrink-0">
+                <Users size={18} className="text-[#8C6B1F]" strokeWidth={1.5} />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold">团队中心</p>
-                <p className="text-xs text-white/60">查看团队成员、佣金与货款</p>
+                <p className="text-sm font-bold text-[#1A1208]">团队中心</p>
+                <p className="text-xs text-[#8C7B6B] mt-0.5">查看团队成员、佣金与货款</p>
               </div>
-              <ChevronRight size={18} className="text-white/40" />
+              <ChevronRight size={18} className="text-[#C8BAA8]" />
             </Link>
           )}
-
-          {/* 完整说明入口 */}
-          <Link href="/profile/rights" className="mx-4 mt-4 bg-white rounded-2xl p-4 flex items-center justify-between">
-            <span className="text-sm font-medium text-[#1A1208]">查看完整身份权益说明</span>
-            <ChevronRight size={18} className="text-[#C8BAA8]" />
-          </Link>
         </div>
       </div>
     </PhoneFrame>

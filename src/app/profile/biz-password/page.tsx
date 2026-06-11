@@ -77,7 +77,7 @@ export default function BizPasswordPage() {
 
           {/* 初始密码结果卡 */}
           {initPassword && (
-            <div className="bg-[#1A1208] rounded-2xl p-5 text-white">
+            <div className="surface-noir rounded-2xl p-5 text-white">
               <div className="flex items-center gap-2 mb-3">
                 <Lock size={16} className="text-[#D4AF5A]" />
                 <span className="text-sm font-bold">初始密码已生成</span>

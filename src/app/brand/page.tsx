@@ -101,7 +101,7 @@ export default function BrandZonePage() {
           </div>
 
           {/* 核心科技 · 暗色仪式区（人造皮脂膜™） */}
-          <div className="mx-4 mt-10 bg-[#1A1208] rounded-2xl px-6 py-8 relative overflow-hidden">
+          <div className="mx-4 mt-10 surface-noir rounded-2xl px-6 py-8 relative overflow-hidden">
             <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#B8973A]/50" aria-hidden="true" />
             <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-[#B8973A]/50" aria-hidden="true" />
             <p className="eyebrow text-center">Core Technology</p>

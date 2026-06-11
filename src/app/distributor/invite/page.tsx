@@ -54,7 +54,7 @@ export default function InvitePage() {
   return (
     <PhoneFrame hideNav>
       {/* 顶部 */}
-      <div className="bg-[#1A1208] px-4 pt-4 pb-8 relative overflow-hidden">
+      <div className="surface-noir px-4 pt-4 pb-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-[#B8973A]/10"
           style={{ transform: "translate(30%, -40%)" }}
         />

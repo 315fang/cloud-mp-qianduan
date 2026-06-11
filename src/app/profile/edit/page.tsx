@@ -29,7 +29,7 @@ export default function ProfileEditPage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-24">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           {isFirstLogin ? (
             <span className="flex items-center gap-1.5 -ml-0.5 px-2.5 py-1 rounded-full bg-[#B8973A]/15 border border-[#B8973A]/30">
               <Lock size={12} className="text-[#B8973A]" />
@@ -45,7 +45,7 @@ export default function ProfileEditPage() {
 
         {/* 首次登录引导条 */}
         {isFirstLogin && (
-          <div className="bg-[#1A1208] px-5 pb-5 pt-1">
+          <div className="surface-noir px-5 pb-5 pt-1">
             <div className="flex items-start gap-2 bg-[#B8973A]/15 border border-[#B8973A]/30 rounded-xl p-3">
               <Sparkles size={16} className="text-[#B8973A] shrink-0 mt-0.5" />
               <div>

@@ -41,7 +41,7 @@ export default function GroupDetailPage() {
 
         <div className="flex-1 overflow-y-auto pb-32 space-y-3 p-4">
           {/* 倒计时提示 */}
-          <div className="bg-[#1A1208] rounded-2xl px-5 py-3 flex items-center justify-between">
+          <div className="surface-noir rounded-2xl px-5 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-white">
               <Clock size={15} className="text-[#B8973A]" />
               <span className="text-sm">拼团剩余时间</span>

@@ -45,14 +45,14 @@ export default function BrandPosterPage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-8">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
           <h1 className="text-base font-bold text-white">品牌推荐海报</h1>
         </header>
 
-        <div className="bg-[#1A1208] px-5 pb-5 pt-2">
+        <div className="surface-noir px-5 pb-5 pt-2">
           {/* 我的ID */}
           <div className="flex items-center justify-between">
             <span className="text-xs text-white/60">我的推广ID</span>

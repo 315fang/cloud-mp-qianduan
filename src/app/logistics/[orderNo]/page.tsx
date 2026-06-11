@@ -46,7 +46,7 @@ export default function LogisticsPage() {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* 状态头部 */}
-          <div className="bg-[#1A1208] rounded-2xl p-4 text-white">
+          <div className="surface-noir rounded-2xl p-4 text-white">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                 <Package size={20} className="text-[#B8973A]" />

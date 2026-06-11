@@ -29,7 +29,7 @@ export default function PromotionProgressPage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4]">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
@@ -37,7 +37,7 @@ export default function PromotionProgressPage() {
         </header>
 
         {/* 当前等级主卡 */}
-        <div className="bg-[#1A1208] px-5 pb-7 pt-2">
+        <div className="surface-noir px-5 pb-7 pt-2">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-xs text-white/50">当前等级</p>

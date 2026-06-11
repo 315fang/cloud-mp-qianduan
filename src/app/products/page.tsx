@@ -318,7 +318,7 @@ export default function ProductsPage() {
         <div className="absolute bottom-16 left-0 right-0 px-4 z-30">
           <Link
             href="/cart"
-            className="flex items-center justify-between bg-[#1A1208] rounded-2xl px-5 py-3 shadow-lg"
+            className="flex items-center justify-between surface-noir rounded-2xl px-5 py-3 shadow-lg"
           >
             <div className="flex items-center gap-3">
               <div className="relative w-9 h-9 bg-[#B8973A] rounded-full flex items-center justify-center">

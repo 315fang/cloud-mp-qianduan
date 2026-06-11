@@ -36,7 +36,7 @@ export default function LotteryPrizePage() {
 
         <div className="px-4 py-5 space-y-4">
           {/* 中奖横幅 */}
-          <div className="bg-[#1A1208] rounded-2xl p-5 flex items-center gap-4">
+          <div className="surface-noir rounded-2xl p-5 flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#B8973A] flex items-center justify-center shrink-0">
               <Trophy size={24} className="text-[#1A1208]" />
             </div>

@@ -83,7 +83,7 @@ export default function OrderDetailPage() {
 
         <div className="flex-1 overflow-y-auto pb-28 space-y-3 p-4">
           {/* 状态卡 */}
-          <div className="bg-[#1A1208] rounded-2xl px-5 py-5">
+          <div className="surface-noir rounded-2xl px-5 py-5">
             <p className="text-white text-lg font-bold">{statusMap[order.status]}</p>
             <p className="text-[#C4A882] text-xs mt-1">{statusDescMap[order.status]}</p>
             {order.expressNo && (

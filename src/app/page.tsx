@@ -33,7 +33,7 @@ export default function HomePage() {
         {/* 公告栏：私享礼遇语言，去促销腔 */}
         <Link
           href="/coupons/center"
-          className="bg-[#1A1208] px-4 py-1.5 flex items-center justify-center gap-2 overflow-hidden"
+          className="surface-noir px-4 py-1.5 flex items-center justify-center gap-2 overflow-hidden"
         >
           <span className="text-[9px] tracking-[0.28em] text-[#D4AF5A] font-semibold uppercase">
             Privilege
@@ -98,7 +98,7 @@ export default function HomePage() {
 
         {/* 品牌叙事区 —— 1974 溯源 · 真实品牌故事 */}
         <section aria-labelledby="brand-narrative-heading">
-          <Link href="/brand" className="block bg-[#1A1208] rounded-2xl px-6 py-8 relative overflow-hidden">
+          <Link href="/brand" className="block surface-noir rounded-2xl px-6 py-8 relative overflow-hidden">
             {/* 金色装饰角线 */}
             <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-[#B8973A]/50" aria-hidden="true" />
             <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-[#B8973A]/50" aria-hidden="true" />

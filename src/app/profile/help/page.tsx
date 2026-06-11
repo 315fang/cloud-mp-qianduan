@@ -47,7 +47,7 @@ export default function HelpPage() {
 
       <div className="px-4 space-y-4 pb-8">
         {/* 联系客服 */}
-        <div className="bg-[#1A1208] rounded-2xl px-5 py-4 flex items-center gap-4">
+        <div className="surface-noir rounded-2xl px-5 py-4 flex items-center gap-4">
           <div className="w-11 h-11 rounded-full bg-[#B8973A]/20 flex items-center justify-center flex-shrink-0">
             <MessageSquare size={20} className="text-[#B8973A]" />
           </div>

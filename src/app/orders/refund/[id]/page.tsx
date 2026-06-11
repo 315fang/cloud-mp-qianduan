@@ -25,7 +25,7 @@ export default function RefundDetailPage() {
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* 状态卡 */}
-          <div className="bg-[#1A1208] rounded-2xl p-5">
+          <div className="surface-noir rounded-2xl p-5">
             <div className="flex items-center gap-3">
               <Clock size={22} className="text-[#B8973A]" />
               <div>

@@ -32,7 +32,7 @@ export default function WithdrawHistoryPage() {
         </div>
 
         {/* 汇总卡 */}
-        <div className="mx-4 mt-4 bg-[#1A1208] rounded-2xl p-4 flex items-center gap-4">
+        <div className="mx-4 mt-4 surface-noir rounded-2xl p-4 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-[#B8973A]/20 flex items-center justify-center">
             <Banknote size={20} className="text-[#B8973A]" />
           </div>

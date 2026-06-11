@@ -44,7 +44,7 @@ export default function PartnerInviteManagePage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-24">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
@@ -52,7 +52,7 @@ export default function PartnerInviteManagePage() {
         </header>
 
         {/* 邀约说明卡 */}
-        <div className="bg-[#1A1208] px-5 pb-6 pt-2">
+        <div className="surface-noir px-5 pb-6 pt-2">
           <div className="flex items-start gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-[#B8973A] flex items-center justify-center shrink-0">
               <Gift size={20} className="text-[#1A1208]" />

@@ -35,7 +35,7 @@ export default function OrderAfterSalePage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#FAF7F4] pb-24">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1">
             <ArrowLeft size={20} className="text-white" />
           </button>
@@ -49,7 +49,7 @@ export default function OrderAfterSalePage() {
         </header>
 
         {/* 订单号头部说明 */}
-        <div className="bg-[#1A1208] px-5 pb-6 pt-2">
+        <div className="surface-noir px-5 pb-6 pt-2">
           <p className="text-xs text-white/60 leading-relaxed">
             请选择需要售后的商品发起申请。一笔订单可对不同商品分别申请售后。
           </p>

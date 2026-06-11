@@ -110,7 +110,7 @@ export default function DealerApplyPage() {
         {step === "select" && (
           <div className="p-4 space-y-4">
             {/* 顶部说明 */}
-            <div className="bg-[#1A1208] rounded-2xl px-5 py-4 text-center">
+            <div className="surface-noir rounded-2xl px-5 py-4 text-center">
               <p className="text-[10px] tracking-widest text-[#B8973A] font-semibold mb-1">CLOUD BEAUTY · 分销体系</p>
               <p className="text-base font-bold text-white">成为经销商，开启副业新可能</p>
               <p className="text-xs text-white/50 mt-1 leading-relaxed">销售即佣金，团队越大收益越高，零库存无压力</p>

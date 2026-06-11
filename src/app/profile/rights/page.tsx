@@ -65,16 +65,16 @@ export default function RightsPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto pb-6">
-          {/* 当前等级大卡 */}
-          <div className={`mx-4 mt-4 rounded-2xl p-5 ${cur.level >= 3 ? "bg-[#1A1208] text-white" : "bg-white"}`}>
+          {/* 当前等级大卡：分销等级用香槟面板区分，不再用黑块 */}
+          <div className={`mx-4 mt-4 rounded-2xl p-5 ${cur.isDistributor ? "surface-champagne border border-[#EADFC8]" : "bg-white"}`}>
             <div className="flex items-center gap-2 mb-2">
-              <Crown size={20} className="text-[#D4AF5A]" />
-              <span className={`text-lg font-bold ${cur.level >= 3 ? "text-white" : "text-[#1A1208]"}`}>Lv.{cur.level} {cur.name}</span>
+              <Crown size={20} className="text-[#B8973A]" />
+              <span className="text-lg font-bold text-[#1A1208]">Lv.{cur.level} {cur.name}</span>
               {cur.current && <span className="ml-auto text-[10px] bg-[#B8973A] text-white px-2 py-0.5 rounded-full">当前等级</span>}
               {cur.passed && <span className="ml-auto text-[10px] text-[#8C7B6B]">已达成</span>}
               {!cur.current && !cur.passed && <span className="ml-auto text-[10px] text-[#B8973A]">待解锁</span>}
             </div>
-            <p className={`text-xs ${cur.level >= 3 ? "text-white/60" : "text-[#8C7B6B]"}`}>{cur.brief}</p>
+            <p className="text-xs text-[#8C7B6B]">{cur.brief}</p>
           </div>
 
           {/* 特权概览 */}
@@ -107,7 +107,7 @@ export default function RightsPage() {
               {levels.map((l, i) => (
                 <div key={l.level} className="flex items-center shrink-0">
                   <div className="flex flex-col items-center gap-1.5 w-16">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold ${l.current ? "bg-[#B8973A] text-white" : l.passed ? "bg-[#1A1208] text-white" : "bg-[#F5EFE8] text-[#B8A898]"}`}>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold ${l.current ? "bg-[#B8973A] text-white" : l.passed ? "bg-[#F0E6C8] text-[#8C6B1F]" : "bg-[#F5EFE8] text-[#B8A898]"}`}>
                       {l.level}
                     </div>
                     <span className={`text-[10px] text-center leading-tight ${l.current ? "text-[#B8973A] font-bold" : "text-[#8C7B6B]"}`}>{l.name}</span>

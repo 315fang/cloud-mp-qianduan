@@ -47,7 +47,7 @@ export default function DiyActivityPage() {
 
         <div className="flex-1 overflow-y-auto pb-24">
           {/* Hero */}
-          <div className="relative px-5 pt-16 pb-6 bg-[#1A1208] text-white overflow-hidden">
+          <div className="relative px-5 pt-16 pb-6 surface-noir text-white overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-15" style={{ background: "radial-gradient(circle, #D4AF5A, transparent 70%)" }} />
             <p className="text-[10px] tracking-[0.3em] text-[#D4AF5A] uppercase mb-1">DIY Bundle</p>
             <h1 className="text-2xl font-bold">随心选专场</h1>

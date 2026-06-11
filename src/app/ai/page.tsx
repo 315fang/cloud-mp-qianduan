@@ -66,7 +66,7 @@ export default function AiPage() {
   return (
     <PhoneFrame>
       {/* 顶部导航 */}
-      <header className="sticky top-0 z-40 bg-[#1A1208] px-4 pt-3 pb-3 flex items-center gap-3">
+      <header className="sticky top-0 z-40 surface-noir px-4 pt-3 pb-3 flex items-center gap-3">
         <Link href="/" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10">
           <ArrowLeft size={18} className="text-white" />
         </Link>

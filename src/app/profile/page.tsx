@@ -80,15 +80,14 @@ const bagTotal = bagItems.reduce((sum, p) => sum + p.price, 0);
 export default function ProfilePage() {
   return (
     <PhoneFrame>
-      {/* 顶部用户信息区（去掉关注/粉丝/收藏/积分重复统计行） */}
-      <div className="relative bg-[#1A1208] px-5 pt-8 pb-12 overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#B8973A]/10 -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-[#B8973A]/5 translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+      {/* 顶部用户信息区：香槟浅色面板，深色仅作文字（苹果式克制） */}
+      <div className="relative surface-champagne px-5 pt-8 pb-12 overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#B8973A]/8 -translate-y-1/2 translate-x-1/4 pointer-events-none" />
 
         <div className="relative flex items-start gap-4">
           {/* 头像 */}
           <div className="relative flex-shrink-0">
-            <div className="w-16 h-16 rounded-full bg-[#F0E6C8] flex items-center justify-center border-2 border-[#B8973A]/40">
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center border border-[#E2D3B4] shadow-sm">
               <span className="font-luxury text-2xl text-[#B8973A]">问</span>
             </div>
             <Link href="/profile/edit" className="absolute bottom-0 right-0 w-5 h-5 bg-[#B8973A] rounded-full flex items-center justify-center" aria-label="编辑资料">
@@ -98,34 +97,34 @@ export default function ProfilePage() {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="font-luxury text-lg text-white">问兰用户</h2>
-              <span className="text-[10px] font-medium text-[#B8973A] border border-[#B8973A]/50 px-2 py-0.5 rounded-full">
+              <h2 className="font-luxury text-lg text-[#1A1208]">问兰用户</h2>
+              <span className="text-[10px] font-medium text-[#8C6B1F] bg-[#F0E6C8] px-2 py-0.5 rounded-full">
                 黄金会员
               </span>
-              <span className="text-[10px] font-medium text-[#7CA9D4] border border-[#7CA9D4]/40 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-medium text-[#3D6B9E] bg-[#E4EDF6] px-2 py-0.5 rounded-full">
                 L2 高级经销商
               </span>
             </div>
-            <p className="text-xs text-white/50 mt-0.5">ID：YJ2024001280</p>
+            <p className="text-xs text-[#8C7B6B] mt-0.5">ID：YJ2024001280</p>
             {/* 等级进度（积分唯一出现在此与资产卡） */}
             <div className="mt-2.5">
               <div className="flex justify-between text-[10px] mb-1">
-                <span className="text-[#B8973A]">黄金 1,280积分</span>
-                <span className="text-white/40">铂金 2,000积分</span>
+                <span className="text-[#8C6B1F] font-medium">黄金 1,280积分</span>
+                <span className="text-[#B0A18C]">铂金 2,000积分</span>
               </div>
-              <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-1.5 rounded-full bg-[#E8DCC4] overflow-hidden">
                 <div className="h-full rounded-full bg-gradient-to-r from-[#B8973A] to-[#D4AF5A]" style={{ width: "64%" }} />
               </div>
             </div>
             {/* 会员礼遇一行收纳（原独立横幅合并至此） */}
-            <Link href="/profile/member" className="mt-2.5 inline-flex items-center gap-1.5 text-[10px] text-[#D4AF5A]">
+            <Link href="/profile/member" className="mt-2.5 inline-flex items-center gap-1.5 text-[10px] text-[#8C6B1F] font-medium">
               <Sparkles size={11} />
               会员专属礼遇 · 每月礼品 · 积分加速
               <ChevronRight size={11} />
             </Link>
           </div>
 
-          <Link href="/profile/settings" className="text-white/40 flex-shrink-0 mt-1" aria-label="设置">
+          <Link href="/profile/settings" className="text-[#B0A18C] flex-shrink-0 mt-1" aria-label="设置">
             <Settings size={18} strokeWidth={1.5} />
           </Link>
         </div>
@@ -221,17 +220,17 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* 工作台双入口（分销 / 店长，各一行，不再重复铺数据与宫格） */}
+        {/* 工作台双入口（同等视觉重量的白卡，仅以图标底色区分） */}
         <div className="grid grid-cols-2 gap-3">
-          <Link href="/distributor" className="bg-[#1A1208] rounded-2xl p-4 flex flex-col gap-2">
-            <div className="w-9 h-9 rounded-full bg-[#B8973A]/20 flex items-center justify-center">
-              <TrendingUp size={17} className="text-[#D4AF5A]" />
+          <Link href="/distributor" className="bg-white rounded-2xl p-4 flex flex-col gap-2 border border-[#F0E8DC]">
+            <div className="w-9 h-9 rounded-full bg-[#F0E6C8] flex items-center justify-center">
+              <TrendingUp size={17} className="text-[#8C6B1F]" />
             </div>
             <div>
-              <p className="text-sm font-bold text-white">分销工作台</p>
-              <p className="text-[11px] text-white/50 mt-0.5">本月佣金 ¥1,280</p>
+              <p className="text-sm font-bold text-[#1A1208]">分销工作台</p>
+              <p className="text-[11px] text-[#8C7B6B] mt-0.5">本月佣金 ¥1,280</p>
             </div>
-            <span className="text-[11px] text-[#D4AF5A] flex items-center gap-0.5">
+            <span className="text-[11px] text-[#B8973A] flex items-center gap-0.5">
               进入 <ChevronRight size={12} />
             </span>
           </Link>
@@ -296,7 +295,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 邀请好友 */}
-        <div className="bg-[#1A1208] rounded-2xl px-5 py-4 flex items-center justify-between">
+        <div className="surface-noir rounded-2xl px-5 py-4 flex items-center justify-between">
           <div>
             <p className="text-[10px] tracking-[0.2em] text-[#B8973A] font-medium">WENLAN BEAUTY</p>
             <p className="text-sm font-semibold text-white mt-0.5">邀请好友得礼品</p>

@@ -184,7 +184,7 @@ export default function MaterialsPage() {
                 ))}
               </div>
 
-              <div className="mt-5 bg-[#1A1208] rounded-2xl p-4 space-y-3">
+              <div className="mt-5 surface-noir rounded-2xl p-4 space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-white/60">预计直销佣金</span>
                   <span className="text-lg font-bold text-[#D4AF5A]">¥{commission.toFixed(2)}</span>

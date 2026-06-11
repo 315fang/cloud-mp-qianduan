@@ -86,7 +86,7 @@ export default function VerifyConsolePage() {
   return (
     <PhoneFrame>
       <div className="min-h-full bg-[#1A1208]">
-        <header className="sticky top-0 z-10 flex items-center gap-3 bg-[#1A1208] px-4 py-3">
+        <header className="sticky top-0 z-10 flex items-center gap-3 surface-noir px-4 py-3">
           <button onClick={() => router.back()} className="flex items-center justify-center w-8 h-8 -ml-1" aria-label="返回">
             <ArrowLeft size={20} className="text-white" />
           </button>

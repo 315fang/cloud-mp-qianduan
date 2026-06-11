@@ -70,7 +70,7 @@ export default function DiyListPage() {
 
         <div className="flex-1 overflow-y-auto pb-6">
           {/* Hero 卡 */}
-          <div className="relative px-5 pt-16 pb-7 bg-[#1A1208] text-white overflow-hidden">
+          <div className="relative px-5 pt-16 pb-7 surface-noir text-white overflow-hidden">
             <div
               className="absolute top-0 right-0 w-44 h-44 rounded-full opacity-15"
               style={{ background: "radial-gradient(circle, #D4AF5A, transparent 70%)" }}

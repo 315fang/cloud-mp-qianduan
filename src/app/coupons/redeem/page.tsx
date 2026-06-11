@@ -36,7 +36,7 @@ export default function RedeemCodePage() {
 
         <div className="px-4 py-5 space-y-5">
           {/* 输入卡 */}
-          <div className="bg-[#1A1208] rounded-2xl p-5">
+          <div className="surface-noir rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-4">
               <Ticket size={18} className="text-[#B8973A]" />
               <span className="text-sm font-bold text-white">输入兑换码</span>

@@ -105,7 +105,7 @@ export default function SlashDetailPage() {
           </div>
 
           {/* 邀请卡 */}
-          <div className="bg-[#1A1208] rounded-2xl px-5 py-4">
+          <div className="surface-noir rounded-2xl px-5 py-4">
             <p className="text-white font-bold mb-1">邀请好友帮砍价</p>
             <p className="text-[#C4A882] text-xs mb-3">再邀请 {needed} 位好友帮砍，即可达到最低价</p>
             <button onClick={handleCopy} className="w-full bg-[#B8973A] text-white py-2.5 rounded-full text-sm font-bold flex items-center justify-center gap-2">
