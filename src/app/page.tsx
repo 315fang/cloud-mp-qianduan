@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Bell, ChevronRight, ArrowRight, Crown, Ticket, Zap, Gift, Users, Sparkles } from "lucide-react";
+import { Search, Bell, ChevronRight, ArrowRight, Crown, Ticket, Zap, Sparkles, Heart } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import BannerCarousel from "@/components/BannerCarousel";
 import ProductCard from "@/components/ProductCard";
@@ -84,7 +84,7 @@ export default function HomePage() {
               { icon: Sparkles, label: "新品上市", href: "/products" },
               { icon: Zap, label: "限时专场", href: "/activity/flash" },
               { icon: Ticket, label: "领券中心", href: "/coupons/center" },
-              { icon: Gift, label: "会员礼遇", href: "/lottery" },
+              { icon: Heart, label: "会员礼遇", href: "/lottery" },
             ].map(({ icon: Icon, label, href }) => (
               <Link key={label} href={href} className="flex flex-col items-center gap-1.5">
                 <div className="w-11 h-11 rounded-full bg-[#F5EFE8] flex items-center justify-center">
@@ -183,19 +183,20 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 更多玩法：拼团/砍价/随心配 收进次级横排入口 */}
-        <section aria-label="互动玩法">
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { icon: Users, label: "好友拼团", sub: "成团享专属价", href: "/group" },
-              { icon: Gift, label: "幸运抽奖", sub: "积分赢好礼", href: "/lottery" },
-              { icon: Sparkles, label: "随心配", sub: "自由组合套组", href: "/activity/diy/list" },
-            ].map(({ icon: Icon, label, sub, href }) => (
-              <Link key={label} href={href} className="bg-white rounded-2xl px-3 py-3.5 flex flex-col items-center gap-1.5">
-                <Icon size={18} className="text-[#B8973A]" strokeWidth={1.5} />
-                <span className="text-[11px] font-semibold text-[#1A1208]">{label}</span>
-                <span className="text-[9px] text-[#8C7B6B]">{sub}</span>
-              </Link>
+        {/* 臻选推荐 */}
+        <section aria-labelledby="hot-heading">
+          <div className="flex items-end justify-between mb-3">
+            <div>
+              <p className="eyebrow">Selection</p>
+              <h2 id="hot-heading" className="font-luxury text-lg text-[#1A1208] mt-1">臻选推荐</h2>
+            </div>
+            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A] pb-0.5">
+              查看全部 <ChevronRight size={13} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {hotProducts.map((product) => (
+              <ProductCard key={product.id} product={product} layout="grid" />
             ))}
           </div>
         </section>
@@ -239,26 +240,6 @@ export default function HomePage() {
             ))}
           </div>
         </section>
-
-        {/* 臻选推荐 */}
-        <section aria-labelledby="hot-heading">
-          <div className="flex items-end justify-between mb-3">
-            <div>
-              <p className="eyebrow">Selection</p>
-              <h2 id="hot-heading" className="font-luxury text-lg text-[#1A1208] mt-1">臻选推荐</h2>
-            </div>
-            <Link href="/products" className="flex items-center gap-0.5 text-[12px] text-[#B8973A] pb-0.5">
-              查看全部 <ChevronRight size={13} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {hotProducts.map((product) => (
-              <ProductCard key={product.id} product={product} layout="grid" />
-            ))}
-          </div>
-        </section>
-
-        {/* 底部品牌信息 */}
         <div className="text-center py-8">
           <div className="gold-divider mb-5" aria-hidden="true" />
           <p className="font-display-en text-[11px] text-[#3D2B1A]">Wenlan Beauty · Since 1974</p>
