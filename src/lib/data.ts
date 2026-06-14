@@ -11,6 +11,7 @@ export type Product = {
   reviewCount: number;
   isNew?: boolean;
   isHot?: boolean;
+  sales?: number;
   stock: number;
   description: string;
   specs: { label: string; value: string }[];
